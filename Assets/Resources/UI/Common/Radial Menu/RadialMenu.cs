@@ -4,6 +4,7 @@ using System.Linq;
 using Boo.Lang.Environments;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -14,6 +15,7 @@ public class RadialMenu : MonoBehaviour
 	public GameObject[][] ButtonObjects;
     public UnityEvent OnClosed;
 
+    private string _activeSubmenu;
     private int _currentPage;
 	private const int PageSize = 8;
 	private int _numPages;
@@ -56,6 +58,10 @@ public class RadialMenu : MonoBehaviour
 	        bckBtn.GetComponent<Image>().color = Color.gray;
 	        bckBtn.GetComponent<Button>().enabled = false;
 	    }
+
+	    var submenus = GameObject.FindGameObjectsWithTag("Submenu");
+        foreach(var submenu in submenus)
+            submenu.SetActive(false);
 	}
 
     public void Update() {
@@ -116,9 +122,16 @@ public class RadialMenu : MonoBehaviour
         foreach (var array in ButtonObjects)
             foreach (var b in array)
             {
-                b.GetComponent<Button>().interactable = false;
-                b.GetComponent<Image>().enabled = false;
-                b.transform.Find("Icon").gameObject.GetComponent<Image>().enabled = false;
+                if (b.name == button.name)
+                {
+                    b.GetComponent<Button>().interactable = false;
+                    b.GetComponent<Image>().enabled = false;
+                    b.GetComponent<AlphaHitbox>().enabled = false;
+                    b.GetComponent<EventTrigger>().enabled = false;
+                    b.transform.Find("Icon").gameObject.GetComponent<Image>().enabled = false;
+                    _activeSubmenu = b.name;
+                } else
+                    b.SetActive(false);
             }
     }
 
@@ -133,9 +146,15 @@ public class RadialMenu : MonoBehaviour
         foreach (var array in ButtonObjects)
         foreach (var b in array)
         {
+            if (b.name != _activeSubmenu) continue;
+            
             b.GetComponent<Button>().interactable = true;
             b.GetComponent<Image>().enabled = true;
+            b.GetComponent<AlphaHitbox>().enabled = true;
+            b.GetComponent<EventTrigger>().enabled = true;
             b.transform.Find("Icon").gameObject.GetComponent<Image>().enabled = true;
         }
+
+        ChangePages();
     }
 }

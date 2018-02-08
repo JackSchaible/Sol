@@ -1,9 +1,10 @@
 ﻿<Properties StartupItem="Sol.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scenes\ShipBuild\ShipBuildManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuControl.cs">
     <Files>
       <File FileName="Assets\Scenes\ShipBuild\ShipBuildManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" Line="110" Column="1" />
+      <File FileName="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuControl.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
