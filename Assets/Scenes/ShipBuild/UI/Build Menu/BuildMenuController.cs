@@ -1,29 +1,30 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class BuildMenuController : MonoBehaviour
 {
     public GameObject parent;
 
-    private GameObject[] Options;
+	void Start ()
+	{
+	    var submenus = GameObject.FindGameObjectsWithTag("Submenu");
 
-    void Start()
-    {
-        Options = parent.GetComponentsInChildren<Transform>()
-            .Where(x => x.tag == "Radial Menu Button")
-            .Select(x => x.gameObject).ToArray();
-
-        foreach (var option in Options)
-            option.GetComponent<Toggle>().isOn = false;
-    }
+	    foreach (var item in submenus)
+	    {
+	        var menu = item.GetComponent<BuildMenuToggle>().Submenu;
+	        if (menu == null) continue;
+            menu.SetActive(false);
+	    }
+	}
 
     public void OnChange(Toggle item)
     {
-        foreach (var option in Options)
-        {
-            if (option.name != item.name)
-                option.GetComponent<Toggle>().isOn = false;
-        }
+        var toggleScript = item.GetComponent<BuildMenuToggle>();
+            
+        var submenu = toggleScript.Submenu;
+
+        if (submenu == null) return;
+
+        submenu.SetActive(item.isOn);
     }
 }
