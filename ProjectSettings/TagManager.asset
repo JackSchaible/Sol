@@ -4,10 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Radial Menu Button
-  - Radial Menu Sub-1-Menu
-  - Radial Menu Sub-2-Menu
   - Submenu
+  - First-Level Menu Button
+  - Menu Toggle
   layers:
   - Default
   - TransparentFX

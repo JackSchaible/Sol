@@ -11,7 +11,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
-35b9a78b8f7791efe6da5947e221f4d9 Assembly-CSharp.dll:.ShipBuildUIManager
+24f706dab9b7d21efc577ffc8b9851de Assembly-CSharp.dll:.ShipBuildUIManager
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
 49cd62a578efc0a599b810a2b66cd49c UnityEngine.UI.dll:UnityEngine.UI.Button
@@ -88,7 +88,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
-24ad1705bc77c9aeed60ea39a704d4c6 Assembly-CSharp.dll:.ShipBuildManager
+8aca1b88f3addab8398f18b61c79e67e Assembly-CSharp.dll:.ShipBuildManager
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 60b2bb652410a5867a5ab9a01cd38461 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -143,5 +143,5 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.AlphaHitbox
 ce8f41b831b5b90af7a26b37ec3d16bc Assembly-CSharp.dll:.RadialMenu
-00ee24b179a4a80deff28e754f0fb4ba Assembly-CSharp.dll:.BuildMenuController
-c5c44654ac7f96ae88a683e9f421e918 Assembly-CSharp.dll:.BuildMenuToggle
+6df4621277a2f830dae83edfa4aa4def Assembly-CSharp.dll:.BuildMenuToggle
+318b69b15c5875252a552563bcccc799 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.UI.Build_Menu.Submenu

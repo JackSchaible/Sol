@@ -1,16 +1,14 @@
 ﻿<Properties StartupItem="Sol.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="Assets\Scenes\ShipBuild\ShipBuildManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs" Line="19" Column="1" />
+      <File FileName="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\devl\SolUnity\Sol\Assets\Scenes\SpaceFight\UI\UIManager.cs" line="43" column="3" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

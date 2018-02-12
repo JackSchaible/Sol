@@ -1,32 +1,46 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using System.Runtime.InteropServices;
+using Assets.Scenes.ShipBuild.UI.Build_Menu;
+using UnityEngine;
 using UnityEngine.UI;
+using Toggle = UnityEngine.UI.Toggle;
 
 public class BuildMenuToggle : MonoBehaviour
 {
-    public GameObject Submenu;
+    public GameObject Parent;
+    public GameObject Child;
 
-    private static Color selected = new Color(0.28f, 0.33f, 0.86f);
-    private static Color unselected = new Color(1, 1, 1);
+    public GameObject Details;
 
-	// Use this for initialization
-	void Start () {
-		
+    private static readonly Color Selected = new Color(0.28f, 0.33f, 0.86f);
+    private static readonly Color Unselected = new Color(1, 1, 1);
+
+    public bool IsOn
+    {
+        get { return gameObject.GetComponent<Toggle>().isOn; }
+        set { gameObject.GetComponent<Toggle>().isOn = value; }
+    }
+
+    private bool _previousOn = false;
+
+	void Start ()
+	{
+	    if (Child == null) return;
+	    Child.GetComponent<Submenu>().Parent = this;
 	}
 	
-	// Update is called once per frame
 	void Update ()
 	{
-	    var isOn = gameObject.GetComponent<Toggle>().isOn;
+	    transform.gameObject.GetComponentInChildren<Text>().color = IsOn ? Selected : Unselected;
 
-        transform.gameObject.GetComponentInChildren<Text>().color = isOn ? selected : unselected;
+	    if (_previousOn == IsOn) return;
 
-	    if (Submenu == null) return;
-        SetActive(isOn);
+	    if (IsOn && Child != null)
+	        Child.SetActive(IsOn);
+
+	    if (Child == null)
+	        Details.SetActive(IsOn);
+
+        _previousOn = IsOn;
 	}
-
-    public void SetActive(bool active)
-    {
-        Submenu.GetComponent<BuildMenuToggle>().SetActive(active);
-        SetActive(active);
-    }
 }
