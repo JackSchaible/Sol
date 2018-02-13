@@ -29,6 +29,14 @@ namespace Assets.Ships
             return new ModuleStats[]
             {
                 new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Heavy Machine Gun", "Projectile", "HMG - Build", 10, 0, 400, 15, 3000, new WeaponDamage(3, 2, 1), 1000, 0, 400, 6800),
+                new WeaponStats("Flak Cannon", "Projectile", "Flak Cannon - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
+                new WeaponStats("Light Machine Gun", "Projectile", "LMG - Build", 10, 0, 200, 15, 6000, new WeaponDamage(1, 0, 0), 700, 0, 200, 15000),
             };
         }
     }
