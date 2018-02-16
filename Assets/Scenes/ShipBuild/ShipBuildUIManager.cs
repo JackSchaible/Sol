@@ -17,6 +17,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
     void Update()
     {
+        return; //todo: reimplement, was lost somehow
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PersonnelAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;

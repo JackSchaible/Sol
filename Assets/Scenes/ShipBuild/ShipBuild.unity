@@ -424,7 +424,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -629,7 +629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &75803702
 MonoBehaviour:
@@ -673,7 +673,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -1208,7 +1208,7 @@ RectTransform:
   m_Children:
   - {fileID: 227960302}
   m_Father: {fileID: 2077185826}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -1447,7 +1447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &200450747
 MonoBehaviour:
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -1615,7 +1615,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 240171704}
-  - component: {fileID: 240171706}
   - component: {fileID: 240171707}
   m_Layer: 5
   m_Name: Content
@@ -1654,17 +1653,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.000069521564}
   m_SizeDelta: {x: 0, y: 1544.7}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &240171706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 240171703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d66b565d445e02447880c65ef9d2889d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &240171707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1930,7 +1918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &300056870
 MonoBehaviour:
@@ -1974,7 +1962,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -2792,8 +2780,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 737731755}
   m_HandleRect: {fileID: 737731754}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.6292942
+  m_Value: 0.9999998
+  m_Size: 0.6292941
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2882,7 +2870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &621218950
 MonoBehaviour:
@@ -2926,7 +2914,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -3322,7 +3310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &719059937
 MonoBehaviour:
@@ -3366,7 +3354,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -4105,7 +4093,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &831061074
 MonoBehaviour:
@@ -4149,7 +4137,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -4350,7 +4338,7 @@ RectTransform:
   m_Children:
   - {fileID: 1792386495}
   m_Father: {fileID: 2077185826}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -4489,7 +4477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &912494489
 MonoBehaviour:
@@ -4533,7 +4521,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -4766,8 +4754,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1553652000}
   m_HandleRect: {fileID: 1553651999}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.6292942
+  m_Value: 0.9999996
+  m_Size: 0.6292941
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4957,7 +4945,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 781134336}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.45376638
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5756,7 +5744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &1210519762
 MonoBehaviour:
@@ -5800,7 +5788,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -5863,7 +5851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &1221145144
 MonoBehaviour:
@@ -5907,7 +5895,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -6019,7 +6007,7 @@ RectTransform:
   m_Children:
   - {fileID: 1203463888}
   m_Father: {fileID: 2077185826}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -6216,8 +6204,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 400548874}
   m_HandleRect: {fileID: 400548873}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.6292942
+  m_Value: 0.9999996
+  m_Size: 0.6292941
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6404,7 +6392,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -6661,8 +6649,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1730671912}
   m_HandleRect: {fileID: 1730671911}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.6292942
+  m_Value: 0.9999998
+  m_Size: 0.6292941
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7093,7 +7081,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000004864975}
+  m_AnchoredPosition: {x: 0, y: 0.016378792}
   m_SizeDelta: {x: 0, y: 1035}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1662582887
@@ -7262,7 +7250,7 @@ GameObject:
   - component: {fileID: 1767780984}
   - component: {fileID: 1767780986}
   m_Layer: 5
-  m_Name: LMG Details
+  m_Name: Details
   m_TagString: Submenu
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7280,7 +7268,7 @@ RectTransform:
   m_Children:
   - {fileID: 1089431398}
   m_Father: {fileID: 2077185826}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -7632,8 +7620,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 200415503}
   m_HandleRect: {fileID: 200415502}
   m_Direction: 2
-  m_Value: 0.99999976
-  m_Size: 0.67003304
+  m_Value: 0.9999995
+  m_Size: 0.670033
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7832,7 +7820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 189064516}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &1910169962
 MonoBehaviour:
@@ -7876,7 +7864,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 240171706}
+      - m_Target: {fileID: 0}
         m_MethodName: OnChange
         m_Mode: 2
         m_Arguments:
@@ -8159,10 +8147,10 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 1767780983}
   - {fileID: 896226501}
   - {fileID: 189064517}
   - {fileID: 1254037194}
-  - {fileID: 1767780983}
   - {fileID: 578963387}
   - {fileID: 682651970}
   m_Father: {fileID: 0}

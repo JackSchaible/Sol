@@ -7,25 +7,22 @@ namespace Assets.Ships
         public int RateOfFire { get; set; }
         public WeaponDamage Damage { get; set; }
         public int Range { get; set; }
-        public int PersonnelRequirement { get; set; }
-        public int PowerConsumption { get; set; }
         public int AmmoStorage { get; set; }
 
         public WeaponStats()
         {
-            
+
         }
 
-        public WeaponStats(string moduleName, string moduleType, string buildSprite, int health, int armor, int weight,
-            int cost, int rateOfFire, WeaponDamage damage, int range, int personnelRequirement, int powerConsumption,
-            int ammoStorage)
-            : base(moduleName, moduleType, buildSprite, health, armor, weight, cost)
+        public WeaponStats(string moduleType, string buildSprite, string name, int width, int height, int offsetX,
+            int offsetY, int originX, int originY, int weight, int cost, int crewRequirement, int powerConumption,
+            int commandRequirement, int rateOfFire, WeaponDamage damage, int range, int ammoStorage)
+            : base(moduleType, buildSprite, name, width, height, offsetX, offsetY, originX, originY, 10, 0,
+                 weight, cost, crewRequirement, powerConumption, commandRequirement)
         {
             RateOfFire = rateOfFire;
             Damage = damage;
             Range = range;
-            PersonnelRequirement = personnelRequirement;
-            PowerConsumption = powerConsumption;
             AmmoStorage = ammoStorage;
         }
     }

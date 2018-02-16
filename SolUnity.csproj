@@ -293,6 +293,7 @@
     <Compile Include="Assets\Resources\UI\Common\CameraManager.cs" />
     <Compile Include="Assets\Resources\UI\Common\Radial Menu\Option.cs" />
     <Compile Include="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" />
+    <Compile Include="Assets\Resources\UI\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs" />
