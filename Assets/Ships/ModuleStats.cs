@@ -8,6 +8,7 @@ namespace Assets.Ships
         public string ModuleType { get; set; }
         public string BuildSprite { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int OffsetX { get; set; }
@@ -27,13 +28,14 @@ namespace Assets.Ships
 
         }
 
-        protected ModuleStats(string moduleType, string buildSprite, string name, int width, int height, int offsetX, 
-            int offsetY, int originx, int originY, int health, int armor, int weight, int cost, int crewRequirement,
+        protected ModuleStats(string moduleType, string buildSprite, string name, string description, int width, int height, 
+            int offsetX, int offsetY, int originx, int originY, int health, int armor, int weight, int cost, int crewRequirement,
             int powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
             BuildSprite = buildSprite;
             Name = name;
+            Description = description;
             Width = width;
             Height = height;
             OffsetX = offsetX;
