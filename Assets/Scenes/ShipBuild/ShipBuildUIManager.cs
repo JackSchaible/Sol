@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Ships;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ShipBuildUIManager : MonoBehaviour
@@ -11,8 +12,21 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public Grid BuildGrid;
 
+    private ModuleStatsManager _statsManager;
+    private ModuleStats[] _stats;
+
     void Start()
     {
+        _statsManager = new ModuleStatsManager();
+        _stats = _statsManager.Get();
+    }
+
+    public void ModuleSelected(Toggle toggle)
+    {
+        if (toggle.isOn)
+        {
+            //TODO: get name of toggle, display values
+        }
     }
 
     void Update()

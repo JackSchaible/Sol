@@ -1,5 +1,4 @@
 ﻿using Assets.Data;
-using Assets.Ships.Weapons;
 
 namespace Assets.Ships
 {
@@ -9,19 +8,21 @@ namespace Assets.Ships
 
         public ModuleStatsManager()
         {
-            _dataManager = new XmlDataManager<ModuleStats[]>();
+            //_dataManager = new XmlDataManager<ModuleStats[]>();
         }
 
         public ModuleStats[] Get()
         {
-            var result = _dataManager.Load();
+            //TODO: Do we really need to store this in a file?
+            /*var result = _dataManager.Load();
             if (result == null)
             {
                 result = Generate();
                 _dataManager.Save(result);
-            }
+            }*/
 
-            return result;
+            //return result;
+            return Generate();
         }
 
         private ModuleStats[] Generate()
