@@ -1047,7 +1047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 1767780982}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &159963821
 MonoBehaviour:
@@ -1256,7 +1256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 1767780982}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &183719037
 MonoBehaviour:
@@ -3322,7 +3322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 1767780982}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &648053611
 MonoBehaviour:
@@ -3898,7 +3898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 1767780982}
+  Child: {fileID: 0}
   Details: {fileID: 0}
 --- !u!114 &755064359
 MonoBehaviour:
@@ -5404,7 +5404,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 781134336}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9967198
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7690,7 +7690,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000040840543}
+  m_AnchoredPosition: {x: 0, y: -0.000014244845}
   m_SizeDelta: {x: 0, y: 1035}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1662582887
@@ -8916,7 +8916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
-  Child: {fileID: 1254037193}
+  Child: {fileID: 682651969}
   Details: {fileID: 0}
 --- !u!114 &2087574775
 MonoBehaviour:

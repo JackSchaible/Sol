@@ -305,6 +305,7 @@
     <Compile Include="Assets\Ships\CommandModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
+    <Compile Include="Assets\Ships\ModuleTypes.cs" />
     <Compile Include="Assets\Ships\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Weapons\WeaponStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />
