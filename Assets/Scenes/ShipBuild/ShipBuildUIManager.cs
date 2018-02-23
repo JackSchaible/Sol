@@ -1,4 +1,6 @@
-﻿using Assets.Ships;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.Ships;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +18,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
     private ModuleStatsManager _statsManager;
     private ModuleStats[] _stats;
+    private Dictionary<string, GameObject> _detailsViews;
 
     void Start()
     {
@@ -28,7 +31,10 @@ public class ShipBuildUIManager : MonoBehaviour
         if (toggle.isOn)
         {
             var toggleName = toggle.name.Replace(" Toggle", "");
-
+            var stats = _stats.First(x => x.Name == toggleName);
+            var view = _detailsViews[stats.ModuleSubtype];
+            
+            ConfigureModuleDetailsView(stats, view);
         }
     }
 
@@ -37,5 +43,21 @@ public class ShipBuildUIManager : MonoBehaviour
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PersonnelAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
+    }
+
+
+    private void ConfigureModuleDetailsView(ModuleStats stats, GameObject view)
+    {
+        switch (stats.ModuleSubtype)
+        {
+            case ControlCentreTypes.SmallShip:
+                SmallShip(stats, view);
+                break;
+        }
+    }
+
+    private void SmallShip(ModuleStats stats, GameObject view)
+    {
+        
     }
 }
