@@ -12,6 +12,8 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public Grid BuildGrid;
 
+    public GameObject ControlCentresDetails;
+
     private ModuleStatsManager _statsManager;
     private ModuleStats[] _stats;
 
@@ -25,13 +27,13 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         if (toggle.isOn)
         {
-            //TODO: get name of toggle, display values
+            var toggleName = toggle.name.Replace(" Toggle", "");
+
         }
     }
 
     void Update()
     {
-        return; //todo: reimplement, was lost somehow
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PersonnelAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;

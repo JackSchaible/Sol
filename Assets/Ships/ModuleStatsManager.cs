@@ -29,8 +29,8 @@ namespace Assets.Ships
         {
             return new ModuleStats[]
             {
-                new CommandModuleStats("Small Ship", "Basic Cockpit", "Basic Cockpit", "A very basic cockpit, containing the essentials for flying a small ship; attitude, yaw, roll, and thruster control, as well as communications, life support, and basic navigation and targeting algorithms.", 50, 31, 0, 0, 0, 0, 25, 3, 500, 25, 1, 200, 8),
-                new CommandModuleStats("Small Ship", "Advanced Cockpit", "Advanced Cockpit", "A slightly more advanced cockpit. Contains a very basic VI for assistance in navigation, communications, life support management, and other menial piloting tasks.", 50, 31, 0, 0, 0, 0, 25, 3, 550, 35, 1, 500, 12),
+                new CommandModuleStats(ControlCentreTypes.SmallShip, "Basic Cockpit", "Basic Cockpit", "A very basic cockpit, containing the essentials for flying a small ship; attitude, yaw, roll, and thruster control, as well as communications, life support, and basic navigation and targeting algorithms.", 50, 31, 0, 0, 0, 0, 25, 3, 500, 25, 1, 200, 8),
+                new CommandModuleStats(ControlCentreTypes.SmallShip, "Advanced Cockpit", "Advanced Cockpit", "A slightly more advanced cockpit. Contains a very basic VI for assistance in navigation, communications, life support management, and other menial piloting tasks.", 50, 31, 0, 0, 0, 0, 25, 3, 550, 35, 1, 500, 12),
             };
         }
     }
