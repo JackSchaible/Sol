@@ -309,6 +309,7 @@
     <Compile Include="Assets\Ships\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Weapons\WeaponStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />
+    <Compile Include="Assets\Utils\GraphicsUtils.cs" />
     <Compile Include="Assets\Utils\MathHelper.cs" />
     <Compile Include="Assets\Utils\Random.cs" />
     <Compile Include="Assets\Utils\Rectangle.cs" />

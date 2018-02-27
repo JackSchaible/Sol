@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Ships;
+using Assets.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,9 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         _statsManager = new ModuleStatsManager();
         _stats = _statsManager.Get();
+
+        foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
+            _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
     }
 
     public void ModuleSelected(Toggle toggle)
@@ -51,13 +55,14 @@ public class ShipBuildUIManager : MonoBehaviour
         switch (stats.ModuleSubtype)
         {
             case ControlCentreTypes.SmallShip:
-                SmallShip(stats, view);
+                BindSmallShipDetailsView((CommandModuleStats)stats, view);
                 break;
         }
     }
 
-    private void SmallShip(ModuleStats stats, GameObject view)
+    private void BindSmallShipDetailsView(CommandModuleStats stats, GameObject view)
     {
-        
+        view.GetComponentInChildren<Text>().text = stats.Name;
+        view.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
     }
 }
