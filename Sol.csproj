@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.3.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -300,24 +302,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Common\AlphaHitbox.cs" />
+    <Compile Include="Assets\Common\CameraManager.cs" />
+    <Compile Include="Assets\Common\Radial Menu\Option.cs" />
+    <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
+    <Compile Include="Assets\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
-    <Compile Include="Assets\Resources\Ships\IShipStats.cs" />
-    <Compile Include="Assets\Resources\Ships\Twelve Colonies\Galactica\GalacticaStats.cs" />
-    <Compile Include="Assets\Resources\UI\Common\AlphaHitbox.cs" />
-    <Compile Include="Assets\Resources\UI\Common\CameraManager.cs" />
-    <Compile Include="Assets\Resources\UI\Common\Radial Menu\Option.cs" />
-    <Compile Include="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" />
-    <Compile Include="Assets\Resources\UI\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Build Menu\Submenu.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
     <Compile Include="Assets\Ships\CommandModuleStats.cs" />
+    <Compile Include="Assets\Ships\IShipStats.cs" />
     <Compile Include="Assets\Ships\ModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
     <Compile Include="Assets\Ships\ModuleTypes.cs" />
@@ -328,6 +329,9 @@
     <Compile Include="Assets\Utils\MathHelper.cs" />
     <Compile Include="Assets\Utils\Random.cs" />
     <Compile Include="Assets\Utils\Rectangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Common\PressStart2P-Regular.ttf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

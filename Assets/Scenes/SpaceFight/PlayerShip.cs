@@ -10,7 +10,6 @@ public class PlayerShip : MonoBehaviour {
 	public IShipStats ShipStats;
 
 	void Start () {
-		ShipStats = new GalacticaStats ();
 		var body = GetComponentInChildren<Rigidbody>();
 		body.mass = ShipStats.Mass;
 	}

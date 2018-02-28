@@ -285,24 +285,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Common\AlphaHitbox.cs" />
+    <Compile Include="Assets\Common\CameraManager.cs" />
+    <Compile Include="Assets\Common\Radial Menu\Option.cs" />
+    <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
+    <Compile Include="Assets\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
-    <Compile Include="Assets\Resources\Ships\IShipStats.cs" />
-    <Compile Include="Assets\Resources\Ships\Twelve Colonies\Galactica\GalacticaStats.cs" />
-    <Compile Include="Assets\Resources\UI\Common\AlphaHitbox.cs" />
-    <Compile Include="Assets\Resources\UI\Common\CameraManager.cs" />
-    <Compile Include="Assets\Resources\UI\Common\Radial Menu\Option.cs" />
-    <Compile Include="Assets\Resources\UI\Common\Radial Menu\RadialMenu.cs" />
-    <Compile Include="Assets\Resources\UI\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Build Menu\BuildMenuToggle.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Build Menu\Submenu.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
     <Compile Include="Assets\Ships\CommandModuleStats.cs" />
+    <Compile Include="Assets\Ships\IShipStats.cs" />
     <Compile Include="Assets\Ships\ModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
     <Compile Include="Assets\Ships\ModuleTypes.cs" />
