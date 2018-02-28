@@ -26,6 +26,7 @@ public class ShipBuildUIManager : MonoBehaviour
         _statsManager = new ModuleStatsManager();
         _stats = _statsManager.Get();
 
+        _detailsViews = new Dictionary<string, GameObject>();
         foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
             _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
     }
