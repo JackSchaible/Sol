@@ -1,4 +1,5 @@
-﻿using Assets.Ships.Weapons;
+﻿using System;
+using Assets.Ships.Weapons;
 
 namespace Assets.Ships
 {
@@ -8,6 +9,7 @@ namespace Assets.Ships
         public WeaponDamage Damage { get; set; }
         public int Range { get; set; }
         public int AmmoStorage { get; set; }
+        public override string[] RelatedAbilities { get { return new [] { "Strength", "Dexterity"}; } }
 
         public WeaponStats()
         {

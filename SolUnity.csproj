@@ -295,6 +295,7 @@
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />

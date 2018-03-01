@@ -28,7 +28,10 @@ public class ShipBuildUIManager : MonoBehaviour
 
         _detailsViews = new Dictionary<string, GameObject>();
         foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
+        {
             _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
+            SetDetailsViewActive(view, false);
+        }
     }
 
     public void ModuleSelected(Toggle toggle)
@@ -40,6 +43,7 @@ public class ShipBuildUIManager : MonoBehaviour
             var view = _detailsViews[stats.ModuleSubtype];
             
             ConfigureModuleDetailsView(stats, view);
+            SetDetailsViewActive(view, toggle.isOn);
         }
     }
 
@@ -63,7 +67,23 @@ public class ShipBuildUIManager : MonoBehaviour
 
     private void BindSmallShipDetailsView(CommandModuleStats stats, GameObject view)
     {
-        view.GetComponentInChildren<Text>().text = stats.Name;
-        view.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
+        var textComponents = view.GetComponentsInChildren<Text>();
+        var imageComponents = view.GetComponentsInChildren<Image>();
+
+        textComponents.First(x => x.name == "Name").text = stats.Name;
+        imageComponents.First(x => x.name == "Image").sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
+        textComponents.First(x => x.name == "Description").text = stats.Description;
+        textComponents.First(x => x.name == "Command").text = stats.CommandSupplied.ToString();
+        textComponents.First(x => x.name == "Health").text = stats.Health.ToString();
+        textComponents.First(x => x.name == "Crew").text = stats.CrewRequirement.ToString();
+        //Do something with these two to make SI units
+        textComponents.First(x => x.name == "Weight").text = stats.Weight.ToString();
+        textComponents.First(x => x.name == "Power").text = stats.PowerConumption.ToString();
+        textComponents.First(x => x.name == "Cost").text = stats.Cost.ToString();
+    }
+
+    private void SetDetailsViewActive(GameObject view, bool active)
+    {
+        view.transform.parent.parent.parent.gameObject.SetActive(active);
     }
 }

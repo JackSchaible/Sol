@@ -23,6 +23,7 @@ namespace Assets.Ships
         public int CrewRequirement { get; set; }
         public int PowerConumption { get; set; }
         public int CommandRequirement { get; set; }
+        public abstract string[] RelatedAbilities { get; }
 
         protected ModuleStats()
         {
@@ -30,7 +31,7 @@ namespace Assets.Ships
         }
 
         protected ModuleStats(ModuleTypes moduleType, string moduleSubtype, string buildSprite, string name, string description,
-            int width, int height, int offsetX, int offsetY, int originx, int originY, int health, int armor, int weight, 
+            int width, int height, int offsetX, int offsetY, int originx, int originY, int health, int armor, int weight,
             int cost, int crewRequirement, int powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
