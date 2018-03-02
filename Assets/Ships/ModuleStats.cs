@@ -1,13 +1,14 @@
-﻿using System;
+﻿using UnityEngine;
 
 namespace Assets.Ships
 {
-    [Serializable]
     public abstract class ModuleStats
     {
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
         public string BuildSprite { get; set; }
+        public Vector3 Size { get; set; }
+        public Vector2 Origin { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Width { get; set; }
@@ -30,13 +31,16 @@ namespace Assets.Ships
 
         }
 
-        protected ModuleStats(ModuleTypes moduleType, string moduleSubtype, string buildSprite, string name, string description,
-            int width, int height, int offsetX, int offsetY, int originx, int originY, int health, int armor, int weight,
-            int cost, int crewRequirement, int powerConumption, int commandRequirement)
+        protected ModuleStats(ModuleTypes moduleType, string moduleSubtype, string buildSprite, Vector3 size,
+            Vector2 origin, string name, string description, int width, int height, int offsetX, int offsetY,
+            int originx, int originY, int health, int armor, int weight, int cost, int crewRequirement,
+            int powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;
             BuildSprite = buildSprite;
+            Size = size;
+            Origin = origin;
             Name = name;
             Description = description;
             Width = width;

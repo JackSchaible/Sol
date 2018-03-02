@@ -22,7 +22,7 @@ namespace Assets.Data
                 using (var stream = new FileStream(_filename, FileMode.Open))
                     return (T) _serializer.Deserialize(stream);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return default(T);
             }

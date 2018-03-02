@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
-    public Camera mainCamera;
-
     public int PowerAvailable;
     public int PowerUsed;
     public int ControlAvailable;
@@ -19,9 +17,7 @@ public class ShipBuildManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Escape))
             Application.Quit();
-
-        
     }
 }

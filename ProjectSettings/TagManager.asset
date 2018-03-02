@@ -8,6 +8,7 @@ TagManager:
   - First-Level Menu Button
   - Menu Toggle
   - Details View
+  - Base Menu
   layers:
   - Default
   - TransparentFX

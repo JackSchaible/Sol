@@ -17,9 +17,18 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public GameObject ControlCentresDetails;
 
+    public Camera Camera;
+
     private ModuleStatsManager _statsManager;
     private ModuleStats[] _stats;
     private Dictionary<string, GameObject> _detailsViews;
+
+    private ModuleStats _selected;
+    private List<GameObject> _activeObjects = new List<GameObject>();
+    private bool _placeMode;
+    private Module _newModule;
+
+    private int _currentDeck = 0;
 
     void Start()
     {
@@ -44,6 +53,7 @@ public class ShipBuildUIManager : MonoBehaviour
             
             ConfigureModuleDetailsView(stats, view);
             SetDetailsViewActive(view, toggle.isOn);
+            _selected = stats;
         }
     }
 
@@ -52,6 +62,26 @@ public class ShipBuildUIManager : MonoBehaviour
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PersonnelAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
+
+        if (_placeMode)
+        {
+            //Constrain to n-px increments
+            const int n = 50;
+            _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
+            _newModule.GameObject.transform.position = new Vector3(
+                Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
+                Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
+                _currentDeck);
+
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                _placeMode = false;
+
+                foreach (var obj in _activeObjects)
+                    obj.SetActive(true);
+                _newModule = null;
+            }
+        }
     }
 
 
@@ -85,5 +115,18 @@ public class ShipBuildUIManager : MonoBehaviour
     private void SetDetailsViewActive(GameObject view, bool active)
     {
         view.transform.parent.parent.parent.gameObject.SetActive(active);
+    }
+
+    public void Build()
+    {
+        _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
+        _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
+        _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Details View"));
+
+        foreach(var obj in _activeObjects)
+            obj.SetActive(false);
+
+        _placeMode = true;
+        _newModule = Module.Create(_selected);
     }
 }

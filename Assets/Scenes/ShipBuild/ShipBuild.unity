@@ -3206,7 +3206,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: d618ffd6e08531840a36b0ac7a109c17, type: 3}
+  m_Sprite: {fileID: 21300000, guid: de6331efb6d96574fac2b179bd73de48, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4789,6 +4789,7 @@ MonoBehaviour:
   PeopleText: {fileID: 1477001408}
   BuildGrid: {fileID: 0}
   ControlCentresDetails: {fileID: 1662582885}
+  Camera: {fileID: 491572714}
 --- !u!4 &842667963
 Transform:
   m_ObjectHideFlags: 0
@@ -5040,7 +5041,7 @@ GameObject:
   - component: {fileID: 896226502}
   m_Layer: 5
   m_Name: Build Menu
-  m_TagString: Untagged
+  m_TagString: Base Menu
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5664,7 +5665,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 781134336}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6045,7 +6046,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1043832766}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 842667962}
+        m_MethodName: Build
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1043832766
@@ -6067,8 +6079,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 59d4d834a815ef244b7761fbc544e7cd, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6477,7 +6489,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 7f44f69e23a948f49bb72a1007fbf480, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 11c22543b0f7533478ef79832d80f598, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -6998,7 +7010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -7898,7 +7910,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad2549633ea2e6c41a94d0b0c76f31f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
   PowerAvailable: 0
   PowerUsed: 0
   ControlAvailable: 0
@@ -8441,7 +8452,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000021740036}
+  m_AnchoredPosition: {x: 0, y: 61.64919}
   m_SizeDelta: {x: 0, y: 1035}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1662582887
@@ -8747,7 +8758,7 @@ GameObject:
   - component: {fileID: 1767780986}
   m_Layer: 5
   m_Name: Control Centres Details
-  m_TagString: Untagged
+  m_TagString: Details View
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9893,6 +9904,7 @@ MonoBehaviour:
   PeopleText: {fileID: 0}
   BuildGrid: {fileID: 0}
   ControlCentresDetails: {fileID: 0}
+  Camera: {fileID: 0}
 --- !u!1 &2087574772
 GameObject:
   m_ObjectHideFlags: 0
