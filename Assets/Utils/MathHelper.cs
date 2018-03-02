@@ -67,83 +67,39 @@ namespace Assets.Utils
 
         #region AjustSI
 
-        public static string AdjustSI(float unadjustedValue, int decimalPlaces)
+        public static string AdjustSi(float number, string baseUnit)
         {
-			//TODO: broken
-            var value = unadjustedValue;
-            float factor = unadjustedValue < 0 ? 0.001f : 1000f;
-            int iterations = 0;
-            string prefix = "";
+            string result = "";
+            bool isNegative = number < 0;
 
-            while (value.ToString().Length > decimalPlaces)
-            {
-                value *= factor;
+            if (isNegative)
+                number *= -1;
 
-                iterations++;
-            }
+            if (number >= 10E23)
+                result = Math.Round(number / 10E23) + "Y" + baseUnit;
+            else if (number >= 10E20)
+                result = Math.Round(number / 10E20) + "Z" + baseUnit;
+            else if (number >= 10E17)
+                result = Math.Round(number / 10E17) + "E" + baseUnit;
+            else if (number >= 10E14)
+                result = Math.Round(number / 10E14) + "P" + baseUnit;
+            else if (number >= 10E11)
+                result = Math.Round(number / 10E11) + "T" + baseUnit;
+            else if (number >= 10E8)
+                result = Math.Round(number / 10E8) + "G" + baseUnit;
+            else if (number >= 10E5)
+                result = Math.Round(number / 10E5) + "M" + baseUnit;
+            else if (number >= 10E2)
+                result = Math.Round(number / 10E2) + "k" + baseUnit;
+            else
+                result = number + baseUnit;
 
-            if (iterations > 0)
-            {
-                if (unadjustedValue > 0)
-                    switch (iterations)
-                    {
-                        case 1:
-                            prefix = "k";
-                            break;
+            if (isNegative)
+                result = "-" + result;
 
-                        case 2:
-                            prefix = "M";
-                            break;
-                        case 3:
-                            prefix = "G";
-                            break;
-                        case 4:
-                            prefix = "T";
-                            break;
-                        case 5:
-                            prefix = "P";
-                            break;
-                        case 6:
-                            prefix = "E";
-                            break;
-                        case 7:
-                            prefix = "Z";
-                            break;
-                        case 8:
-                            prefix = "Y";
-                            break;
-                    }
-                else
-                    switch (iterations)
-                    {
-                        case 1:
-                            prefix = "m";
-                            break;
-                        case 2:
-                            prefix = "µ";
-                            break;
-                        case 3:
-                            prefix = "n";
-                            break;
-                        case 4:
-                            prefix = "p";
-                            break;
-                        case 5:
-                            prefix = "f";
-                            break;
-                        case 6:
-                            prefix = "a";
-                            break;
-                        case 7:
-                            prefix = "z";
-                            break;
-                        case 8:
-                            prefix = "y"; break;
-                    }
-            }
-
-            return String.Format("{0} {1}", value, prefix);
+            return result;
         }
+
         #endregion
     }
 }

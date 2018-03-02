@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Ships;
 using Assets.Utils;
+using Assets.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -106,9 +107,8 @@ public class ShipBuildUIManager : MonoBehaviour
         textComponents.First(x => x.name == "Command").text = stats.CommandSupplied.ToString();
         textComponents.First(x => x.name == "Health").text = stats.Health.ToString();
         textComponents.First(x => x.name == "Crew").text = stats.CrewRequirement.ToString();
-        //Do something with these two to make SI units
-        textComponents.First(x => x.name == "Weight").text = stats.Weight.ToString();
-        textComponents.First(x => x.name == "Power").text = stats.PowerConumption.ToString();
+        textComponents.First(x => x.name == "Weight").text = stats.Weight.ToSiUnit("g");
+        textComponents.First(x => x.name == "Power").text = stats.PowerConumption.ToSiUnit("W");
         textComponents.First(x => x.name == "Cost").text = stats.Cost.ToString();
     }
 

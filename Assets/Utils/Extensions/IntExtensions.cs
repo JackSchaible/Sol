@@ -23,5 +23,38 @@ namespace Assets.Utils.Extensions
             if (number >= 1) return "I" + ToRomanNumeral(number - 1);
             throw new ArgumentOutOfRangeException("something bad happened");
         }
+
+        public static string ToSiUnit(this int number, string unit)
+        {
+            string result = "";
+            bool isNegative = number < 0;
+
+            if (isNegative)
+                number *= -1;
+
+            if (number >= 10E23)
+                result = Math.Round(number / 10E23) + "Y" + unit;
+            else if (number >= 10E20)
+                result = Math.Round(number / 10E20) + "Z" + unit;
+            else if (number >= 10E17)
+                result = Math.Round(number / 10E17) + "E" + unit;
+            else if (number >= 10E14)
+                result = Math.Round(number / 10E14) + "P" + unit;
+            else if (number >= 10E11)
+                result = Math.Round(number / 10E11) + "T" + unit;
+            else if (number >= 10E8)
+                result = Math.Round(number / 10E8) + "G" + unit;
+            else if (number >= 10E5)
+                result = Math.Round(number / 10E5) + "M" + unit;
+            else if (number >= 10E2)
+                result = Math.Round(number / 10E2) + "k" + unit;
+            else
+                result = number + unit;
+
+            if (isNegative)
+                result = "-" + result;
+
+            return result;
+        }
     }
 }
