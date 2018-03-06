@@ -24,7 +24,9 @@ public class BuildMenuToggle : MonoBehaviour
 	void Start ()
 	{
 	    if (Child == null) return;
-	    Child.GetComponent<Submenu>().Parent = this;
+	    var submenu = Child.GetComponent<Submenu>();
+	    if (submenu == null) return;
+        submenu.Parent = this;
 	}
 	
 	void Update ()
@@ -36,7 +38,7 @@ public class BuildMenuToggle : MonoBehaviour
 	    if (IsOn && Child != null)
 	        Child.SetActive(IsOn);
 
-	    if (Child == null)
+	    if (Child == null && Details != null)
 	        Details.SetActive(IsOn);
 
         _previousOn = IsOn;

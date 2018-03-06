@@ -319,7 +319,9 @@
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
     <Compile Include="Assets\Ships\CommandModuleStats.cs" />
+    <Compile Include="Assets\Ships\Crew\CrewMember.cs" />
     <Compile Include="Assets\Ships\IShipStats.cs" />
+    <Compile Include="Assets\Ships\Module.cs" />
     <Compile Include="Assets\Ships\ModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
     <Compile Include="Assets\Ships\ModuleTypes.cs" />

@@ -112,9 +112,15 @@ public class ShipBuildUIManager : MonoBehaviour
         textComponents.First(x => x.name == "Cost").text = stats.Cost.ToString();
     }
 
-    private void SetDetailsViewActive(GameObject view, bool active)
+    private static void SetDetailsViewActive(GameObject view, bool active)
     {
-        view.transform.parent.parent.parent.gameObject.SetActive(active);
+        var p1 = view.transform.parent;
+        if (p1 == null) return;
+        var p2 = p1.parent;
+        if (p2 == null) return;
+        var p3 = p2.parent;
+        if (p3 == null) return;
+        p3.gameObject.SetActive(active);
     }
 
     public void Build()
