@@ -320,11 +320,12 @@
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
     <Compile Include="Assets\Ships\CommandModuleStats.cs" />
     <Compile Include="Assets\Ships\Crew\CrewMember.cs" />
-    <Compile Include="Assets\Ships\IShipStats.cs" />
     <Compile Include="Assets\Ships\Module.cs" />
     <Compile Include="Assets\Ships\ModuleStats.cs" />
     <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
     <Compile Include="Assets\Ships\ModuleTypes.cs" />
+    <Compile Include="Assets\Ships\Ship.cs" />
+    <Compile Include="Assets\Ships\ShipStats.cs" />
     <Compile Include="Assets\Ships\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Weapons\WeaponStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />

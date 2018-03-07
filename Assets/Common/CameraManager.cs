@@ -46,7 +46,7 @@ public class CameraManager : MonoBehaviour {
 				Player.IsFollowing = false;
 		}
 
-		if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
+		if (Input.GetAxis ("Mouse ScrollWheel") != 0 && Input.GetKey(KeyCode.Z)) {
 			var zoomSpeed = Camera.main.orthographicSize * 0.5f;
 
 			if (Input.GetAxis ("Mouse ScrollWheel") > 0 && Camera.main.orthographicSize - zoomSpeed > 0)
