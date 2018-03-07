@@ -18,6 +18,11 @@ namespace Assets.Ships
         public int OwnerId;
         public double Efficiency;
 
+        public Module()
+        {
+            
+        }
+
         private Module(ModuleStats moduleStats)
         {
             ModuleStats = moduleStats;
@@ -28,10 +33,18 @@ namespace Assets.Ships
         {
             var module = new Module(stats);
             module.GameObject = new GameObject();
-            module.GameObject.AddComponent<Image>();
-            module.GameObject.GetComponent<Image>().sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
+            module.GameObject.AddComponent<SpriteRenderer>();
+            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
+            module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
 
             return module;
+        }
+
+        public void Initialize()
+        {
+            GameObject.AddComponent<SpriteRenderer>();
+            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleStats.BuildSprite);
+            GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         }
 
         public void CalculateEfficiency()

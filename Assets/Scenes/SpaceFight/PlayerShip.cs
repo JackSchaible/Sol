@@ -7,7 +7,7 @@ using Assets.Utils;
 public class PlayerShip : MonoBehaviour {
 	public float ForwardThrust;
 	public float RotationalThrust;
-	public IShipStats ShipStats;
+	public ShipStats ShipStats;
 
 	void Start () {
 		var body = GetComponentInChildren<Rigidbody>();

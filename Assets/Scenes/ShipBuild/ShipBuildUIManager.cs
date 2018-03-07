@@ -28,6 +28,7 @@ public class ShipBuildUIManager : MonoBehaviour
     private List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
+    private List<Module> _modules = new List<Module>();
 
     private int _currentDeck = 0;
 
@@ -75,14 +76,22 @@ public class ShipBuildUIManager : MonoBehaviour
                 _currentDeck);
 
             if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                _placeMode = false;
+                CancelBuildMode();
 
-                foreach (var obj in _activeObjects)
-                    obj.SetActive(true);
-                _newModule = null;
+            if (Input.GetMouseButtonDown(0))
+            {
+                _modules.Add(_newModule);
+                CancelBuildMode();
             }
         }
+    }
+
+    private void CancelBuildMode()
+    {
+        _placeMode = false;
+
+        foreach (var obj in _activeObjects)
+            obj.SetActive(true);
     }
 
 
