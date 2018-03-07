@@ -12,22 +12,28 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
-    public List<Module> Modules = new List<Module>();
+    public List<Module> Modules { get; private set; }
 
     void Start()
     {
+        Modules = new List<Module>();
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Escape))
             Application.Quit();
+    }
+
+    public void AddModule(Module module)
+    {
+        Modules.Add(module);
 
         PowerUsed = Modules.Sum(x => x.ModuleStats.PowerConumption);
         ControlUsed = Modules.Sum(x => x.ModuleStats.CommandRequirement);
         PersonnelUsed = Modules.Sum(x => x.ModuleStats.CrewRequirement);
 
         ControlAvailable = Modules.Where(x => x.ModuleStats is CommandModuleStats)
-            .Sum(x => ((CommandModuleStats) x.ModuleStats).CommandSupplied);
+            .Sum(x => ((CommandModuleStats)x.ModuleStats).CommandSupplied);
     }
 }

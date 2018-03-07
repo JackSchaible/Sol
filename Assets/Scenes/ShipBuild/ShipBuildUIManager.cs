@@ -81,14 +81,21 @@ public class ShipBuildUIManager : MonoBehaviour
             _newModule.GameObject.transform.position = new Vector3(
                 Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
                 Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
-                _currentDeck);
+                1);
+
+            //Todo: replace with raycast when you can figure it out
+            if (Manager.Modules.Any(x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
+                                         x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
+            {
+                //Make newmodule sprite red, disable placement, handle for seperate decks
+            }
 
             if (Input.GetKeyUp(KeyCode.Escape))
                 CancelBuildMode();
 
             if (Input.GetMouseButtonDown(0))
             {
-                Manager.Modules.Add(_newModule);
+                Manager.AddModule(_newModule);
                 CancelBuildMode();
             }
         }
