@@ -18,7 +18,6 @@ namespace Assets.Ships
         public int Originx { get; set; }
         public int OriginY { get; set; }
         public int Health { get; set; }
-        public int Armor { get; set; }
         public int Weight { get; set; }
         public int Cost { get; set; }
         public int CrewRequirement { get; set; }
@@ -33,8 +32,8 @@ namespace Assets.Ships
 
         protected ModuleStats(ModuleTypes moduleType, string moduleSubtype, string buildSprite, Vector3 size,
             Vector2 origin, string name, string description, int width, int height, int offsetX, int offsetY,
-            int originx, int originY, int health, int armor, int weight, int cost, int crewRequirement,
-            int powerConumption, int commandRequirement)
+            int originx, int originY, int health, int weight, int cost, int crewRequirement, int powerConumption,
+            int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;
@@ -50,7 +49,6 @@ namespace Assets.Ships
             Originx = originx;
             OriginY = originY;
             Health = health;
-            Armor = armor;
             Weight = weight;
             Cost = cost;
             CrewRequirement = crewRequirement;

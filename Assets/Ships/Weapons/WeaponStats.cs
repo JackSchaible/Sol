@@ -22,7 +22,7 @@ namespace Assets.Ships
             int weight, int cost, int crewRequirement, int powerConumption, int commandRequirement,
             int rateOfFire, WeaponDamage damage, int range, int ammoStorage)
             : base(ModuleTypes.Weapon, moduleType, buildSprite, size, origin, name, description, width, height,
-                  offsetX, offsetY, originX, originY, 10, 0, weight, cost, crewRequirement, powerConumption,
+                  offsetX, offsetY, originX, originY, 10, weight, cost, crewRequirement, powerConumption,
                   commandRequirement)
         {
             RateOfFire = rateOfFire;
