@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.Ships;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
+    public List<Module> Modules = new List<Module>();
+
     void Start()
     {
     }
@@ -19,5 +22,12 @@ public class ShipBuildManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Escape))
             Application.Quit();
+
+        PowerUsed = Modules.Sum(x => x.ModuleStats.PowerConumption);
+        ControlUsed = Modules.Sum(x => x.ModuleStats.CommandRequirement);
+        PersonnelUsed = Modules.Sum(x => x.ModuleStats.CrewRequirement);
+
+        ControlAvailable = Modules.Where(x => x.ModuleStats is CommandModuleStats)
+            .Sum(x => ((CommandModuleStats) x.ModuleStats).CommandSupplied);
     }
 }

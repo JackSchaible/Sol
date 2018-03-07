@@ -28,7 +28,6 @@ public class ShipBuildUIManager : MonoBehaviour
     private List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
-    private List<Module> _modules = new List<Module>();
 
     private int _currentDeck = 0;
 
@@ -62,8 +61,17 @@ public class ShipBuildUIManager : MonoBehaviour
     void Update()
     {
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
-        PowerText.text = Manager.PowerUsed + " / " + Manager.PersonnelAvailable;
+        PowerText.text = Manager.PowerUsed + " / " + Manager.PowerAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
+
+        ModulesText.color = Manager.ControlUsed > Manager.ControlAvailable ?
+            new Color(1, 0, 0) : new Color(1, 1, 1);
+
+        PowerText.color = Manager.PowerUsed > Manager.PowerAvailable ?
+            new Color(1, 0, 0) : new Color(1, 1, 1);
+
+        PeopleText.color = Manager.PersonnelUsed > Manager.PersonnelAvailable ?
+            new Color(1, 0, 0) : new Color(1, 1, 1);
 
         if (_placeMode)
         {
@@ -80,7 +88,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                _modules.Add(_newModule);
+                Manager.Modules.Add(_newModule);
                 CancelBuildMode();
             }
         }
