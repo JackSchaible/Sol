@@ -8,7 +8,7 @@ namespace Assets.Ships
 {
     public class Module
     {
-        public ModuleStats ModuleStats { get; set; }
+        public ModuleBlueprints ModuleBlueprints { get; set; }
 
         public GameObject GameObject;
         public int Health;
@@ -23,19 +23,19 @@ namespace Assets.Ships
             
         }
 
-        private Module(ModuleStats moduleStats)
+        private Module(ModuleBlueprints moduleBlueprints)
         {
-            ModuleStats = moduleStats;
+            ModuleBlueprints = moduleBlueprints;
             Crew = new List<CrewMember>();
         }
 
-        public static Module Create(ModuleStats stats)
+        public static Module Create(ModuleBlueprints blueprints)
         {
-            var module = new Module(stats);
+            var module = new Module(blueprints);
             module.GameObject = new GameObject();
             module.GameObject.AddComponent<SpriteRenderer>();
-            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
-            module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
+            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
+            module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
 
             return module;
         }
@@ -43,14 +43,14 @@ namespace Assets.Ships
         public void Initialize()
         {
             GameObject.AddComponent<SpriteRenderer>();
-            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleStats.BuildSprite);
+            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleBlueprints.BuildSprite);
             GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         }
 
         public void CalculateEfficiency()
         {
             var eff = CalculateCrewEfficiency();
-            eff *= ((float)CurrentPower / (float)ModuleStats.PowerConumption);
+            eff *= ((float)CurrentPower / (float)ModuleBlueprints.PowerConumption);
             //TODO: any other mods?
 
             Efficiency = eff;
@@ -61,7 +61,7 @@ namespace Assets.Ships
             float totalMod = 0;
 
             foreach (var crew in Crew)
-                foreach (var ability in ModuleStats.RelatedAbilities)
+                foreach (var ability in ModuleBlueprints.RelatedAbilities)
                 {
                     float abilityMod = 0f;
 
@@ -92,7 +92,7 @@ namespace Assets.Ships
                             break;
                     }
 
-                    abilityMod /= (ModuleStats.RelatedAbilities.Length * 10);
+                    abilityMod /= (ModuleBlueprints.RelatedAbilities.Length * 10);
                     abilityMod += 1;
                     totalMod += (int)Mathf.Floor((abilityMod - 10.0f) / 2f);
                 }

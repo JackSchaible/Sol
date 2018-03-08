@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Ships;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
@@ -13,10 +14,25 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelUsed;
 
     public List<Module> Modules { get; private set; }
+    public bool HasCommandModule { get; private set; }
+
+    private List<Toggle> _firstLevelToggles;
 
     void Start()
     {
         Modules = new List<Module>();
+        HasCommandModule = false;
+
+        _firstLevelToggles = new List<Toggle>();
+        var gos = GameObject.FindGameObjectsWithTag("First-Level Menu Button");
+        foreach (var go in gos)
+        {
+            var toggle = go.transform.gameObject.GetComponentInChildren<Toggle>();
+            if (go.name != "Control Centers Toggle")
+                toggle.interactable = false;
+
+            _firstLevelToggles.Add(toggle);
+        }
     }
 
     void Update()
@@ -29,11 +45,27 @@ public class ShipBuildManager : MonoBehaviour
     {
         Modules.Add(module);
 
-        PowerUsed = Modules.Sum(x => x.ModuleStats.PowerConumption);
-        ControlUsed = Modules.Sum(x => x.ModuleStats.CommandRequirement);
-        PersonnelUsed = Modules.Sum(x => x.ModuleStats.CrewRequirement);
+        PowerUsed = Modules.Sum(x => x.ModuleBlueprints.PowerConumption);
+        ControlUsed = Modules.Sum(x => x.ModuleBlueprints.CommandRequirement);
+        PersonnelUsed = Modules.Sum(x => x.ModuleBlueprints.CrewRequirement);
 
-        ControlAvailable = Modules.Where(x => x.ModuleStats is CommandModuleStats)
-            .Sum(x => ((CommandModuleStats)x.ModuleStats).CommandSupplied);
+        ControlAvailable = Modules.Where(x => x.ModuleBlueprints is CommandModuleBlueprints)
+            .Sum(x => ((CommandModuleBlueprints)x.ModuleBlueprints).CommandSupplied);
+
+        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprints is CockpitModuleBlueprints)
+            .Sum(x => ((CockpitModuleBlueprints)x.ModuleBlueprints).PersonnelHoused);
+
+        if (!HasCommandModule && module.ModuleBlueprints is CommandModuleBlueprints)
+        {
+            HasCommandModule = true;
+
+            foreach (var go in _firstLevelToggles)
+            {
+                go.interactable = true;
+
+                if (module.ModuleBlueprints is CockpitModuleBlueprints && go.name == "Control Centers Toggle")
+                    go.interactable = false;
+            }
+        }
     }
 }

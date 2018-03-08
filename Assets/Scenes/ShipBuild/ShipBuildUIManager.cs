@@ -20,21 +20,22 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public Camera Camera;
 
-    private ModuleStatsManager _statsManager;
-    private ModuleStats[] _stats;
+    private ModuleBlueprintsManager _blueprintsManager;
+    private ModuleBlueprints[] _blueprints;
     private Dictionary<string, GameObject> _detailsViews;
 
-    private ModuleStats _selected;
+    private ModuleBlueprints _selected;
     private List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
+    private bool _placementValid;
 
     private int _currentDeck = 0;
 
     void Start()
     {
-        _statsManager = new ModuleStatsManager();
-        _stats = _statsManager.Get();
+        _blueprintsManager = new ModuleBlueprintsManager();
+        _blueprints = _blueprintsManager.Get();
 
         _detailsViews = new Dictionary<string, GameObject>();
         foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
@@ -49,7 +50,7 @@ public class ShipBuildUIManager : MonoBehaviour
         if (toggle.isOn)
         {
             var toggleName = toggle.name.Replace(" Toggle", "");
-            var stats = _stats.First(x => x.Name == toggleName);
+            var stats = _blueprints.First(x => x.Name == toggleName);
             var view = _detailsViews[stats.ModuleSubtype];
             
             ConfigureModuleDetailsView(stats, view);
@@ -60,6 +61,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
     void Update()
     {
+        _placementValid = true;
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PowerAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
@@ -84,17 +86,23 @@ public class ShipBuildUIManager : MonoBehaviour
                 1);
 
             //Todo: replace with raycast when you can figure it out
-            if (Manager.Modules.Any(x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
-                                         x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
+            if (Manager.Modules.Any(
+                x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
+                     x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
             {
                 //Make newmodule sprite red, disable placement, handle for seperate decks
+                _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+                _placementValid = false;
             }
+            else
+                _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
 
             if (Input.GetKeyUp(KeyCode.Escape))
                 CancelBuildMode();
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && _placementValid)
             {
+                _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
                 Manager.AddModule(_newModule);
                 CancelBuildMode();
             }
@@ -110,30 +118,30 @@ public class ShipBuildUIManager : MonoBehaviour
     }
 
 
-    private void ConfigureModuleDetailsView(ModuleStats stats, GameObject view)
+    private void ConfigureModuleDetailsView(ModuleBlueprints blueprints, GameObject view)
     {
-        switch (stats.ModuleSubtype)
+        switch (blueprints.ModuleSubtype)
         {
             case ControlCentreTypes.SmallShip:
-                BindSmallShipDetailsView((CommandModuleStats)stats, view);
+                BindSmallShipDetailsView((CommandModuleBlueprints)blueprints, view);
                 break;
         }
     }
 
-    private void BindSmallShipDetailsView(CommandModuleStats stats, GameObject view)
+    private void BindSmallShipDetailsView(CommandModuleBlueprints blueprints, GameObject view)
     {
         var textComponents = view.GetComponentsInChildren<Text>();
         var imageComponents = view.GetComponentsInChildren<Image>();
 
-        textComponents.First(x => x.name == "Name").text = stats.Name;
-        imageComponents.First(x => x.name == "Image").sprite = GraphicsUtils.GetSpriteFromPath(stats.BuildSprite);
-        textComponents.First(x => x.name == "Description").text = stats.Description;
-        textComponents.First(x => x.name == "Command").text = stats.CommandSupplied.ToString();
-        textComponents.First(x => x.name == "Health").text = stats.Health.ToString();
-        textComponents.First(x => x.name == "Crew").text = stats.CrewRequirement.ToString();
-        textComponents.First(x => x.name == "Weight").text = stats.Weight.ToSiUnit("g");
-        textComponents.First(x => x.name == "Power").text = stats.PowerConumption.ToSiUnit("W");
-        textComponents.First(x => x.name == "Cost").text = stats.Cost.ToString();
+        textComponents.First(x => x.name == "Name").text = blueprints.Name;
+        imageComponents.First(x => x.name == "Image").sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
+        textComponents.First(x => x.name == "Description").text = blueprints.Description;
+        textComponents.First(x => x.name == "Command").text = blueprints.CommandSupplied.ToString();
+        textComponents.First(x => x.name == "Health").text = blueprints.Health.ToString();
+        textComponents.First(x => x.name == "Crew").text = blueprints.CrewRequirement.ToString();
+        textComponents.First(x => x.name == "Weight").text = blueprints.Weight.ToSiUnit("g");
+        textComponents.First(x => x.name == "Power").text = blueprints.PowerConumption.ToSiUnit("W");
+        textComponents.First(x => x.name == "Cost").text = blueprints.Cost.ToString();
     }
 
     private static void SetDetailsViewActive(GameObject view, bool active)
