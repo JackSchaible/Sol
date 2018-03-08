@@ -9,6 +9,7 @@ TagManager:
   - Menu Toggle
   - Details View
   - Base Menu
+  - Deck Button
   layers:
   - Default
   - TransparentFX

@@ -310,6 +310,7 @@
     <Compile Include="Assets\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
