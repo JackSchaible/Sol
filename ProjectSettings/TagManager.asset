@@ -52,3 +52,6 @@ TagManager:
   - name: UI FG
     uniqueID: 2286707963
     locked: 0
+  - name: Modal
+    uniqueID: 2476077447
+    locked: 0
