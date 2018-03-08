@@ -304,6 +304,7 @@
   <ItemGroup>
     <Compile Include="Assets\Common\AlphaHitbox.cs" />
     <Compile Include="Assets\Common\CameraManager.cs" />
+    <Compile Include="Assets\Common\Modal.cs" />
     <Compile Include="Assets\Common\Radial Menu\Option.cs" />
     <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
     <Compile Include="Assets\Common\ToggleGroup.cs" />
@@ -318,16 +319,18 @@
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
-    <Compile Include="Assets\Ships\CommandModuleStats.cs" />
     <Compile Include="Assets\Ships\Crew\CrewMember.cs" />
     <Compile Include="Assets\Ships\Module.cs" />
-    <Compile Include="Assets\Ships\ModuleStats.cs" />
-    <Compile Include="Assets\Ships\ModuleStatsManager.cs" />
-    <Compile Include="Assets\Ships\ModuleTypes.cs" />
+    <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />
+    <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Ship.cs" />
     <Compile Include="Assets\Ships\ShipStats.cs" />
-    <Compile Include="Assets\Ships\Weapons\WeaponDamage.cs" />
-    <Compile Include="Assets\Ships\Weapons\WeaponStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />
     <Compile Include="Assets\Utils\GraphicsUtils.cs" />
     <Compile Include="Assets\Utils\MathHelper.cs" />
@@ -336,6 +339,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Common\PressStart2P-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Ships\Weapons\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

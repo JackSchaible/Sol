@@ -8,13 +8,13 @@ using UnityEngine.UI;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
+    public Modal Modal;
+
     public ShipBuildManager Manager;
 
     public Text ModulesText;
     public Text PowerText;
     public Text PeopleText;
-
-    public Grid BuildGrid;
 
     public GameObject ControlCentresDetails;
 
@@ -43,6 +43,9 @@ public class ShipBuildUIManager : MonoBehaviour
             _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
             SetDetailsViewActive(view, false);
         }
+
+        Modal.Initialize(Modal.ModalTypes.Info, "Command Modules", "Command modules must be placed first, before any other module.");
+        Modal.ShowModal();
     }
 
     public void ModuleSelected(Toggle toggle)
@@ -166,5 +169,15 @@ public class ShipBuildUIManager : MonoBehaviour
 
         _placeMode = true;
         _newModule = Module.Create(_selected);
+    }
+
+    public void ShowCommandModulePopup(Toggle t)
+    {
+        if (t.isOn)
+        {
+            Modal.Initialize(Modal.ModalTypes.Info, "Cockpit Modules",
+                "You may only place one Small Ship module. If you select a different type of command module, you will be unable to place a Small Ship module.");
+            Modal.ShowModal();
+        }
     }
 }
