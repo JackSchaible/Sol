@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,9 +29,9 @@ public class Modal : MonoBehaviour
 		
 	}
 
-    public void Initialize(ModalTypes modalType, string title, string content)
+    public void Initialize(ModalData data)
     {
-        switch (modalType)
+        switch (data.ModalType)
         {
             case ModalTypes.Error:
                 Error.SetActive(true);
@@ -50,8 +51,8 @@ public class Modal : MonoBehaviour
         }
 
         var texts = GetComponentsInChildren<Text>();
-        texts.First(x => x.name == "Title").text = title;
-        texts.First(x => x.name == "Content").text = content;
+        texts.First(x => x.name == "Title").text = data.Title;
+        texts.First(x => x.name == "Content").text = data.Text;
     }
 
     public void ShowModal()
@@ -64,13 +65,5 @@ public class Modal : MonoBehaviour
     {
         if (_canvas == null) return;
         _canvas.enabled = false;
-    }
-
-    public enum ModalTypes
-    {
-        Success,
-        Info,
-        Error,
-        Input
     }
 }

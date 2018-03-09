@@ -43,6 +43,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExCSS.Unity, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files\Unity\Editor\Data\Managed\ExCSS.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.XML" />
@@ -308,6 +312,7 @@
     <Compile Include="Assets\Common\Radial Menu\Option.cs" />
     <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
+    <Compile Include="Assets\Data\Modals.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
@@ -325,6 +330,7 @@
     <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprints.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprints.cs" />
     <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
+    <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprints.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />

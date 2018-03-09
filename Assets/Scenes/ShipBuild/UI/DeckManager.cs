@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
+using UnityEngine.UI;
+using Button = UnityEngine.Experimental.UIElements.Button;
 
 namespace Assets.Scenes.ShipBuild
 {
@@ -9,14 +11,43 @@ namespace Assets.Scenes.ShipBuild
         public Button NewUpperDeck;
         public Button NewLowerDeck;
 
-        private List<Button> _deckButtons;
+        public int CurrentDeck { get; private set; }
+
+        private Dictionary<int, GameObject> _deckButtons;
+
 
         void Start()
+        {
+            var gameObjects = GameObject.FindGameObjectsWithTag("Deck Buttons");
+
+            _deckButtons = new Dictionary<int, GameObject>();
+
+            foreach (var go in gameObjects)
+                _deckButtons.Add(int.Parse(go.GetComponentInChildren<Text>().text), go);
+
+            CurrentDeck = 1;
+        }
+
+        void Update()
         {
             
         }
 
-        void Update()
+        public void DisableDeck(int deckNumber)
+        {
+            var deck = _deckButtons.FirstOrDefault(x => x.GetComponentInChildren<Text>().text == deckNumber.ToString());
+            if (deck == null) return;
+
+            deck.GetComponent<Button>().SetEnabled(false);
+
+        }
+
+        public void AddUpperDeck()
+        {
+            
+        }
+
+        public void AddLowerDeck()
         {
             
         }

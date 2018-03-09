@@ -45,17 +45,17 @@ public class ShipBuildManager : MonoBehaviour
     {
         Modules.Add(module);
 
-        PowerUsed = Modules.Sum(x => x.ModuleBlueprints.PowerConumption);
-        ControlUsed = Modules.Sum(x => x.ModuleBlueprints.CommandRequirement);
-        PersonnelUsed = Modules.Sum(x => x.ModuleBlueprints.CrewRequirement);
+        PowerUsed = Modules.Sum(x => x.ModuleBlueprint.PowerConumption);
+        ControlUsed = Modules.Sum(x => x.ModuleBlueprint.CommandRequirement);
+        PersonnelUsed = Modules.Sum(x => x.ModuleBlueprint.CrewRequirement);
 
-        ControlAvailable = Modules.Where(x => x.ModuleBlueprints is CommandModuleBlueprints)
-            .Sum(x => ((CommandModuleBlueprints)x.ModuleBlueprints).CommandSupplied);
+        ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprints)
+            .Sum(x => ((CommandModuleBlueprints)x.ModuleBlueprint).CommandSupplied);
 
-        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprints is CockpitModuleBlueprints)
-            .Sum(x => ((CockpitModuleBlueprints)x.ModuleBlueprints).PersonnelHoused);
+        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprints)
+            .Sum(x => ((CockpitModuleBlueprints)x.ModuleBlueprint).PersonnelHoused);
 
-        if (!HasCommandModule && module.ModuleBlueprints is CommandModuleBlueprints)
+        if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprints)
         {
             HasCommandModule = true;
 
@@ -63,7 +63,7 @@ public class ShipBuildManager : MonoBehaviour
             {
                 go.interactable = true;
 
-                if (module.ModuleBlueprints is CockpitModuleBlueprints && go.name == "Control Centers Toggle")
+                if (module.ModuleBlueprint is CockpitModuleBlueprints && go.name == "Control Centers Toggle")
                     go.interactable = false;
             }
         }

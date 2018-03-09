@@ -13,10 +13,10 @@ namespace Assets.Ships
         }
 
         public CommandModuleBlueprints(string moduleType, string buildSprite, string name, string description, 
-            int health, int weight, int cost, ConnectorPositions[] connectors, int crewRequirement, int powerConumption,
-            int commandSupplied)
+            int health, int weight, int cost, ConnectorPositions[] connectors, ExclusionVectors[] exclusionVectors,
+            int crewRequirement, int powerConumption, int commandSupplied)
             : base(ModuleTypes.ControlCentre, moduleType, buildSprite, name, description, health, weight, cost,
-                connectors, crewRequirement, powerConumption, 0)
+                connectors, exclusionVectors, crewRequirement, powerConumption, 0)
         {
             CommandSupplied = commandSupplied;
         }

@@ -8,7 +8,7 @@ namespace Assets.Ships
 {
     public class Module
     {
-        public ModuleBlueprints ModuleBlueprints { get; set; }
+        public ModuleBlueprints ModuleBlueprint { get; set; }
 
         public GameObject GameObject;
         public int Health;
@@ -23,9 +23,9 @@ namespace Assets.Ships
             
         }
 
-        private Module(ModuleBlueprints moduleBlueprints)
+        private Module(ModuleBlueprints moduleBlueprint)
         {
-            ModuleBlueprints = moduleBlueprints;
+            ModuleBlueprint = moduleBlueprint;
             Crew = new List<CrewMember>();
         }
 
@@ -43,14 +43,14 @@ namespace Assets.Ships
         public void Initialize()
         {
             GameObject.AddComponent<SpriteRenderer>();
-            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleBlueprints.BuildSprite);
+            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleBlueprint.BuildSprite);
             GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         }
 
         public void CalculateEfficiency()
         {
             var eff = CalculateCrewEfficiency();
-            eff *= ((float)CurrentPower / (float)ModuleBlueprints.PowerConumption);
+            eff *= ((float)CurrentPower / (float)ModuleBlueprint.PowerConumption);
             //TODO: any other mods?
 
             Efficiency = eff;
@@ -61,7 +61,7 @@ namespace Assets.Ships
             float totalMod = 0;
 
             foreach (var crew in Crew)
-                foreach (var ability in ModuleBlueprints.RelatedAbilities)
+                foreach (var ability in ModuleBlueprint.RelatedAbilities)
                 {
                     float abilityMod = 0f;
 
@@ -92,7 +92,7 @@ namespace Assets.Ships
                             break;
                     }
 
-                    abilityMod /= (ModuleBlueprints.RelatedAbilities.Length * 10);
+                    abilityMod /= (ModuleBlueprint.RelatedAbilities.Length * 10);
                     abilityMod += 1;
                     totalMod += (int)Mathf.Floor((abilityMod - 10.0f) / 2f);
                 }

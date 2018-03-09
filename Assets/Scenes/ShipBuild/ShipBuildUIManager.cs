@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Assets.Data;
+using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.UI.DetailsViews;
 using Assets.Ships;
+using Assets.Ships.Modules;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using UnityEngine;
@@ -24,6 +28,8 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public Camera Camera;
 
+    public DeckManager decks;
+
     private ModuleBlueprintsManager _blueprintsManager;
     private ModuleBlueprints[] _blueprints;
     private Dictionary<string, GameObject> _detailsViews;
@@ -34,7 +40,6 @@ public class ShipBuildUIManager : MonoBehaviour
     private Module _newModule;
     private bool _placementValid;
 
-    private int _currentDeck = 0;
 
     void Start()
     {
@@ -48,7 +53,7 @@ public class ShipBuildUIManager : MonoBehaviour
             SetDetailsViewActive(view, false);
         }
 
-        Modal.Initialize(Modal.ModalTypes.Info, "Command Modules", "Command modules must be placed first, before any other module.");
+        Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
         Modal.ShowModal();
     }
 
@@ -112,9 +117,62 @@ public class ShipBuildUIManager : MonoBehaviour
                 _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
                 Manager.AddModule(_newModule);
 
-                if (_newModule.ModuleBlueprints is CockpitModuleBlueprints)
+                if (_newModule.ModuleBlueprint is CockpitModuleBlueprints)
                     ControlCentresToggle.isOn = false;
 
+                if (_newModule.ModuleBlueprint.ExclusionVectors.Length > 0)
+                {
+                    foreach (var vector in _newModule.ModuleBlueprint.ExclusionVectors)
+                    {
+                        //Disable whatever it is
+                        switch (vector)
+                        {
+                            case ExclusionVectors.ForwardLine:
+                                break;
+
+                            case ExclusionVectors.BackwardLine:
+                                break;
+
+                            case ExclusionVectors.UpwardLine:
+                                break;
+
+                            case ExclusionVectors.DownwardLine:
+                                break;
+
+                            case ExclusionVectors.RightLine:
+                                break;
+
+                            case ExclusionVectors.LeftLine:
+                                break;
+
+                            case ExclusionVectors.Plane:
+                                decks.DisableDeck(decks.CurrentDeck);
+                                break;
+
+                            case ExclusionVectors.PlaneAndAbove:
+                                
+                                break;
+
+                            case ExclusionVectors.PlaneAndBelow:
+                                break;
+
+                            case ExclusionVectors.PlaneAndForward:
+                                break;
+
+                            case ExclusionVectors.PlaneAndBackward:
+                                break;
+
+                            case ExclusionVectors.PlaneAndRight:
+                                break;
+
+                            case ExclusionVectors.PlaneAndLeft:
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
                 CancelPlaceMode();
             }
         }
@@ -127,7 +185,6 @@ public class ShipBuildUIManager : MonoBehaviour
         foreach (var obj in _activeObjects)
             obj.SetActive(true);
     }
-
 
     private void ConfigureModuleDetailsView(ModuleBlueprints blueprints, GameObject view)
     {
@@ -184,8 +241,7 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         if (t.isOn)
         {
-            Modal.Initialize(Modal.ModalTypes.Info, "Cockpit Modules",
-                "You may only place one Small Ship module. If you select a different type of command module, you will be unable to place a Small Ship module.");
+            Modal.Initialize(Modals.BuildMenu.CockpitModalData);
             Modal.ShowModal();
         }
     }
