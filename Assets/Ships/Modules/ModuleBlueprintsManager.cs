@@ -34,6 +34,10 @@ namespace Assets.Ships
                     "Ships/Control Centres/Small Ship/Advanced Heavy Cockpit - Build", "Advanced Heavy Cockpit",
                     "A larger cockpit boasting 2 crew and 2 VI's.",
                     50, 800, 50, new []{ ConnectorPositions.Bottom }, 2, 550, 2, 24),
+                new CockpitModuleBlueprints(ControlCentreTypes.SmallShip,
+                    "Ships/Control Centres/Small Ship/Tactical Cockpit - Build", "Tactical Cockpit",
+                    "A much larger cockpit, usually reserved for long-range strike craft, scout craft, bombers, or anything else that requires someone other than a pilot. Has space for 2 pilots and 1 technical officer. Includes a more advanced AI for helping with technical tasks, as well as maintaining life support and doing navigation calculations, among other things.",
+                    75, 1500, 100, new []{ ConnectorPositions.Bottom }, 3, 1000, 3, 36),
             };
         }
     }

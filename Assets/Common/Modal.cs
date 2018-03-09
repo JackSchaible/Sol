@@ -56,11 +56,13 @@ public class Modal : MonoBehaviour
 
     public void ShowModal()
     {
+        if (_canvas == null) return;
         _canvas.enabled = true;
     }
 
     public void OnClose()
     {
+        if (_canvas == null) return;
         _canvas.enabled = false;
     }
 

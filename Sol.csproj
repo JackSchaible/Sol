@@ -307,7 +307,6 @@
     <Compile Include="Assets\Common\Modal.cs" />
     <Compile Include="Assets\Common\Radial Menu\Option.cs" />
     <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
-    <Compile Include="Assets\Common\ToggleGroup.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
@@ -315,6 +314,7 @@
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\SmallShip.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />

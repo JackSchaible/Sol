@@ -24,7 +24,7 @@ namespace Assets.Utils.Extensions
             throw new ArgumentOutOfRangeException("something bad happened");
         }
 
-        public static string ToSiUnit(this int number, string unit)
+        public static string ToSiUnit(this int number, string baseUnit)
         {
             string result = "";
             bool isNegative = number < 0;
@@ -33,23 +33,23 @@ namespace Assets.Utils.Extensions
                 number *= -1;
 
             if (number >= 10E23)
-                result = Math.Round(number / 10E23) + "Y" + unit;
+                result = Math.Round(number / 10E23, 2) + "Y" + baseUnit;
             else if (number >= 10E20)
-                result = Math.Round(number / 10E20) + "Z" + unit;
+                result = Math.Round(number / 10E20, 2) + "Z" + baseUnit;
             else if (number >= 10E17)
-                result = Math.Round(number / 10E17) + "E" + unit;
+                result = Math.Round(number / 10E17, 2) + "E" + baseUnit;
             else if (number >= 10E14)
-                result = Math.Round(number / 10E14) + "P" + unit;
+                result = Math.Round(number / 10E14, 2) + "P" + baseUnit;
             else if (number >= 10E11)
-                result = Math.Round(number / 10E11) + "T" + unit;
+                result = Math.Round(number / 10E11, 2) + "T" + baseUnit;
             else if (number >= 10E8)
-                result = Math.Round(number / 10E8) + "G" + unit;
+                result = Math.Round(number / 10E2, 2) + "G" + baseUnit;
             else if (number >= 10E5)
-                result = Math.Round(number / 10E5) + "M" + unit;
+                result = Math.Round(number / 10E5, 2) + "M" + baseUnit;
             else if (number >= 10E2)
-                result = Math.Round(number / 10E2) + "k" + unit;
+                result = Math.Round(number / 10E2, 2) + "k" + baseUnit;
             else
-                result = number + unit;
+                result = number + baseUnit;
 
             if (isNegative)
                 result = "-" + result;

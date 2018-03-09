@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scenes.ShipBuild.UI.DetailsViews;
 using Assets.Ships;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
+using Image = UnityEngine.UI.Image;
+using Toggle = UnityEngine.UI.Toggle;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
@@ -17,6 +20,7 @@ public class ShipBuildUIManager : MonoBehaviour
     public Text PeopleText;
 
     public GameObject ControlCentresDetails;
+    public Toggle ControlCentresToggle;
 
     public Camera Camera;
 
@@ -101,18 +105,22 @@ public class ShipBuildUIManager : MonoBehaviour
                 _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
 
             if (Input.GetKeyUp(KeyCode.Escape))
-                CancelBuildMode();
+                CancelPlaceMode();
 
             if (Input.GetMouseButtonDown(0) && _placementValid)
             {
                 _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
                 Manager.AddModule(_newModule);
-                CancelBuildMode();
+
+                if (_newModule.ModuleBlueprints is CockpitModuleBlueprints)
+                    ControlCentresToggle.isOn = false;
+
+                CancelPlaceMode();
             }
         }
     }
 
-    private void CancelBuildMode()
+    private void CancelPlaceMode()
     {
         _placeMode = false;
 
@@ -133,18 +141,19 @@ public class ShipBuildUIManager : MonoBehaviour
 
     private void BindSmallShipDetailsView(CommandModuleBlueprints blueprints, GameObject view)
     {
-        var textComponents = view.GetComponentsInChildren<Text>();
-        var imageComponents = view.GetComponentsInChildren<Image>();
+        var script = view.GetComponent<SmallShip>();
 
-        textComponents.First(x => x.name == "Name").text = blueprints.Name;
-        imageComponents.First(x => x.name == "Image").sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
-        textComponents.First(x => x.name == "Description").text = blueprints.Description;
-        textComponents.First(x => x.name == "Command").text = blueprints.CommandSupplied.ToString();
-        textComponents.First(x => x.name == "Health").text = blueprints.Health.ToString();
-        textComponents.First(x => x.name == "Crew").text = blueprints.CrewRequirement.ToString();
-        textComponents.First(x => x.name == "Weight").text = blueprints.Weight.ToSiUnit("g");
-        textComponents.First(x => x.name == "Power").text = blueprints.PowerConumption.ToSiUnit("W");
-        textComponents.First(x => x.name == "Cost").text = blueprints.Cost.ToString();
+        script.Title.text = blueprints.Name;
+        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
+        script.Image.type = Image.Type.Simple;
+        script.Image.preserveAspect = true;
+        script.Description.text = blueprints.Description;
+        script.Command.text = blueprints.CommandSupplied.ToString();
+        script.Health.text = blueprints.Health.ToString();
+        script.Crew.text = blueprints.CrewRequirement.ToString();
+        script.Weight.text = blueprints.Weight.ToSiUnit("g");
+        script.Power.text = blueprints.PowerConumption.ToSiUnit("W");
+        script.Cost.text = blueprints.Cost.ToString();
     }
 
     private static void SetDetailsViewActive(GameObject view, bool active)
