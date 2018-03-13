@@ -87,94 +87,105 @@ public class ShipBuildUIManager : MonoBehaviour
         PeopleText.color = Manager.PersonnelUsed > Manager.PersonnelAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
-        if (_placeMode)
+        UpdatePlace();
+    }
+
+    #region Place Mode
+
+    private void UpdatePlace()
+    {
+        if (!_placeMode) return;
+
+        //Constrain to n-px increments
+        const int n = 50;
+        _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
+        _newModule.GameObject.transform.position = new Vector3(
+            Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
+            Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
+            1);
+
+        //Todo: replace with raycast when you can figure it out
+        if (Manager.Modules.Any(
+            x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
+                 x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
         {
-            //Constrain to n-px increments
-            const int n = 50;
-            _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
-            _newModule.GameObject.transform.position = new Vector3(
-                Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
-                Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
-                1);
+            //Make newmodule sprite red, disable placement, handle for seperate decks
+            _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+            _placementValid = false;
+        }
+        else
+            _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
 
-            //Todo: replace with raycast when you can figure it out
-            if (Manager.Modules.Any(
-                x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
-                     x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
+        if (Input.GetKeyUp(KeyCode.Escape))
+            CancelPlaceMode();
+
+        if (Input.GetMouseButtonDown(0) && _placementValid)
+        {
+            _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
+            Manager.AddModule(_newModule);
+
+            if (_newModule.ModuleBlueprint is CockpitModuleBlueprints)
+                ControlCentresToggle.isOn = false;
+
+            if (_newModule.ModuleBlueprint.ExclusionVectors.Length > 0)
             {
-                //Make newmodule sprite red, disable placement, handle for seperate decks
-                _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
-                _placementValid = false;
-            }
-            else
-                _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-
-            if (Input.GetKeyUp(KeyCode.Escape))
-                CancelPlaceMode();
-
-            if (Input.GetMouseButtonDown(0) && _placementValid)
-            {
-                _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
-                Manager.AddModule(_newModule);
-
-                if (_newModule.ModuleBlueprint is CockpitModuleBlueprints)
-                    ControlCentresToggle.isOn = false;
-
-                if (_newModule.ModuleBlueprint.ExclusionVectors.Length > 0)
+                foreach (var vector in _newModule.ModuleBlueprint.ExclusionVectors)
                 {
-                    foreach (var vector in _newModule.ModuleBlueprint.ExclusionVectors)
+                    //Disable whatever it is
+                    switch (vector)
                     {
-                        //Disable whatever it is
-                        switch (vector)
-                        {
-                            case ExclusionVectors.ForwardLine:
-                                break;
+                        case ExclusionVectors.ForwardLine:
+                            break;
 
-                            case ExclusionVectors.BackwardLine:
-                                break;
+                        case ExclusionVectors.BackwardLine:
+                            break;
 
-                            case ExclusionVectors.UpwardLine:
-                                break;
+                        case ExclusionVectors.UpwardLine:
+                            break;
 
-                            case ExclusionVectors.DownwardLine:
-                                break;
+                        case ExclusionVectors.DownwardLine:
+                            break;
 
-                            case ExclusionVectors.RightLine:
-                                break;
+                        case ExclusionVectors.RightLine:
+                            break;
 
-                            case ExclusionVectors.LeftLine:
-                                break;
+                        case ExclusionVectors.LeftLine:
+                            break;
 
-                            case ExclusionVectors.Plane:
-                                decks.DisableDeck(decks.CurrentDeck);
-                                break;
+                        case ExclusionVectors.Plane:
+                            decks.DisableDeck(decks.CurrentDeck);
+                            break;
 
-                            case ExclusionVectors.PlaneAndAbove:
-                                
-                                break;
+                        case ExclusionVectors.PlaneAndAbove:
+                            decks.DisableDeck(decks.CurrentDeck);
+                            decks.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+                            decks.AddLowerDeck();
+                            break;
 
-                            case ExclusionVectors.PlaneAndBelow:
-                                break;
+                        case ExclusionVectors.PlaneAndBelow:
+                            decks.DisableDeck(decks.CurrentDeck);
+                            decks.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+                            decks.AddUpperDeck();
+                            break;
 
-                            case ExclusionVectors.PlaneAndForward:
-                                break;
+                        case ExclusionVectors.PlaneAndForward:
+                            break;
 
-                            case ExclusionVectors.PlaneAndBackward:
-                                break;
+                        case ExclusionVectors.PlaneAndBackward:
+                            break;
 
-                            case ExclusionVectors.PlaneAndRight:
-                                break;
+                        case ExclusionVectors.PlaneAndRight:
+                            break;
 
-                            case ExclusionVectors.PlaneAndLeft:
-                                break;
+                        case ExclusionVectors.PlaneAndLeft:
+                            break;
 
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
-                CancelPlaceMode();
             }
+            CancelPlaceMode();
         }
     }
 
@@ -236,8 +247,19 @@ public class ShipBuildUIManager : MonoBehaviour
         _placeMode = true;
         _newModule = Module.Create(_selected);
     }
+    #endregion
 
+    #region Modals
     public void ShowCommandModulePopup(Toggle t)
+    {
+        if (t.isOn)
+        {
+            Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
+            Modal.ShowModal();
+        }
+    }
+
+    public void ShowCockpitModulePopup(Toggle t)
     {
         if (t.isOn)
         {
@@ -245,4 +267,5 @@ public class ShipBuildUIManager : MonoBehaviour
             Modal.ShowModal();
         }
     }
+    #endregion
 }

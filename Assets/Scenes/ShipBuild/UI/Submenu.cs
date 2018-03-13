@@ -8,8 +8,6 @@ namespace Assets.Scenes.ShipBuild.UI.Build_Menu
         public GameObject ParentObj;
         public BuildMenuToggle Parent;
 
-        private bool _lastOn = false;
-
         void Start()
         {
             Parent = ParentObj.GetComponent<BuildMenuToggle>();
@@ -28,8 +26,6 @@ namespace Assets.Scenes.ShipBuild.UI.Build_Menu
                     child.IsOn = Parent.IsOn;
 
             gameObject.SetActive(Parent.IsOn);
-
-            _lastOn = Parent.IsOn;
         }
     }
 }
