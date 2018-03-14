@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Common.Utils;
 using Assets.Ships;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,6 +44,15 @@ public class ShipBuildManager : MonoBehaviour
 
     public void AddModule(Module module)
     {
+        if (Modules.Count == 0)
+        {
+            module.Position = new IntVector(0, 0, 1);
+        }
+        else
+        {
+            //Calculate position based off of distance from first module
+        }
+
         Modules.Add(module);
 
         PowerUsed = Modules.Sum(x => x.ModuleBlueprint.PowerConumption);
@@ -67,5 +77,15 @@ public class ShipBuildManager : MonoBehaviour
                     go.interactable = false;
             }
         }
+    }
+
+    public void FadeModulesOnDeck(int deck)
+    {
+        var modules = Modules.Where(x => x.Position.Z == deck);
+    }
+
+    public void HideModulesOnDeck(int deck)
+    {
+        
     }
 }

@@ -61,6 +61,21 @@ namespace Assets.Scenes.ShipBuild
             }
         }
 
+        public void EnableNewDeckButtons(NewDeckButtons button)
+        {
+            switch (button)
+            {
+                case NewDeckButtons.Upper:
+                    NewUpperDeck.interactable = true;
+                    break;
+                case NewDeckButtons.Lower:
+                    NewLowerDeck.interactable = true;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("button", button, null);
+            }
+        }
+
         public void AddUpperDeck()
         {
             var topDeck = _deckButtons.OrderByDescending(x => x.Key).First();

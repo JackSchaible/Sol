@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Common.Utils;
 using Assets.Ships.Crew;
 using Assets.Utils;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace Assets.Ships
         public int Health;
         public int CurrentPower;
         public List<CrewMember> Crew;
-        public Vector3 Position;
+        public IntVector Position;
         public int OwnerId;
         public double Efficiency;
 

@@ -311,6 +311,7 @@
     <Compile Include="Assets\Common\Modal.cs" />
     <Compile Include="Assets\Common\Radial Menu\Option.cs" />
     <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
+    <Compile Include="Assets\Common\Utils\IntVector.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\Modals.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />

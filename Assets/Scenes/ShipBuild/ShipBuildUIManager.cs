@@ -28,7 +28,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
     public Camera Camera;
 
-    public DeckManager decks;
+    public DeckManager DeckManager;
 
     private ModuleBlueprintsManager _blueprintsManager;
     private ModuleBlueprints[] _blueprints;
@@ -39,7 +39,6 @@ public class ShipBuildUIManager : MonoBehaviour
     private bool _placeMode;
     private Module _newModule;
     private bool _placementValid;
-
 
     void Start()
     {
@@ -55,6 +54,15 @@ public class ShipBuildUIManager : MonoBehaviour
 
         Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
         Modal.ShowModal();
+
+        //TODO: Only run this if ship is new
+        NewShipInitialization();
+    }
+
+    private void NewShipInitialization()
+    {
+        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
     }
 
     public void ModuleSelected(Toggle toggle)
@@ -122,6 +130,13 @@ public class ShipBuildUIManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && _placementValid)
         {
             _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
+
+            if (Manager.Modules.Count == 0)
+            {
+                DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+                DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+            }
+
             Manager.AddModule(_newModule);
 
             if (_newModule.ModuleBlueprint is CockpitModuleBlueprints)
@@ -153,19 +168,19 @@ public class ShipBuildUIManager : MonoBehaviour
                             break;
 
                         case ExclusionVectors.Plane:
-                            decks.DisableDeck(decks.CurrentDeck);
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
                             break;
 
                         case ExclusionVectors.PlaneAndAbove:
-                            decks.DisableDeck(decks.CurrentDeck);
-                            decks.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-                            decks.AddLowerDeck();
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+                            DeckManager.AddLowerDeck();
                             break;
 
                         case ExclusionVectors.PlaneAndBelow:
-                            decks.DisableDeck(decks.CurrentDeck);
-                            decks.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                            decks.AddUpperDeck();
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+                            DeckManager.AddUpperDeck();
                             break;
 
                         case ExclusionVectors.PlaneAndForward:
