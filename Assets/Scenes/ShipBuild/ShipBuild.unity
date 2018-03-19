@@ -3867,7 +3867,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 737731754}
   m_Direction: 2
   m_Value: 0.9999998
-  m_Size: 0.6292941
+  m_Size: 0.62929416
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6389,8 +6389,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 781134337}
   m_HandleRect: {fileID: 781134336}
   m_Direction: 2
-  m_Value: 0.9999993
-  m_Size: 0.8583332
+  m_Value: 1
+  m_Size: 0.85833323
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8948,29 +8948,14 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114421073666978870, guid: e19e66c0383174a4d94e4c6f0923c646,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 594233524}
     - target: {fileID: 1459129171698250, guid: e19e66c0383174a4d94e4c6f0923c646, type: 2}
       propertyPath: m_Name
-      value: Deck 1 Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 114539390493667224, guid: e19e66c0383174a4d94e4c6f0923c646,
-        type: 2}
-      propertyPath: m_PreferredWidth
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 114539390493667224, guid: e19e66c0383174a4d94e4c6f0923c646,
-        type: 2}
-      propertyPath: m_PreferredHeight
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 114539390493667224, guid: e19e66c0383174a4d94e4c6f0923c646,
-        type: 2}
-      propertyPath: m_MinWidth
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114539390493667224, guid: e19e66c0383174a4d94e4c6f0923c646,
-        type: 2}
-      propertyPath: m_MinHeight
-      value: -1
+      value: 001 Deck Button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e19e66c0383174a4d94e4c6f0923c646, type: 2}
@@ -9420,7 +9405,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1730671911}
   m_Direction: 2
   m_Value: 0.9999998
-  m_Size: 0.6292941
+  m_Size: 0.62929416
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10809,7 +10794,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 200415502}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.670033
+  m_Size: 0.67003304
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

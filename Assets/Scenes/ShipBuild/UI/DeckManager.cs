@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,8 @@ namespace Assets.Scenes.ShipBuild
 
         private Dictionary<int, GameObject> _deckButtons;
 
+        private Color activeColor = new Color(1, 1, 1, 0.8f);
+        private Color inactiveColor = new Color(1, 1, 1, 0.5f);
 
         void Start()
         {
@@ -30,6 +33,9 @@ namespace Assets.Scenes.ShipBuild
                 _deckButtons.Add(int.Parse(go.GetComponentInChildren<Text>().text), go);
 
             CurrentDeck = 1;
+
+            foreach (var deckKvp in _deckButtons)
+                deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == CurrentDeck ? activeColor : inactiveColor;
         }
 
         void Update()
@@ -37,13 +43,16 @@ namespace Assets.Scenes.ShipBuild
             
         }
 
-        public void DisableDeck(int deckNumber)
+        public void DisableDeck(int deckNumber, bool autoAddNewDeck = false)
         {
             var deck = _deckButtons[deckNumber];
             if (deck == null) return;
 
             deck.GetComponent<Button>().interactable = false;
+            if (autoAddNewDeck && !_deckButtons.ContainsKey(deckNumber - 1))
+                AddLowerDeck();
 
+            SelectDeck(deckNumber - 1);
         }
 
         public void DisableNewDeckButtons(NewDeckButtons button)
@@ -80,6 +89,8 @@ namespace Assets.Scenes.ShipBuild
         {
             var topDeck = _deckButtons.OrderByDescending(x => x.Key).First();
             var go = Instantiate(DeckPrefab, Content.transform);
+
+            go.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(go); });
             var key = topDeck.Key + 1;
 
             go.GetComponentInChildren<Text>().text = key.ToString();
@@ -87,18 +98,37 @@ namespace Assets.Scenes.ShipBuild
             go.transform.SetAsFirstSibling();
 
             _deckButtons.Add(topDeck.Key + 1, go);
+
+            SelectDeck(topDeck.Key + 1);
         }
 
         public void AddLowerDeck()
         {
             var bottomDeck = _deckButtons.OrderBy(x => x.Key).First();
             var go = Instantiate(DeckPrefab, Content.transform);
+
+            go.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(go); });
             var key = bottomDeck.Key - 1;
 
             go.GetComponentInChildren<Text>().text = key.ToString();
-            go.name = "Deck " + key + " Button";
+            go.name = key + " Deck Button";
 
             _deckButtons.Add(bottomDeck.Key - 1, go);
+
+            SelectDeck(bottomDeck.Key - 1);
+        }
+
+        public void SelectDeck(int deck)
+        {
+            foreach (var deckKvp in _deckButtons)
+                deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == deck ? activeColor : inactiveColor;
+
+            CurrentDeck = deck;
+        }
+
+        void OnDeckSelected(GameObject button)
+        {
+            SelectDeck(button.name.ParseUntil());
         }
 
         public enum NewDeckButtons
