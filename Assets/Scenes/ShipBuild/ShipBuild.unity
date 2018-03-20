@@ -3722,6 +3722,7 @@ MonoBehaviour:
   NewUpperDeck: {fileID: 1006715081}
   NewLowerDeck: {fileID: 2028343422}
   Content: {fileID: 1949094603}
+  BuildManager: {fileID: 1507601628}
   DeckPrefab: {fileID: 1459129171698250, guid: e19e66c0383174a4d94e4c6f0923c646, type: 2}
 --- !u!1 &603261648
 GameObject:

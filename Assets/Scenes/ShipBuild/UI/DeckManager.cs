@@ -13,7 +13,7 @@ namespace Assets.Scenes.ShipBuild
         public Button NewLowerDeck;
 
         public GameObject Content;
-
+        public ShipBuildManager BuildManager;
         public GameObject DeckPrefab;
 
         public int CurrentDeck { get; private set; }
@@ -22,6 +22,10 @@ namespace Assets.Scenes.ShipBuild
 
         private Color activeColor = new Color(1, 1, 1, 0.8f);
         private Color inactiveColor = new Color(1, 1, 1, 0.5f);
+
+        private Color SelectedDeckModuleColor = new Color(1, 1, 1, 1);
+        private Color AdjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
+        private Color UnattachedDeckModuleColor = new Color(1, 1, 1, 0);
 
         void Start()
         {
@@ -122,6 +126,19 @@ namespace Assets.Scenes.ShipBuild
         {
             foreach (var deckKvp in _deckButtons)
                 deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == deck ? activeColor : inactiveColor;
+
+            foreach (var module in BuildManager.Modules)
+            {
+                Color color;
+                if (module.Position.Z == deck)
+                    color = SelectedDeckModuleColor;
+                else if (module.Position.Z == deck - 1 || module.Position.Z == deck + 1)
+                    color = AdjacentDeckModuleColor;
+                else
+                    color = UnattachedDeckModuleColor;
+
+                module.GameObject.GetComponent<SpriteRenderer>().color = color;
+            }
 
             CurrentDeck = deck;
         }
