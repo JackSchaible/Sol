@@ -130,6 +130,7 @@ namespace Assets.Scenes.ShipBuild
             foreach (var module in BuildManager.Modules)
             {
                 Color color;
+
                 if (module.Position.Z == deck)
                     color = SelectedDeckModuleColor;
                 else if (module.Position.Z == deck - 1 || module.Position.Z == deck + 1)

@@ -8,6 +8,7 @@ using Assets.Ships;
 using Assets.Ships.Modules;
 using Assets.Utils;
 using Assets.Utils.Extensions;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
@@ -111,7 +112,7 @@ public class ShipBuildUIManager : MonoBehaviour
             Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
             Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
             1);
-
+            
         //Todo: replace with raycast when you can figure it out
         if (Manager.Modules.Any(
             x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
@@ -126,6 +127,47 @@ public class ShipBuildUIManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Escape))
             CancelPlaceMode();
+
+        #region Rotate/Flip Controls
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+        {
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), 90);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CW);
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), -90);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CCW);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CCW);
+        } else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+        {
+            _newModule.GameObject.transform.localScale = new Vector3(
+                _newModule.GameObject.transform.localScale.x,
+                _newModule.GameObject.transform.localScale.y * -1,
+                _newModule.GameObject.transform.localScale.z);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Horizontal);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Horizontal);
+        } else if (Input.GetKeyDown(KeyCode.T))
+        {
+            _newModule.GameObject.transform.localScale = new Vector3(
+                _newModule.GameObject.transform.localScale.x * -1,
+                _newModule.GameObject.transform.localScale.y,
+                _newModule.GameObject.transform.localScale.z);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
+        }
+
+        #endregion
 
         if (Input.GetMouseButtonDown(0) && _placementValid)
         {
@@ -282,5 +324,6 @@ public class ShipBuildUIManager : MonoBehaviour
             Modal.ShowModal();
         }
     }
+
     #endregion
 }

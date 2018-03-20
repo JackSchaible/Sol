@@ -6,7 +6,7 @@
         Right = 2,
         Down = 3,
         Left = 4,
-        Top = 5,
-        Bottom = 6
+        Forward = 5,
+        Backward = 6
     }
 }

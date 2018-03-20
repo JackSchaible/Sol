@@ -322,6 +322,7 @@
     <Compile Include="Assets\Utils\Extensions\StringExtensions.cs" />
     <Compile Include="Assets\Utils\GraphicsUtils.cs" />
     <Compile Include="Assets\Utils\MathHelper.cs" />
+    <Compile Include="Assets\Utils\ModuleUtils\ModuleVectorUtils.cs" />
     <Compile Include="Assets\Utils\Random.cs" />
     <Compile Include="Assets\Utils\Rectangle.cs" />
   </ItemGroup>

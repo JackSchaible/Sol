@@ -38,7 +38,7 @@ public class ShipBuildManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
     }
 
@@ -77,15 +77,5 @@ public class ShipBuildManager : MonoBehaviour
                     go.interactable = false;
             }
         }
-    }
-
-    public void FadeModulesOnDeck(int deck)
-    {
-        var modules = Modules.Where(x => x.Position.Z == deck);
-    }
-
-    public void HideModulesOnDeck(int deck)
-    {
-        
     }
 }
