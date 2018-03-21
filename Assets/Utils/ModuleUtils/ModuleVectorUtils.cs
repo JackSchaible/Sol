@@ -95,42 +95,30 @@ namespace Assets.Utils.ModuleUtils
             return vectors;
         }
 
-        public static ConnectorPositions[] RotateConnectorPositions(ConnectorPositions[] positions, RotationDirection rd)
+        public static ConnectorPosition[] RotateConnectorPositions(ConnectorPosition[] positions, RotationDirection rd)
         {
-            for (var i = 0; i < positions.Length; i++)
+            foreach (ConnectorPosition cp in positions)
             {
-                switch (positions[i])
+                switch (cp.Position)
                 {
                     case ConnectorPositions.Forward:
                     case ConnectorPositions.Backward:
                         break;
 
                     case ConnectorPositions.Up:
-                        if (rd == RotationDirection.CW)
-                            positions[i] = ConnectorPositions.Right;
-                        else
-                            positions[i] = ConnectorPositions.Left;
+                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Right : ConnectorPositions.Left;
                         break;
 
                     case ConnectorPositions.Right:
-                        if (rd == RotationDirection.CW)
-                            positions[i] = ConnectorPositions.Down;
-                        else
-                            positions[i] = ConnectorPositions.Up;
+                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Down : ConnectorPositions.Up;
                         break;
 
                     case ConnectorPositions.Down:
-                        if (rd == RotationDirection.CW)
-                            positions[i] = ConnectorPositions.Left;
-                        else
-                            positions[i] = ConnectorPositions.Right;
+                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Left : ConnectorPositions.Right;
                         break;
 
                     case ConnectorPositions.Left:
-                        if (rd == RotationDirection.CW)
-                            positions[i] = ConnectorPositions.Up;
-                        else
-                            positions[i] = ConnectorPositions.Down;
+                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Up : ConnectorPositions.Down;
                         break;
 
                     default:
@@ -203,11 +191,11 @@ namespace Assets.Utils.ModuleUtils
             return vectors;
         }
 
-        public static ConnectorPositions[] FlipConnectorPositions(ConnectorPositions[] positions, FlipDirection fd)
+        public static ConnectorPosition[] FlipConnectorPositions(ConnectorPosition[] positions, FlipDirection fd)
         {
-            for (var i = 0; i < positions.Length; i++)
+            foreach (ConnectorPosition cp in positions)
             {
-                switch (positions[i])
+                switch (cp.Position)
                 {
                     case ConnectorPositions.Forward:
                     case ConnectorPositions.Backward:
@@ -215,22 +203,22 @@ namespace Assets.Utils.ModuleUtils
 
                     case ConnectorPositions.Up:
                         if (fd == FlipDirection.Horizontal)
-                            positions[i] = ConnectorPositions.Down;
+                            cp.Position = ConnectorPositions.Down;
                         break;
 
                     case ConnectorPositions.Right:
                         if (fd == FlipDirection.Vertical)
-                            positions[i] = ConnectorPositions.Left;
+                            cp.Position = ConnectorPositions.Left;
                         break;
 
                     case ConnectorPositions.Down:
                         if (fd == FlipDirection.Horizontal)
-                            positions[i] = ConnectorPositions.Up;
+                            cp.Position = ConnectorPositions.Up;
                         break;
 
                     case ConnectorPositions.Left:
                         if (fd == FlipDirection.Vertical)
-                            positions[i] = ConnectorPositions.Right;
+                            cp.Position = ConnectorPositions.Right;
                         break;
                     
                     default:

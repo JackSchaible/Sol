@@ -320,6 +320,7 @@
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\ProjectileWeapons.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\SmallShip.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
@@ -328,14 +329,14 @@
     <Compile Include="Assets\Scenes\SpaceFight\UI\UIManager.cs" />
     <Compile Include="Assets\Ships\Crew\CrewMember.cs" />
     <Compile Include="Assets\Ships\Module.cs" />
-    <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprints.cs" />
     <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
     <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprints.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />
-    <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Ship.cs" />
     <Compile Include="Assets\Ships\ShipStats.cs" />

@@ -36,7 +36,10 @@ public class ShipBuildUIManager : MonoBehaviour
     private Dictionary<string, GameObject> _detailsViews;
 
     private ModuleBlueprints _selected;
-    private List<GameObject> _activeObjects = new List<GameObject>();
+    /// <summary>
+    /// A list of the active toggles and menu game objects in the tree, used to hide the menus when placing a module
+    /// </summary>
+    private readonly List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
     private bool _placementValid;
@@ -181,7 +184,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
             Manager.AddModule(_newModule);
 
-            if (_newModule.ModuleBlueprint is CockpitModuleBlueprints)
+            if (_newModule.ModuleBlueprint is CockpitModuleBlueprint)
                 ControlCentresToggle.isOn = false;
 
             if (_newModule.ModuleBlueprint.ExclusionVectors.Length > 0)
@@ -249,6 +252,7 @@ public class ShipBuildUIManager : MonoBehaviour
     private void CancelPlaceMode()
     {
         _placeMode = false;
+        GameObject.Destroy(_newModule.GameObject);
 
         foreach (var obj in _activeObjects)
             obj.SetActive(true);
@@ -264,6 +268,18 @@ public class ShipBuildUIManager : MonoBehaviour
         }
     }
 
+    private static void SetDetailsViewActive(GameObject view, bool active)
+    {
+        var p1 = view.transform.parent;
+        if (p1 == null) return;
+        var p2 = p1.parent;
+        if (p2 == null) return;
+        var p3 = p2.parent;
+        if (p3 == null) return;
+        p3.gameObject.SetActive(active);
+    }
+
+    #region View Bindings
     private void BindSmallShipDetailsView(CommandModuleBlueprints blueprints, GameObject view)
     {
         var script = view.GetComponent<SmallShip>();
@@ -281,17 +297,32 @@ public class ShipBuildUIManager : MonoBehaviour
         script.Cost.text = blueprints.Cost.ToString();
     }
 
-    private static void SetDetailsViewActive(GameObject view, bool active)
+    private void BindProjectileWeaponsView(WeaponBlueprint blueprint, GameObject view)
     {
-        var p1 = view.transform.parent;
-        if (p1 == null) return;
-        var p2 = p1.parent;
-        if (p2 == null) return;
-        var p3 = p2.parent;
-        if (p3 == null) return;
-        p3.gameObject.SetActive(active);
+        var script = view.GetComponent<ProjectileWeapons>();
+
+        script.Title.text = blueprint.Name;
+        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
+        script.Image.type = Image.Type.Simple;
+        script.Image.preserveAspect = true;
+        script.Description.text = blueprint.Description;
+        script.Command.text = blueprint.CommandRequirement.ToString();
+        script.Health.text = blueprint.Health.ToString();
+        script.Crew.text = blueprint.CrewRequirement.ToString();
+        script.Weight.text = blueprint.Weight.ToSiUnit("g");
+        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
+        script.Rof.text = blueprint.RateOfFire.ToString();
+        script.Ammo.text = blueprint.AmmoStorage.ToString();
+        script.DmgVsFlesh.text = blueprint.Damage.VsFlesh.ToString();
+        script.DmgVsHull.text = blueprint.Damage.VsHull.ToString();
+        script.DmgVsArmor.text = blueprint.Damage.VsArmor.ToString();
+        script.DmgVsShields.text = blueprint.Damage.VsShields.ToString();
+        script.Range.text = blueprint.Range.ToString();
+        script.Cost.text = blueprint.Cost.ToString();
+        script.Cost.text = blueprint.Cost.ToString();
     }
 
+    #endregion
     public void Build()
     {
         _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));

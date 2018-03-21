@@ -123,8 +123,6 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Advertisements.dll:UnityEngine.Advertisements.CallbackExecutor
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Advertisements.dll:UnityEngine.Advertisements.Editor.Placeholder
 b70f998fd0789e8d46226b9f6941ab4a Assembly-CSharp.dll:.UIManager
-e16727f8a81d62afe0a19cbd1489e470 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.DeckManager
-b363604f37bb7b8d2df065fa1d2c61ab Assembly-CSharp.dll:Assets.Scenes.ShipBuild.UI.DetailsViews.SmallShip
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 60b2bb652410a5867a5ab9a01cd38461 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -156,3 +154,5 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.AlphaHitbox
 ce8f41b831b5b90af7a26b37ec3d16bc Assembly-CSharp.dll:.RadialMenu
 a0c1b5edb41d8b608d2f5299b3161519 Assembly-CSharp.dll:.Modal
+e16727f8a81d62afe0a19cbd1489e470 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.DeckManager
+b363604f37bb7b8d2df065fa1d2c61ab Assembly-CSharp.dll:Assets.Scenes.ShipBuild.UI.DetailsViews.SmallShip

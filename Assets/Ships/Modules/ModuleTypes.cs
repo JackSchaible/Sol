@@ -16,21 +16,13 @@
         Other
     }
 
-    public enum WeaponTypes
-    {
-        Projectile,
-        Missile,
-        EMCoil,
-        Laser,
-        Plasma,
-        Chemical,
-        Biological,
-        Nuclear,
-        Other
-    }
-
     public static class ControlCentreTypes
     {
         public const string SmallShip = "Small Ship";
+    }
+
+    public static class WeaponTypes
+    {
+        public const string Projectile = "Projectile";
     }
 }

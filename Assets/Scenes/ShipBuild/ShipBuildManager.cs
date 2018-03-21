@@ -14,7 +14,11 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
-    public List<Module> Modules { get; private set; }
+    public List<Module> Modules
+    {
+        get;
+        private set;
+    }
     public bool HasCommandModule { get; private set; }
 
     private List<Toggle> _firstLevelToggles;
@@ -38,7 +42,7 @@ public class ShipBuildManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
     }
 
@@ -62,8 +66,8 @@ public class ShipBuildManager : MonoBehaviour
         ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprints)
             .Sum(x => ((CommandModuleBlueprints)x.ModuleBlueprint).CommandSupplied);
 
-        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprints)
-            .Sum(x => ((CockpitModuleBlueprints)x.ModuleBlueprint).PersonnelHoused);
+        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprint)
+            .Sum(x => ((CockpitModuleBlueprint)x.ModuleBlueprint).PersonnelHoused);
 
         if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprints)
         {
@@ -73,7 +77,7 @@ public class ShipBuildManager : MonoBehaviour
             {
                 go.interactable = true;
 
-                if (module.ModuleBlueprint is CockpitModuleBlueprints && go.name == "Control Centers Toggle")
+                if (module.ModuleBlueprint is CockpitModuleBlueprint && go.name == "Control Centers Toggle")
                     go.interactable = false;
             }
         }
