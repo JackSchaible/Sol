@@ -37,6 +37,7 @@ namespace Assets.Ships
             module.GameObject.AddComponent<SpriteRenderer>();
             module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
             module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
+            
 
             return module;
         }
