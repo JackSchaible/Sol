@@ -42,7 +42,6 @@ public class ShipBuildUIManager : MonoBehaviour
     private readonly List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
-    private bool _placementValid;
 
     void Start()
     {
@@ -85,7 +84,6 @@ public class ShipBuildUIManager : MonoBehaviour
 
     void Update()
     {
-        _placementValid = true;
         ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
         PowerText.text = Manager.PowerUsed + " / " + Manager.PowerAvailable;
         PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
@@ -115,21 +113,12 @@ public class ShipBuildUIManager : MonoBehaviour
             Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
             Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
             1);
-            
-        //Todo: replace with raycast when you can figure it out
-        if (Manager.Modules.Any(
-            x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
-                 x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y))
-        {
-            //Make newmodule sprite red, disable placement, handle for seperate decks
-            _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
-            _placementValid = false;
-        }
-        else
-            _newModule.GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
 
         if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Destroy(_newModule.GameObject);
             CancelPlaceMode();
+        }
 
         #region Rotate/Flip Controls
 
@@ -172,7 +161,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
         #endregion
 
-        if (Input.GetMouseButtonDown(0) && _placementValid)
+        if (Input.GetMouseButtonDown(0) && IsPlacementValid())
         {
             _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
 
@@ -249,21 +238,43 @@ public class ShipBuildUIManager : MonoBehaviour
         }
     }
 
+    private bool IsPlacementValid()
+    {
+        bool valid = true;
+
+        #region If is overlapping
+
+        valid = !Manager.Modules.Any(
+            x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
+                 x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y &&
+                 x.Position.Z == DeckManager.CurrentDeck);
+
+        #endregion
+
+        _newModule.GameObject.GetComponent<SpriteRenderer>().color =
+            valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
+
+        return valid;
+    }
+
     private void CancelPlaceMode()
     {
         _placeMode = false;
-        GameObject.Destroy(_newModule.GameObject);
 
         foreach (var obj in _activeObjects)
             obj.SetActive(true);
     }
 
-    private void ConfigureModuleDetailsView(ModuleBlueprints blueprints, GameObject view)
+    private void ConfigureModuleDetailsView(ModuleBlueprints blueprint, GameObject view)
     {
-        switch (blueprints.ModuleSubtype)
+        switch (blueprint.ModuleSubtype)
         {
             case ControlCentreTypes.SmallShip:
-                BindSmallShipDetailsView((CommandModuleBlueprints)blueprints, view);
+                BindSmallShipDetailsView((CommandModuleBlueprints)blueprint, view);
+                break;
+
+            case WeaponTypes.Projectile:
+                BindProjectileWeaponsView((WeaponBlueprint)blueprint, view);
                 break;
         }
     }
@@ -327,7 +338,7 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
         _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-        _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Details View"));
+        _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
 
         foreach(var obj in _activeObjects)
             obj.SetActive(false);
