@@ -240,16 +240,7 @@ public class ShipBuildUIManager : MonoBehaviour
 
     private bool IsPlacementValid()
     {
-        bool valid = true;
-
-        #region If is overlapping
-
-        valid = !Manager.Modules.Any(
-            x => x.GameObject.transform.position.x == _newModule.GameObject.transform.position.x &&
-                 x.GameObject.transform.position.y == _newModule.GameObject.transform.position.y &&
-                 x.Position.Z == DeckManager.CurrentDeck);
-
-        #endregion
+        bool valid = Manager.IsPlacementValid(_newModule);
 
         _newModule.GameObject.GetComponent<SpriteRenderer>().color =
             valid ? new Color(1, 1, 1) : new Color(1, 0, 0);

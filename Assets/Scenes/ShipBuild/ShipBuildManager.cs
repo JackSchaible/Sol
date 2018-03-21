@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Common.Utils;
+using Assets.Scenes.ShipBuild;
 using Assets.Ships;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
+    public DeckManager DeckManager; 
+
     public int PowerAvailable;
     public int PowerUsed;
     public int ControlAvailable;
@@ -81,5 +84,35 @@ public class ShipBuildManager : MonoBehaviour
                     go.interactable = false;
             }
         }
+    }
+
+    public bool IsPlacementValid(Module newModule)
+    {
+        var valid = false;
+
+        #region If is overlapping
+
+        valid = !Modules.Any(
+            x => x.GameObject.transform.position.x == newModule.GameObject.transform.position.x &&
+                 x.GameObject.transform.position.y == newModule.GameObject.transform.position.y &&
+                 x.Position.Z == DeckManager.CurrentDeck);
+
+        #endregion
+
+        #region Connectors...
+        /*
+         * Steps:
+         * 1. Get current pos of new module [0, 0, -1]
+         * 2. Get adjacent modules
+         * 3. Are there any adjacent modules?
+         * 3.a) If yes, where are their connectors? Do they match up?
+         */
+        #endregion
+
+        #region Exclusion Vectors
+
+        #endregion
+
+        return valid;
     }
 }

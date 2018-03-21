@@ -4233,7 +4233,7 @@ GameObject:
   - component: {fileID: 549588445}
   - component: {fileID: 549588446}
   m_Layer: 5
-  m_Name: Projectile Weapons Details Content
+  m_Name: Projectile Details Content
   m_TagString: Details View
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9996,7 +9996,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 04de2c962e3e5bf44a6e8ebfc14f2af8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 16000c047f2582b42b7319e828370aa0, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -11266,6 +11266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad2549633ea2e6c41a94d0b0c76f31f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DeckManager: {fileID: 594233524}
   PowerAvailable: 0
   PowerUsed: 0
   ControlAvailable: 0

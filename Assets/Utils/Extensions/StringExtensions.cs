@@ -6,13 +6,13 @@ namespace Assets.Utils.Extensions
     public static class StringExtensions
     {
         /// <summary>
-        /// Parses the given string until it reaches a number it can't parse
+        /// This method parses the string until it reaches a character it can't parse
         /// </summary>
         /// <param name="s">The string to parse</param>
         /// <returns>An integer representing the string</returns>
         public static int ParseUntil(this string s)
         {
-            int i = 0, n = 0, rVal = 0;
+            int n, i = 0, rVal = 0;
             var numbers = new List<int>();
             bool hasEncounteredNegative = false;
 
