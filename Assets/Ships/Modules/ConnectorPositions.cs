@@ -9,6 +9,7 @@
 
         /// <summary>
         /// Must this connector be attached to another module?
+        /// TODO: WHY WOULD THIS EVER BE FALSE?
         /// </summary>
         public bool IsMandatory { get; set; }
 
