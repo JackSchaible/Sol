@@ -2,7 +2,7 @@
 
 namespace Assets.Ships
 {
-    public class CockpitModuleBlueprint : CommandModuleBlueprints
+    public class CockpitModuleBlueprint : CommandModuleBlueprint
     {
         public int PersonnelHoused { get; set; }
 

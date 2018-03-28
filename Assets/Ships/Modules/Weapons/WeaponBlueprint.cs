@@ -3,7 +3,7 @@ using Assets.Ships.Weapons;
 
 namespace Assets.Ships
 {
-    public class WeaponBlueprint : ModuleBlueprints
+    public class WeaponBlueprint : ModuleBlueprint
     {
         public int RateOfFire { get; set; }
         public WeaponDamage Damage { get; set; }

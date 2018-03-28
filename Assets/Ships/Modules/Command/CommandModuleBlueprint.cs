@@ -2,17 +2,17 @@
 
 namespace Assets.Ships
 {
-    public class CommandModuleBlueprints : ModuleBlueprints
+    public class CommandModuleBlueprint : ModuleBlueprint
     {
         public int CommandSupplied { get; set; }
         public override string[] RelatedAbilities { get { return new[] { "Charisma", "Intelligence" }; } }
 
-        public CommandModuleBlueprints()
+        public CommandModuleBlueprint()
         {
             
         }
 
-        public CommandModuleBlueprints(string moduleType, string buildSprite, string name, string description, 
+        public CommandModuleBlueprint(string moduleType, string buildSprite, string name, string description, 
             int health, int weight, int cost, ConnectorPosition[] connectors, ExclusionVectors[] exclusionVectors,
             int crewRequirement, int powerConumption, int commandSupplied)
             : base(ModuleTypes.ControlCentre, moduleType, buildSprite, name, description, health, weight, cost,

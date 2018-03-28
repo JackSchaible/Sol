@@ -330,10 +330,11 @@
     <Compile Include="Assets\Ships\Crew\CrewMember.cs" />
     <Compile Include="Assets\Ships\Module.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprint.cs" />
-    <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
     <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
-    <Compile Include="Assets\Ships\Modules\ModuleBlueprints.cs" />
+    <Compile Include="Assets\Ships\Modules\Miscellanious\DecorativeModuleBlueprint.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />
     <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprint.cs" />
@@ -347,9 +348,6 @@
     <Compile Include="Assets\Utils\ModuleUtils\ModuleVectorUtils.cs" />
     <Compile Include="Assets\Utils\Random.cs" />
     <Compile Include="Assets\Utils\Rectangle.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Common\PressStart2P-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Ships\Weapons\" />

@@ -2,7 +2,7 @@
 
 namespace Assets.Ships
 {
-    public abstract class ModuleBlueprints
+    public abstract class ModuleBlueprint
     {
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
@@ -20,12 +20,12 @@ namespace Assets.Ships
         public int CommandRequirement { get; set; }
         public abstract string[] RelatedAbilities { get; }
 
-        protected ModuleBlueprints()
+        protected ModuleBlueprint()
         {
 
         }
 
-        protected ModuleBlueprints(ModuleTypes moduleType, string moduleSubtype, string buildSprite, string name,
+        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite, string name,
             string description, int health, int weight, int cost, ConnectorPosition[] connectors, 
             ExclusionVectors[] exclusionVectors, int crewRequirement, int powerConumption, int commandRequirement)
         {

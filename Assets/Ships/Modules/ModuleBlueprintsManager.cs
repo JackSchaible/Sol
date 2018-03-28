@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
+using Assets.Ships.Modules.Miscellanious;
 using Assets.Ships.Weapons;
 using UnityEngine;
 
@@ -11,14 +12,14 @@ namespace Assets.Ships
         {
         }
 
-        public ModuleBlueprints[] Get()
+        public ModuleBlueprint[] Get()
         {
             return Generate();
         }
 
-        private ModuleBlueprints[] Generate()
+        private ModuleBlueprint[] Generate()
         {
-            return new ModuleBlueprints[]
+            return new ModuleBlueprint[]
             {
                 #region Command Modules
 
@@ -64,6 +65,23 @@ namespace Assets.Ships
                     200, 15, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[] {ExclusionVectors.RightLine}, 0, 200, 1, 6000, new WeaponDamage(1, 1, 0, 0), 700, 15000, 1),
 
+                #endregion
+
+                #endregion
+
+                #region Miscellanious
+
+                #region Decorative Modules
+                new DecorativeModuleBlueprint("Panel", "Panel", "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.", 0, 0, 0, new ConnectorPosition[]
+                {
+                    new ConnectorPosition(ConnectorPositions.Backward),
+                    new ConnectorPosition(ConnectorPositions.Left),
+                    new ConnectorPosition(ConnectorPositions.Down),
+                    new ConnectorPosition(ConnectorPositions.Forward),
+                    new ConnectorPosition(ConnectorPositions.Right),
+                    new ConnectorPosition(ConnectorPositions.Up)
+                },
+                new ExclusionVectors[]{}),
                 #endregion
 
                 #endregion

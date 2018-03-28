@@ -8,7 +8,7 @@ namespace Assets.Ships
 {
     public class Module
     {
-        public ModuleBlueprints ModuleBlueprint { get; set; }
+        public ModuleBlueprint ModuleBlueprint { get; set; }
 
         public GameObject GameObject;
         public int CurrentHealth;
@@ -23,18 +23,18 @@ namespace Assets.Ships
             
         }
 
-        private Module(ModuleBlueprints moduleBlueprint)
+        private Module(ModuleBlueprint moduleBlueprint)
         {
             ModuleBlueprint = moduleBlueprint;
             Crew = new List<CrewMember>();
         }
 
-        public static Module Create(ModuleBlueprints blueprints)
+        public static Module Create(ModuleBlueprint blueprint)
         {
-            var module = new Module(blueprints);
+            var module = new Module(blueprint);
             module.GameObject = new GameObject();
             module.GameObject.AddComponent<SpriteRenderer>();
-            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
+            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
             module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
             
 

@@ -74,13 +74,13 @@ public class ShipBuildManager : MonoBehaviour
         ControlUsed = Modules.Sum(x => x.ModuleBlueprint.CommandRequirement);
         PersonnelUsed = Modules.Sum(x => x.ModuleBlueprint.CrewRequirement);
 
-        ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprints)
-            .Sum(x => ((CommandModuleBlueprints)x.ModuleBlueprint).CommandSupplied);
+        ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprint)
+            .Sum(x => ((CommandModuleBlueprint)x.ModuleBlueprint).CommandSupplied);
 
         PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprint)
             .Sum(x => ((CockpitModuleBlueprint)x.ModuleBlueprint).PersonnelHoused);
 
-        if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprints)
+        if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprint)
         {
             HasCommandModule = true;
 
@@ -306,7 +306,7 @@ public class ShipBuildManager : MonoBehaviour
 
         #endregion
 
-        //TODO: Other invalid conditions?
+        //TODO: Miscellanious invalid conditions?
 
         return valid;
     }

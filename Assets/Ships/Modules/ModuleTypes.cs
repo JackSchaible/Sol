@@ -13,7 +13,7 @@
         StrikeCraft,
         Engineering,
         ControlCentre,
-        Other
+        Miscellanious
     }
 
     public static class ControlCentreTypes
@@ -24,5 +24,10 @@
     public static class WeaponTypes
     {
         public const string Projectile = "Projectile";
+    }
+
+    public static class MiscellaniousTypes
+    {
+        public const string Decorative = "Decorative";
     }
 }

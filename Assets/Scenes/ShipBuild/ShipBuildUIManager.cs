@@ -33,10 +33,10 @@ public class ShipBuildUIManager : MonoBehaviour
     public DeckManager DeckManager;
 
     private ModuleBlueprintsManager _blueprintsManager;
-    private ModuleBlueprints[] _blueprints;
+    private ModuleBlueprint[] _blueprint;
     private Dictionary<string, GameObject> _detailsViews;
 
-    private ModuleBlueprints _selected;
+    private ModuleBlueprint _selected;
     /// <summary>
     /// A list of the active toggles and menu game objects in the tree, used to hide the menus when placing a module
     /// </summary>
@@ -48,7 +48,7 @@ public class ShipBuildUIManager : MonoBehaviour
     void Start()
     {
         _blueprintsManager = new ModuleBlueprintsManager();
-        _blueprints = _blueprintsManager.Get();
+        _blueprint = _blueprintsManager.Get();
 
         _detailsViews = new Dictionary<string, GameObject>();
         foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
@@ -75,7 +75,7 @@ public class ShipBuildUIManager : MonoBehaviour
         if (toggle.isOn)
         {
             var toggleName = toggle.name.Replace(" Toggle", "");
-            var stats = _blueprints.First(x => x.Name == toggleName);
+            var stats = _blueprint.First(x => x.Name == toggleName);
             var view = _detailsViews[stats.ModuleSubtype];
             
             ConfigureModuleDetailsView(stats, view);
@@ -204,12 +204,12 @@ public class ShipBuildUIManager : MonoBehaviour
             obj.SetActive(true);
     }
 
-    private void ConfigureModuleDetailsView(ModuleBlueprints blueprint, GameObject view)
+    private void ConfigureModuleDetailsView(ModuleBlueprint blueprint, GameObject view)
     {
         switch (blueprint.ModuleSubtype)
         {
             case ControlCentreTypes.SmallShip:
-                BindSmallShipDetailsView((CommandModuleBlueprints)blueprint, view);
+                BindSmallShipDetailsView((CommandModuleBlueprint)blueprint, view);
                 break;
 
             case WeaponTypes.Projectile:
@@ -230,21 +230,21 @@ public class ShipBuildUIManager : MonoBehaviour
     }
 
     #region View Bindings
-    private void BindSmallShipDetailsView(CommandModuleBlueprints blueprints, GameObject view)
+    private void BindSmallShipDetailsView(CommandModuleBlueprint blueprint, GameObject view)
     {
         var script = view.GetComponent<SmallShip>();
 
-        script.Title.text = blueprints.Name;
-        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprints.BuildSprite);
+        script.Title.text = blueprint.Name;
+        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
         script.Image.type = Image.Type.Simple;
         script.Image.preserveAspect = true;
-        script.Description.text = blueprints.Description;
-        script.Command.text = blueprints.CommandSupplied.ToString();
-        script.Health.text = blueprints.Health.ToString();
-        script.Crew.text = blueprints.CrewRequirement.ToString();
-        script.Weight.text = blueprints.Weight.ToSiUnit("g");
-        script.Power.text = blueprints.PowerConumption.ToSiUnit("W");
-        script.Cost.text = blueprints.Cost.ToString();
+        script.Description.text = blueprint.Description;
+        script.Command.text = blueprint.CommandSupplied.ToString();
+        script.Health.text = blueprint.Health.ToString();
+        script.Crew.text = blueprint.CrewRequirement.ToString();
+        script.Weight.text = blueprint.Weight.ToSiUnit("g");
+        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
+        script.Cost.text = blueprint.Cost.ToString();
     }
 
     private void BindProjectileWeaponsView(WeaponBlueprint blueprint, GameObject view)
