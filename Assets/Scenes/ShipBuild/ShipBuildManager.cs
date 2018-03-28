@@ -25,8 +25,8 @@ public class ShipBuildManager : MonoBehaviour
         private set;
     }
     public bool HasCommandModule { get; private set; }
+    public Module FirstModule { get; private set; }
 
-    private Module _firstModule;
     private List<Toggle> _firstLevelToggles;
 
     void Start()
@@ -57,12 +57,15 @@ public class ShipBuildManager : MonoBehaviour
         if (Modules.Count == 0)
         {
             module.Position = new IntVector(0, 0, 0);
-            _firstModule = module;
+            FirstModule = module;
+
+            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
         }
         else
         {
-            module.Position = GetRelativeVector(module.GameObject.transform.position,
-                _firstModule.GameObject.transform.position);
+            module.Position = IntVector.GetRelativeVector(module.GameObject.transform.position,
+                FirstModule.GameObject.transform.position);
         }
 
         Modules.Add(module);
@@ -89,17 +92,49 @@ public class ShipBuildManager : MonoBehaviour
                     go.interactable = false;
             }
         }
+
+        //Disable decks if module has an x/y plane or space exclusion vector
+        if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
+        {
+            foreach (var vector in module.ModuleBlueprint.ExclusionVectors)
+            {
+                //Disable whatever it is
+                switch (vector)
+                {
+                    case ExclusionVectors.Plane:
+                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                        break;
+
+                    case ExclusionVectors.PlaneAndAbove:
+                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+                        DeckManager.AddLowerDeck();
+                        break;
+
+                    case ExclusionVectors.PlaneAndBelow:
+                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+                        DeckManager.AddUpperDeck();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
     }
 
     public bool IsPlacementValid(Module newModule)
     {
+        if (!Modules.Any()) return true;
+
         var valid = true;
-        var pos = IntVector.GetRelativeVector(newModule.GameObject.transform.position,
-            _firstModule.GameObject.transform.position);
+        var pos = newModule.Position;
 
         #region If is overlapping
 
-        if (!Modules.Any(
+        if (Modules.Any(
             x => x.GameObject.transform.position.x == newModule.GameObject.transform.position.x &&
                  x.GameObject.transform.position.y == newModule.GameObject.transform.position.y &&
                  x.Position.Z == DeckManager.CurrentDeck))
@@ -187,46 +222,82 @@ public class ShipBuildManager : MonoBehaviour
 
         #endregion
 
-        #region Connectors & Exclusion Vectors
+        #region Connectors
 
         foreach (var connector in newModule.ModuleBlueprint.Connectors)
         {
-            switch (connector.Position)
+            switch (connector.Direction)
             {
                 case ConnectorPositions.Up:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y - 1 &&
-                                          x.Position.X == pos.X &&
-                                          x.Position.Z == pos.Z))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X &&
+                            conPos.Y == pos.Y - 1 &&
+                            conPos.Z == pos.Z;
+                    }))
                         valid = false;
                     break;
                 case ConnectorPositions.Right:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y &&
-                                             x.Position.X == pos.X + 1 &&
-                                             x.Position.Z == pos.Z))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X + 1 &&
+                            conPos.Y == pos.Y &&
+                            conPos.Z == pos.Z;
+                    }))
                         valid = false;
                     break;
                 case ConnectorPositions.Down:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y + 1 &&
-                                             x.Position.X == pos.X &&
-                                             x.Position.Z == pos.Z))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X &&
+                            conPos.Y == pos.Y + 1 &&
+                            conPos.Z == pos.Z;
+                    }))
                         valid = false;
                     break;
                 case ConnectorPositions.Left:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y &&
-                                             x.Position.X == pos.X - 1 &&
-                                             x.Position.Z == pos.Z))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X - 1 &&
+                            conPos.Y == pos.Y &&
+                            conPos.Z == pos.Z;
+                    }))
                         valid = false;
                     break;
                 case ConnectorPositions.Forward:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y &&
-                                             x.Position.X == pos.X &&
-                                             x.Position.Z == pos.Z + 1))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X &&
+                            conPos.Y == pos.Y &&
+                            conPos.Z == pos.Z + 1;
+                    }))
                         valid = false;
                     break;
                 case ConnectorPositions.Backward:
-                    if (!Modules.Any(x => x.Position.Y == pos.Y &&
-                                             x.Position.X == pos.X &&
-                                             x.Position.Z == pos.Z - 1))
+                    if (!Modules.Any(x =>
+                    {
+                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
+
+                        return
+                            conPos.X == pos.X &&
+                            conPos.Y == pos.Y &&
+                            conPos.Z == pos.Z - 1;
+                    }))
                         valid = false;
                     break;
             }

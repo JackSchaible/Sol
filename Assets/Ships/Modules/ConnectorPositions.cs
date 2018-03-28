@@ -1,33 +1,30 @@
-﻿namespace Assets.Ships.Modules
+﻿using Assets.Common.Utils;
+
+namespace Assets.Ships.Modules
 {
     public class ConnectorPosition
     {
         /// <summary>
         /// The position on the module this connector sits
         /// </summary>
-        public ConnectorPositions Position { get; set; }
+        public ConnectorPositions Direction { get; set; }
 
         /// <summary>
-        /// Must this connector be attached to another module?
-        /// TODO: WHY WOULD THIS EVER BE FALSE?
+        /// Where in the module does this connector sit?
+        /// <value>{0, 0, 0} by default</value>
         /// </summary>
-        public bool IsMandatory { get; set; }
-
-        /// <summary>
-        /// If the module is mandatory, does it belong to a group of "At Least 1" connectors?
-        /// </summary>
-        public int? Group { get; set; }
+        public IntVector Position { get; set; }
 
         public ConnectorPosition()
         {
             
         }
 
-        public ConnectorPosition(ConnectorPositions position, bool isMandatory, int? @group)
+        public ConnectorPosition(ConnectorPositions direction, IntVector position = null)
         {
-            Position = position;
-            IsMandatory = isMandatory;
-            Group = @group;
+            Direction = direction;
+
+            Position = position ?? IntVector.Zero;
         }
     }
 

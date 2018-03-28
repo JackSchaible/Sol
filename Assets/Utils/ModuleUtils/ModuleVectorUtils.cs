@@ -99,26 +99,26 @@ namespace Assets.Utils.ModuleUtils
         {
             foreach (ConnectorPosition cp in positions)
             {
-                switch (cp.Position)
+                switch (cp.Direction)
                 {
                     case ConnectorPositions.Forward:
                     case ConnectorPositions.Backward:
                         break;
 
                     case ConnectorPositions.Up:
-                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Right : ConnectorPositions.Left;
+                        cp.Direction = rd == RotationDirection.CW ? ConnectorPositions.Right : ConnectorPositions.Left;
                         break;
 
                     case ConnectorPositions.Right:
-                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Down : ConnectorPositions.Up;
+                        cp.Direction = rd == RotationDirection.CW ? ConnectorPositions.Down : ConnectorPositions.Up;
                         break;
 
                     case ConnectorPositions.Down:
-                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Left : ConnectorPositions.Right;
+                        cp.Direction = rd == RotationDirection.CW ? ConnectorPositions.Left : ConnectorPositions.Right;
                         break;
 
                     case ConnectorPositions.Left:
-                        cp.Position = rd == RotationDirection.CW ? ConnectorPositions.Up : ConnectorPositions.Down;
+                        cp.Direction = rd == RotationDirection.CW ? ConnectorPositions.Up : ConnectorPositions.Down;
                         break;
 
                     default:
@@ -195,7 +195,7 @@ namespace Assets.Utils.ModuleUtils
         {
             foreach (ConnectorPosition cp in positions)
             {
-                switch (cp.Position)
+                switch (cp.Direction)
                 {
                     case ConnectorPositions.Forward:
                     case ConnectorPositions.Backward:
@@ -203,22 +203,22 @@ namespace Assets.Utils.ModuleUtils
 
                     case ConnectorPositions.Up:
                         if (fd == FlipDirection.Horizontal)
-                            cp.Position = ConnectorPositions.Down;
+                            cp.Direction = ConnectorPositions.Down;
                         break;
 
                     case ConnectorPositions.Right:
                         if (fd == FlipDirection.Vertical)
-                            cp.Position = ConnectorPositions.Left;
+                            cp.Direction = ConnectorPositions.Left;
                         break;
 
                     case ConnectorPositions.Down:
                         if (fd == FlipDirection.Horizontal)
-                            cp.Position = ConnectorPositions.Up;
+                            cp.Direction = ConnectorPositions.Up;
                         break;
 
                     case ConnectorPositions.Left:
                         if (fd == FlipDirection.Vertical)
-                            cp.Position = ConnectorPositions.Right;
+                            cp.Direction = ConnectorPositions.Right;
                         break;
                     
                     default:

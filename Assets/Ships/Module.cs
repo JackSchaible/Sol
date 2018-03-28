@@ -3,7 +3,6 @@ using Assets.Common.Utils;
 using Assets.Ships.Crew;
 using Assets.Utils;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Ships
 {
@@ -12,7 +11,7 @@ namespace Assets.Ships
         public ModuleBlueprints ModuleBlueprint { get; set; }
 
         public GameObject GameObject;
-        public int Health;
+        public int CurrentHealth;
         public int CurrentPower;
         public List<CrewMember> Crew;
         public IntVector Position;

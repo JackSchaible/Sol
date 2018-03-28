@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.UI.DetailsViews;
@@ -42,6 +43,7 @@ public class ShipBuildUIManager : MonoBehaviour
     private readonly List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
+    private IntVector _previousPos;
 
     void Start()
     {
@@ -114,6 +116,14 @@ public class ShipBuildUIManager : MonoBehaviour
             Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
             1);
 
+        _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
+
+        if (Manager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
+        {
+            //Module pos has changed, recalculate the placement viability
+            IsPlacementValid();
+        }
+
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             Destroy(_newModule.GameObject);
@@ -162,80 +172,11 @@ public class ShipBuildUIManager : MonoBehaviour
         #endregion
 
         if (Input.GetMouseButtonDown(0) && IsPlacementValid())
-        {
-            _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
+            PlaceModule();
 
-            if (Manager.Modules.Count == 0)
-            {
-                DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-            }
-
-            Manager.AddModule(_newModule);
-
-            if (_newModule.ModuleBlueprint is CockpitModuleBlueprint)
-                ControlCentresToggle.isOn = false;
-
-            if (_newModule.ModuleBlueprint.ExclusionVectors.Length > 0)
-            {
-                foreach (var vector in _newModule.ModuleBlueprint.ExclusionVectors)
-                {
-                    //Disable whatever it is
-                    switch (vector)
-                    {
-                        case ExclusionVectors.ForwardLine:
-                            break;
-
-                        case ExclusionVectors.BackwardLine:
-                            break;
-
-                        case ExclusionVectors.UpwardLine:
-                            break;
-
-                        case ExclusionVectors.DownwardLine:
-                            break;
-
-                        case ExclusionVectors.RightLine:
-                            break;
-
-                        case ExclusionVectors.LeftLine:
-                            break;
-
-                        case ExclusionVectors.Plane:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            break;
-
-                        case ExclusionVectors.PlaneAndAbove:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-                            DeckManager.AddLowerDeck();
-                            break;
-
-                        case ExclusionVectors.PlaneAndBelow:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                            DeckManager.AddUpperDeck();
-                            break;
-
-                        case ExclusionVectors.PlaneAndForward:
-                            break;
-
-                        case ExclusionVectors.PlaneAndBackward:
-                            break;
-
-                        case ExclusionVectors.PlaneAndRight:
-                            break;
-
-                        case ExclusionVectors.PlaneAndLeft:
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-            CancelPlaceMode();
-        }
+        if (Manager.FirstModule != null)
+            _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
+                Manager.FirstModule.GameObject.transform.position);
     }
 
     private bool IsPlacementValid()
@@ -246,6 +187,13 @@ public class ShipBuildUIManager : MonoBehaviour
             valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
 
         return valid;
+    }
+
+    private void PlaceModule()
+    {
+        _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
+        Manager.AddModule(_newModule);
+        CancelPlaceMode();
     }
 
     private void CancelPlaceMode()
@@ -325,18 +273,41 @@ public class ShipBuildUIManager : MonoBehaviour
     }
 
     #endregion
+
     public void Build()
     {
-        _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
-        _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-        _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
+        if (Manager.FirstModule == null)
+        {
+            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
+            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
+            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
 
-        foreach(var obj in _activeObjects)
-            obj.SetActive(false);
+            foreach (var obj in _activeObjects)
+                obj.SetActive(false);
 
-        _placeMode = true;
-        _newModule = Module.Create(_selected);
+            _newModule = Module.Create(_selected);
+            _newModule.GameObject.transform.position = Vector3.zero;
+
+            if (_newModule.ModuleBlueprint is CockpitModuleBlueprint)
+                ControlCentresToggle.isOn = false;
+
+            PlaceModule();
+            CancelPlaceMode();
+        }
+        else
+        {
+            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
+            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
+            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
+
+            foreach (var obj in _activeObjects)
+                obj.SetActive(false);
+
+            _placeMode = true;
+            _newModule = Module.Create(_selected);
+        }
     }
+
     #endregion
 
     #region Modals
