@@ -315,8 +315,11 @@
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\Modals.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\MenuManager\DynamicBuildMenuManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuDataManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuData.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />

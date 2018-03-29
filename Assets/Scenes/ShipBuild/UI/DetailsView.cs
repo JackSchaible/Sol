@@ -7,8 +7,8 @@ namespace Assets.Scenes.ShipBuild.UI
     {
         public void ToggleChanged(Toggle t)
         {
-            if (!t.isOn)
-                gameObject.SetActive(false);
+            //if (!t.isOn)
+            //    gameObject.SetActive(false);
         }
     }
 }
