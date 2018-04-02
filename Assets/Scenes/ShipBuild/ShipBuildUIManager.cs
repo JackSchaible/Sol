@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
-using Assets.Scenes.ShipBuild.UI.DetailsViews;
 using Assets.Ships;
-using Assets.Ships.Modules;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using Assets.Utils.ModuleUtils;
@@ -78,7 +75,6 @@ public class ShipBuildUIManager : MonoBehaviour
             var stats = _blueprint.First(x => x.Name == toggleName);
             var view = _detailsViews[stats.ModuleSubtype];
             
-            ConfigureModuleDetailsView(stats, view);
             SetDetailsViewActive(view, toggle.isOn);
             _selected = stats;
         }
@@ -204,20 +200,6 @@ public class ShipBuildUIManager : MonoBehaviour
             obj.SetActive(true);
     }
 
-    private void ConfigureModuleDetailsView(ModuleBlueprint blueprint, GameObject view)
-    {
-        switch (blueprint.ModuleSubtype)
-        {
-            case ControlCentreTypes.SmallShip:
-                BindSmallShipDetailsView((CommandModuleBlueprint)blueprint, view);
-                break;
-
-            case WeaponTypes.Projectile:
-                BindProjectileWeaponsView((WeaponBlueprint)blueprint, view);
-                break;
-        }
-    }
-
     private static void SetDetailsViewActive(GameObject view, bool active)
     {
         var p1 = view.transform.parent;
@@ -228,51 +210,6 @@ public class ShipBuildUIManager : MonoBehaviour
         if (p3 == null) return;
         p3.gameObject.SetActive(active);
     }
-
-    #region View Bindings
-    private void BindSmallShipDetailsView(CommandModuleBlueprint blueprint, GameObject view)
-    {
-        var script = view.GetComponent<SmallShip>();
-
-        script.Title.text = blueprint.Name;
-        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
-        script.Image.type = Image.Type.Simple;
-        script.Image.preserveAspect = true;
-        script.Description.text = blueprint.Description;
-        script.Command.text = blueprint.CommandSupplied.ToString();
-        script.Health.text = blueprint.Health.ToString();
-        script.Crew.text = blueprint.CrewRequirement.ToString();
-        script.Weight.text = blueprint.Weight.ToSiUnit("g");
-        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
-        script.Cost.text = blueprint.Cost.ToString();
-    }
-
-    private void BindProjectileWeaponsView(WeaponBlueprint blueprint, GameObject view)
-    {
-        var script = view.GetComponent<ProjectileWeapons>();
-
-        script.Title.text = blueprint.Name;
-        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
-        script.Image.type = Image.Type.Simple;
-        script.Image.preserveAspect = true;
-        script.Description.text = blueprint.Description;
-        script.Command.text = blueprint.CommandRequirement.ToString();
-        script.Health.text = blueprint.Health.ToString();
-        script.Crew.text = blueprint.CrewRequirement.ToString();
-        script.Weight.text = blueprint.Weight.ToSiUnit("g");
-        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
-        script.Rof.text = blueprint.RateOfFire.ToString();
-        script.Ammo.text = blueprint.AmmoStorage.ToString();
-        script.DmgVsFlesh.text = blueprint.Damage.VsFlesh.ToString();
-        script.DmgVsHull.text = blueprint.Damage.VsHull.ToString();
-        script.DmgVsArmor.text = blueprint.Damage.VsArmor.ToString();
-        script.DmgVsShields.text = blueprint.Damage.VsShields.ToString();
-        script.Range.text = blueprint.Range.ToString();
-        script.Cost.text = blueprint.Cost.ToString();
-        script.Cost.text = blueprint.Cost.ToString();
-    }
-
-    #endregion
 
     public void Build()
     {

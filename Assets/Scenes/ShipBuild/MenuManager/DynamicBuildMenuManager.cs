@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scenes.ShipBuild.UI;
 using Assets.Utils;
+using Assets.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,24 +14,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         public GameObject LayoutGroup;
         public GameObject MenuPrefab;
         public GameObject TogglePrefab;
+        public GameObject DetailsPrefab;
 
         private MenuData _menuDatas;
         private Menu _menu;
 
-        private GameObject test;
-
-        private int _menuDepth;
-        private Vector3 _lastMenuPos;
-
         void Start()
         {
             _menuDatas = new MenuDataManager().Get();
-
-            _menu = GetMenu(LayoutGroup, _menuDatas);
+            _menu = GetMenu(LayoutGroup, _menuDatas, null);
         }
 
         void Update()
         {
+            //Do menu stuff
         }
 
         private Transform GetContentAreaTransform(GameObject o)
@@ -44,33 +44,15 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             return content.gameObject.transform;
         }
 
-        private Menu GetMenu(GameObject parent, MenuData md)
+        private Menu GetMenu(GameObject parent, MenuData md, ToggleData td)
         {
-            if (md is DetailsMenuData)
-            {
-                //Do some other shit
+            Menu m;
+            var data = md as DetailsMenuData;
 
-                return null;
-            }
-
-            Menu m = new Menu { GameObject = Instantiate(MenuPrefab, LayoutGroup.transform) };
-
-            if (parent.name == "Canvas")
-                m.GameObject.name = "Top Menu";
+            if (data == null)
+                m = ConfigureMenu(parent, md);
             else
-                m.GameObject.name = parent.name + " Menu";
-
-            var toggles = new List<MenuToggle>();
-            var content = GetContentAreaTransform(m.GameObject);
-            var group = content.gameObject.GetComponent<ToggleGroup>();
-
-            foreach (var toggle in md.MenuDatas)
-            {
-                //TODO: might need to futz with y positioning?
-                toggles.Add(ConfigureToggle(toggle, content, group));
-            }
-
-            m.MenuToggles = toggles;
+                m = ConfigureDetailView(td, data);
 
             return m;
         }
@@ -81,15 +63,93 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             {
                 GameObject = Instantiate(TogglePrefab)
             };
-            _menuDepth++;
+
             mt.GameObject.name = toggle.Text;
-            mt.Menu = GetMenu(mt.GameObject, toggle.ChildMenu);
+            mt.Menu = GetMenu(mt.GameObject, toggle.ChildMenu, toggle);
             mt.GameObject.transform.parent = content;
             mt.GameObject.GetComponent<Toggle>().group = group;
             mt.GameObject.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(toggle.Image);
             mt.GameObject.GetComponentInChildren<Text>().text = toggle.Text;
 
             return mt;
+        }
+
+        private Menu ConfigureMenu(GameObject parent, MenuData md)
+        {
+            Menu m = new Menu { GameObject = Instantiate(MenuPrefab, LayoutGroup.transform) };
+
+            if (parent.name == "Canvas")
+                m.GameObject.name = "Top Menu";
+            else
+                m.GameObject.name = parent.name + " Menu";
+
+            var content = GetContentAreaTransform(m.GameObject);
+            var group = content.gameObject.GetComponent<ToggleGroup>();
+            var toggles = md.MenuDatas.Select(toggle => ConfigureToggle(toggle, content, @group)).ToList();
+
+            m.MenuToggles = toggles;
+
+            return m;
+        }
+        private Menu ConfigureDetailView(ToggleData td, DetailsMenuData data)
+        {
+            Menu dm = new Menu { GameObject = Instantiate(DetailsPrefab, LayoutGroup.transform) };
+
+            var dv = dm.GameObject.GetComponent<DetailView>();
+            dv.Name.text = td.Text;
+            dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image);
+            dv.Description.text = data.Description;
+            dv.Cost.text = data.Cost.ToString();
+            dv.Health.text = data.Health.ToString();
+            dv.Weight.text = data.Weight.ToSiUnit("kg");
+            dv.Power.text = data.Power.ToSiUnit("W");
+            dv.Crew.text = data.Crew.ToString();
+            dv.Command.text = data.Command.ToString();
+
+            if (data is CommandModuleDetailsMenuData)
+                dv.CommandIcon.sprite = GraphicsUtils.GetSpriteFromPath("Ships/Control Centres Icon");
+
+            var height = dv.Description.preferredHeight;
+            dv.Description.gameObject.transform.parent.gameObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+
+            foreach (var d in data.DetailsFields)
+            {
+                var detailObj = dm.GameObject.GetComponent<DetailView>();
+                var qw = d as DetailsFieldQw;
+
+                if (qw == null)
+                {
+                    var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
+                    var hfInfo = obj.GetComponent<DetailViewHw>();
+
+                    hfInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon1);
+                    hfInfo.Text1.name = d.Name1;
+                    hfInfo.Text1.text = d.Value1;
+                    hfInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon2);
+                    hfInfo.Text2.name = d.Name2;
+                    hfInfo.Text2.text = d.Value2;
+                }
+                else
+                {
+                    var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
+                    var qwInfo = obj.GetComponent<DetailViewQw>();
+
+                    qwInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon1);
+                    qwInfo.Text1.name = qw.Name1;
+                    qwInfo.Text1.text = qw.Value1;
+                    qwInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon2);
+                    qwInfo.Text2.name = qw.Name2;
+                    qwInfo.Text2.text = qw.Value2;
+                    qwInfo.Icon3.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon3);
+                    qwInfo.Text3.name = qw.Name3;
+                    qwInfo.Text3.text = qw.Value3;
+                    qwInfo.Icon4.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon4);
+                    qwInfo.Text4.name = qw.Name4;
+                    qwInfo.Text4.text = qw.Value4;
+                }
+            }
+
+            return dm;
         }
     }
 }

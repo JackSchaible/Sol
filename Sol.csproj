@@ -323,11 +323,9 @@
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\ProjectileWeapons.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\SmallShip.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />

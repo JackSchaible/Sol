@@ -23,52 +23,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                                     new List<ToggleData>
                                     {
                                         new ToggleData("Ships/Control Centres/Small Ship/Basic Cockpit - Build", "Basic Cockpit", false, 
-                                            new DetailsMenuData
+                                            new CommandModuleDetailsMenuData
                                             (
-                                                new List<DetailsField>
-                                                {
-                                                    new DetailsField("Modules", "ShipBuild/Modules Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Life Support", "Ships/Life Support Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Personnel", "ShipBuild/Personnel Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Weight", "ShipBuild/Weight Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Power", "Ships/Power Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Cost", "Common/Currency Icon", DetailsField.DisplayWidths.Full),
-                                                }
-                                            )
-                                        )
-                                    }
-                                ),
-                                Modals.BuildMenu.CockpitModalData
-                            )
-                        }
-                    ), Modals.BuildMenu.CommandModulesModalData
-                ),
-
-                new ToggleData
-                (
-                    "Ships/Control Centres Icon", "Control Centres", true, new MenuData
-                    (
-                        new List<ToggleData>
-                        {
-                            new ToggleData
-                            (
-                                "Ships/Control Centres/Cockpits Icon", "Small Ships", true,
-                                new MenuData
-                                (
-                                    new List<ToggleData>
-                                    {
-                                        new ToggleData("Ships/Control Centres/Small Ship/Basic Cockpit - Build", "Basic Cockpit", false,
-                                            new DetailsMenuData
-                                            (
-                                                new List<DetailsField>
-                                                {
-                                                    new DetailsField("Modules", "ShipBuild/Modules Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Life Support", "Ships/Life Support Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Personnel", "ShipBuild/Personnel Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Weight", "ShipBuild/Weight Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Power", "Ships/Power Icon", DetailsField.DisplayWidths.Half),
-                                                    new DetailsField("Cost", "Common/Currency Icon", DetailsField.DisplayWidths.Full),
-                                                }
+                                                new List<DetailsField>(),
+                                                "A very basic cockpit, containing the essentials for flying a small ship; attitude, yaw, roll, and thruster control, as well as communications, life support, and basic navigation and targeting algorithms.",
+                                                25, 25, 500, 200, 8, 1
                                             )
                                         )
                                     }
