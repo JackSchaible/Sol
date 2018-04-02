@@ -23,11 +23,24 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             _menuDatas = new MenuDataManager().Get();
             _menu = GetMenu(LayoutGroup, _menuDatas, null);
+
+            foreach (var toggle in _menu.MenuToggles)
+                SetTreeActive(toggle.Menu, false);
         }
 
         void Update()
         {
-            //Do menu stuff
+            foreach (var toggle in _menu.MenuToggles)
+            {
+                if (toggle.GameObject.GetComponent<Toggle>().isOn)
+                {
+                    toggle.Menu.GameObject.SetActive(true);
+                }
+                else
+                {
+                    
+                }
+            }
         }
 
         private Transform GetContentAreaTransform(GameObject o)
@@ -43,7 +56,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             return content.gameObject.transform;
         }
-
         private Menu GetMenu(GameObject parent, MenuData md, ToggleData td)
         {
             Menu m;
@@ -56,36 +68,33 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             return m;
         }
-
         private MenuToggle ConfigureToggle(ToggleData toggle, Transform content, ToggleGroup group)
         {
             var mt = new MenuToggle
             {
-                GameObject = Instantiate(TogglePrefab)
+                GameObject = Instantiate(TogglePrefab, content)
             };
 
             mt.GameObject.name = toggle.Text;
             mt.Menu = GetMenu(mt.GameObject, toggle.ChildMenu, toggle);
-            mt.GameObject.transform.parent = content;
             mt.GameObject.GetComponent<Toggle>().group = group;
             mt.GameObject.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(toggle.Image);
             mt.GameObject.GetComponentInChildren<Text>().text = toggle.Text;
 
             return mt;
         }
-
         private Menu ConfigureMenu(GameObject parent, MenuData md)
         {
             Menu m = new Menu { GameObject = Instantiate(MenuPrefab, LayoutGroup.transform) };
 
-            if (parent.name == "Canvas")
+            if (parent.name == "Menus View")
                 m.GameObject.name = "Top Menu";
             else
                 m.GameObject.name = parent.name + " Menu";
 
             var content = GetContentAreaTransform(m.GameObject);
             var group = content.gameObject.GetComponent<ToggleGroup>();
-            var toggles = md.MenuDatas.Select(toggle => ConfigureToggle(toggle, content, @group)).ToList();
+            var toggles = md.MenuDatas.Select(toggle => ConfigureToggle(toggle, content, group)).ToList();
 
             m.MenuToggles = toggles;
 
@@ -150,6 +159,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             }
 
             return dm;
+        }
+        private void SetTreeActive(Menu m, bool active)
+        {
+            if (m == null)
+                return;
+
+            if (m.MenuToggles != null)
+                foreach (var toggle in m.MenuToggles)
+                {
+                    SetTreeActive(toggle.Menu, active);
+                    toggle.GameObject.SetActive(active);
+                }
+
+            m.GameObject.SetActive(active);
         }
     }
 }
