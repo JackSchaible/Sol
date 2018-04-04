@@ -1069,8 +1069,6 @@ MonoBehaviour:
   ModulesText: {fileID: 377438262}
   PowerText: {fileID: 1860672296}
   PeopleText: {fileID: 1477001408}
-  ControlCentresDetails: {fileID: 0}
-  ControlCentresToggle: {fileID: 0}
   Camera: {fileID: 491572714}
   DeckManager: {fileID: 594233524}
 --- !u!4 &842667963
@@ -1566,6 +1564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ac551249e8255240ad3baf6a3776907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UIManager: {fileID: 0}
   LayoutGroup: {fileID: 1914894917}
   MenuPrefab: {fileID: 1479383176811218, guid: 42533a0a096c5404bb703b299c02878d, type: 2}
   TogglePrefab: {fileID: 1355162620734430, guid: d6aab001dc6fa6e4ab6d4585e3230e41,
@@ -1826,7 +1825,7 @@ MonoBehaviour:
   m_Horizontal: 1
   m_Vertical: 0
   m_MovementType: 1
-  m_Elasticity: 0.1
+  m_Elasticity: 0
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1

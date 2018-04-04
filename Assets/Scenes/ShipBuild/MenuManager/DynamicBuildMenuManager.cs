@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scenes.ShipBuild.UI;
+using Assets.Ships;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 {
     public class DynamicBuildMenuManager : MonoBehaviour
     {
+        public ShipBuildUIManager UIManager;
+
         public GameObject LayoutGroup;
         public GameObject MenuPrefab;
         public GameObject TogglePrefab;
@@ -26,21 +29,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             foreach (var toggle in _menu.MenuToggles)
                 SetTreeActive(toggle.Menu, false);
+
         }
 
         void Update()
         {
+            if (_menu == null) return;
+
             foreach (var toggle in _menu.MenuToggles)
-            {
-                if (toggle.GameObject.GetComponent<Toggle>().isOn)
-                {
-                    toggle.Menu.GameObject.SetActive(true);
-                }
-                else
-                {
-                    
-                }
-            }
+                ToggleSubmenu(toggle);
+        }
+
+        public void BuildClicked(ModuleBlueprint blueprints)
+        {
+            
         }
 
         private Transform GetContentAreaTransform(GameObject o)
@@ -78,7 +80,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             mt.GameObject.name = toggle.Text;
             mt.Menu = GetMenu(mt.GameObject, toggle.ChildMenu, toggle);
             mt.GameObject.GetComponent<Toggle>().group = group;
-            mt.GameObject.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(toggle.Image);
+            mt.GameObject.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(toggle.Image, true);
             mt.GameObject.GetComponentInChildren<Text>().text = toggle.Text;
 
             return mt;
@@ -106,17 +108,26 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             var dv = dm.GameObject.GetComponent<DetailView>();
             dv.Name.text = td.Text;
-            dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image);
-            dv.Description.text = data.Description;
-            dv.Cost.text = data.Cost.ToString();
-            dv.Health.text = data.Health.ToString();
-            dv.Weight.text = data.Weight.ToSiUnit("kg");
-            dv.Power.text = data.Power.ToSiUnit("W");
-            dv.Crew.text = data.Crew.ToString();
-            dv.Command.text = data.Command.ToString();
+            dv.BuildButton.onClick.AddListener(() => BuildClicked(data.Blueprint));
+            dv.ModuleImage.preserveAspect = true;
+            dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
+            dv.Description.text = data.Blueprint.Description;
+            dv.Cost.text = data.Blueprint.Cost.ToString();
+            dv.Health.text = data.Blueprint.Health.ToString();
+            dv.Weight.text = data.Blueprint.Weight.ToSiUnit("g");
+            dv.Power.text = data.Blueprint.PowerConumption.ToSiUnit("W");
+            dv.Crew.text = data.Blueprint.CrewRequirement.ToString();
+            dv.Command.text = data.Blueprint.CommandRequirement.ToString();
 
             if (data is CommandModuleDetailsMenuData)
+            {
+                dv.CommandIcon.preserveAspect = true;
                 dv.CommandIcon.sprite = GraphicsUtils.GetSpriteFromPath("Ships/Control Centres Icon");
+                dv.Command.text = (data.Blueprint as CommandModuleBlueprint).CommandSupplied.ToString();
+
+                if (data.Blueprint is CockpitModuleBlueprint)
+                    dv.Crew.text = (data.Blueprint as CockpitModuleBlueprint).PersonnelHoused.ToString();
+            }
 
             var height = dv.Description.preferredHeight;
             dv.Description.gameObject.transform.parent.gameObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
@@ -131,9 +142,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
                     var hfInfo = obj.GetComponent<DetailViewHw>();
 
+                    hfInfo.Icon1.preserveAspect = true;
                     hfInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon1);
                     hfInfo.Text1.name = d.Name1;
                     hfInfo.Text1.text = d.Value1;
+                    hfInfo.Icon2.preserveAspect = true;
                     hfInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon2);
                     hfInfo.Text2.name = d.Name2;
                     hfInfo.Text2.text = d.Value2;
@@ -143,15 +156,19 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
                     var qwInfo = obj.GetComponent<DetailViewQw>();
 
+                    qwInfo.Icon1.preserveAspect = true;
                     qwInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon1);
                     qwInfo.Text1.name = qw.Name1;
                     qwInfo.Text1.text = qw.Value1;
+                    qwInfo.Icon2.preserveAspect = true;
                     qwInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon2);
                     qwInfo.Text2.name = qw.Name2;
                     qwInfo.Text2.text = qw.Value2;
+                    qwInfo.Icon3.preserveAspect = true;
                     qwInfo.Icon3.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon3);
                     qwInfo.Text3.name = qw.Name3;
                     qwInfo.Text3.text = qw.Value3;
+                    qwInfo.Icon4.preserveAspect = true;
                     qwInfo.Icon4.sprite = GraphicsUtils.GetSpriteFromPath(qw.Icon4);
                     qwInfo.Text4.name = qw.Name4;
                     qwInfo.Text4.text = qw.Value4;
@@ -174,5 +191,41 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             m.GameObject.SetActive(active);
         }
+        private void ToggleSubmenu(MenuToggle t)
+        {
+            var active = t.GameObject.GetComponent<Toggle>().isOn;
+            t.Menu.GameObject.SetActive(active);
+
+            if (t.Menu.MenuToggles == null) return;
+
+            foreach (var subtoggle in t.Menu.MenuToggles)
+            {
+                subtoggle.GameObject.SetActive(active);
+                ToggleSubmenu(subtoggle);
+            }
+        }
+
+        #region Modals
+
+        //TODO: Show these
+        public void ShowCommandModulePopup(Toggle t)
+        {
+            if (t.isOn)
+            {
+                //Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
+                //Modal.ShowModal();
+            }
+        }
+
+        public void ShowCockpitModulePopup(Toggle t)
+        {
+            if (t.isOn)
+            {
+                //Modal.Initialize(Modals.BuildMenu.CockpitModalData);
+                //Modal.ShowModal();
+            }
+        }
+
+        #endregion
     }
 }

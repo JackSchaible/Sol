@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class DetailView : MonoBehaviour
 {
     public Text Name;
+    public Button BuildButton;
     public Image ModuleImage;
     public Text Description;
     public Text Cost;

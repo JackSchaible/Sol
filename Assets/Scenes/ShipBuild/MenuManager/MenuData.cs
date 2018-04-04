@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Data;
+using Assets.Ships;
 
 namespace Assets.Scenes.ShipBuild.MenuManager
 {
@@ -34,32 +35,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
     internal class DetailsMenuData : MenuData
     {
         public List<DetailsField> DetailsFields { get; set; }
-        public string Description { get; set; }
-        public int Cost { get; set; }
-        public int Health { get; set; }
-        public int Weight { get; set; }
-        public int Power { get; set; }
-        public int Crew { get; set; }
-        public int Command { get; set; }
+        
+        public ModuleBlueprint Blueprint { get; set; }
 
-        public DetailsMenuData(List<DetailsField> detailsFields, string description, int cost, int health, int weight, int power, int crew, int command)
+        public DetailsMenuData(List<DetailsField> detailsFields, ModuleBlueprint blueprint)
             : base(null)
         {
             DetailsFields = detailsFields;
-            Description = description;
-            Cost = cost;
-            Health = health;
-            Weight = weight;
-            Power = power;
-            Crew = crew;
-            Command = command;
         }
     }
 
     internal class CommandModuleDetailsMenuData : DetailsMenuData
     {
-        public CommandModuleDetailsMenuData(List<DetailsField> detailsFields, string description, int cost, int health, int weight, int power, int crew, int command)
-            :base (detailsFields, description, cost, health, weight, power, crew, command) { }
+        public CommandModuleDetailsMenuData(List<DetailsField> detailsFields, CommandModuleBlueprint cmb)
+            :base (detailsFields, cmb) { }
     }
 
     internal class DetailsField

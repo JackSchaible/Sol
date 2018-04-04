@@ -4,12 +4,9 @@ using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Ships;
-using Assets.Utils;
-using Assets.Utils.Extensions;
 using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
-using Image = UnityEngine.UI.Image;
 using Toggle = UnityEngine.UI.Toggle;
 
 public class ShipBuildUIManager : MonoBehaviour
@@ -22,38 +19,19 @@ public class ShipBuildUIManager : MonoBehaviour
     public Text PowerText;
     public Text PeopleText;
 
-    public GameObject ControlCentresDetails;
-    public Toggle ControlCentresToggle;
-
     public Camera Camera;
 
     public DeckManager DeckManager;
 
-    private ModuleBlueprintsManager _blueprintsManager;
-    private ModuleBlueprint[] _blueprint;
-    private Dictionary<string, GameObject> _detailsViews;
-
-    private ModuleBlueprint _selected;
     /// <summary>
     /// A list of the active toggles and menu game objects in the tree, used to hide the menus when placing a module
     /// </summary>
-    private readonly List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
     private IntVector _previousPos;
 
     void Start()
     {
-        _blueprintsManager = new ModuleBlueprintsManager();
-        _blueprint = _blueprintsManager.Get();
-
-        _detailsViews = new Dictionary<string, GameObject>();
-        foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
-        {
-            _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
-            SetDetailsViewActive(view, false);
-        }
-
         Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
         Modal.ShowModal();
 
@@ -65,19 +43,6 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
         DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-    }
-
-    public void ModuleSelected(Toggle toggle)
-    {
-        if (toggle.isOn)
-        {
-            var toggleName = toggle.name.Replace(" Toggle", "");
-            var stats = _blueprint.First(x => x.Name == toggleName);
-            var view = _detailsViews[stats.ModuleSubtype];
-            
-            SetDetailsViewActive(view, toggle.isOn);
-            _selected = stats;
-        }
     }
 
     void Update()
@@ -123,7 +88,7 @@ public class ShipBuildUIManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             Destroy(_newModule.GameObject);
-            CancelPlaceMode();
+            _placeMode = false;
         }
 
         #region Rotate/Flip Controls
@@ -189,80 +154,22 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         Manager.AddModule(_newModule);
-        CancelPlaceMode();
-    }
-
-    private void CancelPlaceMode()
-    {
         _placeMode = false;
-
-        foreach (var obj in _activeObjects)
-            obj.SetActive(true);
     }
 
-    private static void SetDetailsViewActive(GameObject view, bool active)
-    {
-        var p1 = view.transform.parent;
-        if (p1 == null) return;
-        var p2 = p1.parent;
-        if (p2 == null) return;
-        var p3 = p2.parent;
-        if (p3 == null) return;
-        p3.gameObject.SetActive(active);
-    }
-
-    public void Build()
+    public void Build(ModuleBlueprint blueprint)
     {
         if (Manager.FirstModule == null)
         {
-            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
-            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
-
-            foreach (var obj in _activeObjects)
-                obj.SetActive(false);
-
-            _newModule = Module.Create(_selected);
+            _newModule = Module.Create(blueprint);
             _newModule.GameObject.transform.position = Vector3.zero;
 
-            if (_newModule.ModuleBlueprint is CockpitModuleBlueprint)
-                ControlCentresToggle.isOn = false;
-
             PlaceModule();
-            CancelPlaceMode();
+            _placeMode = false;
         }
         else
         {
-            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
-            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
-
-            foreach (var obj in _activeObjects)
-                obj.SetActive(false);
-
             _placeMode = true;
-            _newModule = Module.Create(_selected);
-        }
-    }
-
-    #endregion
-
-    #region Modals
-    public void ShowCommandModulePopup(Toggle t)
-    {
-        if (t.isOn)
-        {
-            Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
-            Modal.ShowModal();
-        }
-    }
-
-    public void ShowCockpitModulePopup(Toggle t)
-    {
-        if (t.isOn)
-        {
-            Modal.Initialize(Modals.BuildMenu.CockpitModalData);
-            Modal.ShowModal();
         }
     }
 
