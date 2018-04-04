@@ -40,11 +40,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 ToggleSubmenu(toggle);
         }
 
-        public void BuildClicked(ModuleBlueprint blueprints)
-        {
-            
-        }
-
         private Transform GetContentAreaTransform(GameObject o)
         {
             var scrollView = o.transform.GetChild(0);
@@ -108,7 +103,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             var dv = dm.GameObject.GetComponent<DetailView>();
             dv.Name.text = td.Text;
-            dv.BuildButton.onClick.AddListener(() => BuildClicked(data.Blueprint));
+            dv.BuildButton.onClick.AddListener(() => UIManager.Build(data.Blueprint));
             dv.ModuleImage.preserveAspect = true;
             dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
             dv.Description.text = data.Blueprint.Description;
@@ -204,6 +199,37 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 ToggleSubmenu(subtoggle);
             }
         }
+
+        #region Rules
+
+        public void ModulePlaced(ModuleBlueprint blueprint)
+        {
+            //Process rules
+            if (blueprint is CockpitModuleBlueprint)
+                ProcessCockpitRules();
+            else if (blueprint is CommandModuleBlueprint)
+                ProcessCommandModuleRules();
+        }
+
+        private void ProcessCommandModuleRules()
+        {
+            //3.a.ii.2) If a command module other than a cockpit module is placed, no cockpit modules may be placed.
+            var pt = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
+            var mt = pt.Menu.MenuToggles.First(x => x.GameObject.name == "Small Ships");
+            var t = mt.GameObject.GetComponent<Toggle>();
+            t.isOn = false;
+            t.enabled = false;
+        }
+        private void ProcessCockpitRules()
+        {
+            //3.a.ii.1) If a cockpit module is placed, no other command modules may be placed.
+            var mt = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
+            var t = mt.GameObject.GetComponent<Toggle>();
+            t.isOn = false;
+            t.enabled = false;
+        }
+
+        #endregion
 
         #region Modals
 

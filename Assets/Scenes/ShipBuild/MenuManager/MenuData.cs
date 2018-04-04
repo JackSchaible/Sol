@@ -35,13 +35,13 @@ namespace Assets.Scenes.ShipBuild.MenuManager
     internal class DetailsMenuData : MenuData
     {
         public List<DetailsField> DetailsFields { get; set; }
-        
         public ModuleBlueprint Blueprint { get; set; }
 
         public DetailsMenuData(List<DetailsField> detailsFields, ModuleBlueprint blueprint)
             : base(null)
         {
             DetailsFields = detailsFields;
+            Blueprint = blueprint;
         }
     }
 

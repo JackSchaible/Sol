@@ -3,17 +3,18 @@ using System.Linq;
 using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
+using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
 using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
-using Toggle = UnityEngine.UI.Toggle;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
     public Modal Modal;
 
-    public ShipBuildManager Manager;
+    public DynamicBuildMenuManager Menu;
+    public ShipBuildManager ShipBuildManager;
 
     public Text ModulesText;
     public Text PowerText;
@@ -47,17 +48,17 @@ public class ShipBuildUIManager : MonoBehaviour
 
     void Update()
     {
-        ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
-        PowerText.text = Manager.PowerUsed + " / " + Manager.PowerAvailable;
-        PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
+        ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
+        PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
+        PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
 
-        ModulesText.color = Manager.ControlUsed > Manager.ControlAvailable ?
+        ModulesText.color = ShipBuildManager.ControlUsed > ShipBuildManager.ControlAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
-        PowerText.color = Manager.PowerUsed > Manager.PowerAvailable ?
+        PowerText.color = ShipBuildManager.PowerUsed > ShipBuildManager.PowerAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
-        PeopleText.color = Manager.PersonnelUsed > Manager.PersonnelAvailable ?
+        PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
         UpdatePlace();
@@ -79,11 +80,9 @@ public class ShipBuildUIManager : MonoBehaviour
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
 
-        if (Manager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
-        {
-            //Module pos has changed, recalculate the placement viability
+        //Module pos has changed, recalculate the placement viability
+        if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
             IsPlacementValid();
-        }
 
         if (Input.GetKeyUp(KeyCode.Escape))
         {
@@ -135,14 +134,14 @@ public class ShipBuildUIManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && IsPlacementValid())
             PlaceModule();
 
-        if (Manager.FirstModule != null)
+        if (ShipBuildManager.FirstModule != null)
             _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-                Manager.FirstModule.GameObject.transform.position);
+                ShipBuildManager.FirstModule.GameObject.transform.position);
     }
 
     private bool IsPlacementValid()
     {
-        bool valid = Manager.IsPlacementValid(_newModule);
+        bool valid = ShipBuildManager.IsPlacementValid(_newModule);
 
         _newModule.GameObject.GetComponent<SpriteRenderer>().color =
             valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
@@ -153,24 +152,24 @@ public class ShipBuildUIManager : MonoBehaviour
     private void PlaceModule()
     {
         _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
-        Manager.AddModule(_newModule);
+        ShipBuildManager.AddModule(_newModule);
         _placeMode = false;
+        Menu.ModulePlaced(_newModule.ModuleBlueprint);
     }
 
     public void Build(ModuleBlueprint blueprint)
     {
-        if (Manager.FirstModule == null)
-        {
-            _newModule = Module.Create(blueprint);
-            _newModule.GameObject.transform.position = Vector3.zero;
+        _newModule = Module.Create(blueprint);
 
+        if (ShipBuildManager.FirstModule == null)
+        {
+            //Autoplace first modules at {0, 0}
+            _newModule.GameObject.transform.position = Vector3.zero;
             PlaceModule();
             _placeMode = false;
         }
         else
-        {
             _placeMode = true;
-        }
     }
 
     #endregion
