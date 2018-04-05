@@ -309,8 +309,7 @@
     <Compile Include="Assets\Common\AlphaHitbox.cs" />
     <Compile Include="Assets\Common\CameraManager.cs" />
     <Compile Include="Assets\Common\Modal.cs" />
-    <Compile Include="Assets\Common\Radial Menu\Option.cs" />
-    <Compile Include="Assets\Common\Radial Menu\RadialMenu.cs" />
+    <Compile Include="Assets\Common\UI\ToggleHighlighter.cs" />
     <Compile Include="Assets\Common\Utils\IntVector.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
     <Compile Include="Assets\Data\Modals.cs" />
@@ -323,11 +322,9 @@
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\BuildMenuToggle.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsView.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\ProjectileWeapons.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailsViews\SmallShip.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\UI\Submenu.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />

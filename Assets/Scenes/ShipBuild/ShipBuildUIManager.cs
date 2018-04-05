@@ -1,62 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
-using Assets.Scenes.ShipBuild.UI.DetailsViews;
+using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
-using Assets.Ships.Modules;
-using Assets.Utils;
-using Assets.Utils.Extensions;
 using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
-using Image = UnityEngine.UI.Image;
-using Toggle = UnityEngine.UI.Toggle;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
     public Modal Modal;
 
-    public ShipBuildManager Manager;
+    public DynamicBuildMenuManager Menu;
+    public ShipBuildManager ShipBuildManager;
 
     public Text ModulesText;
     public Text PowerText;
     public Text PeopleText;
 
-    public GameObject ControlCentresDetails;
-    public Toggle ControlCentresToggle;
-
     public Camera Camera;
 
     public DeckManager DeckManager;
 
-    private ModuleBlueprintsManager _blueprintsManager;
-    private ModuleBlueprint[] _blueprint;
-    private Dictionary<string, GameObject> _detailsViews;
-
-    private ModuleBlueprint _selected;
     /// <summary>
     /// A list of the active toggles and menu game objects in the tree, used to hide the menus when placing a module
     /// </summary>
-    private readonly List<GameObject> _activeObjects = new List<GameObject>();
     private bool _placeMode;
     private Module _newModule;
     private IntVector _previousPos;
 
     void Start()
     {
-        _blueprintsManager = new ModuleBlueprintsManager();
-        _blueprint = _blueprintsManager.Get();
-
-        _detailsViews = new Dictionary<string, GameObject>();
-        foreach (var view in GameObject.FindGameObjectsWithTag("Details View"))
-        {
-            _detailsViews.Add(view.name.Replace(" Details Content", ""), view);
-            SetDetailsViewActive(view, false);
-        }
-
         Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
         Modal.ShowModal();
 
@@ -70,33 +46,19 @@ public class ShipBuildUIManager : MonoBehaviour
         DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
     }
 
-    public void ModuleSelected(Toggle toggle)
-    {
-        if (toggle.isOn)
-        {
-            var toggleName = toggle.name.Replace(" Toggle", "");
-            var stats = _blueprint.First(x => x.Name == toggleName);
-            var view = _detailsViews[stats.ModuleSubtype];
-            
-            ConfigureModuleDetailsView(stats, view);
-            SetDetailsViewActive(view, toggle.isOn);
-            _selected = stats;
-        }
-    }
-
     void Update()
     {
-        ModulesText.text = Manager.ControlUsed + " / " + Manager.ControlAvailable;
-        PowerText.text = Manager.PowerUsed + " / " + Manager.PowerAvailable;
-        PeopleText.text = Manager.PersonnelUsed + " / " + Manager.PersonnelAvailable;
+        ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
+        PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
+        PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
 
-        ModulesText.color = Manager.ControlUsed > Manager.ControlAvailable ?
+        ModulesText.color = ShipBuildManager.ControlUsed > ShipBuildManager.ControlAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
-        PowerText.color = Manager.PowerUsed > Manager.PowerAvailable ?
+        PowerText.color = ShipBuildManager.PowerUsed > ShipBuildManager.PowerAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
-        PeopleText.color = Manager.PersonnelUsed > Manager.PersonnelAvailable ?
+        PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
         UpdatePlace();
@@ -118,16 +80,14 @@ public class ShipBuildUIManager : MonoBehaviour
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
 
-        if (Manager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
-        {
-            //Module pos has changed, recalculate the placement viability
+        //Module pos has changed, recalculate the placement viability
+        if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
             IsPlacementValid();
-        }
 
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             Destroy(_newModule.GameObject);
-            CancelPlaceMode();
+            _placeMode = false;
         }
 
         #region Rotate/Flip Controls
@@ -174,14 +134,14 @@ public class ShipBuildUIManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && IsPlacementValid())
             PlaceModule();
 
-        if (Manager.FirstModule != null)
+        if (ShipBuildManager.FirstModule != null)
             _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-                Manager.FirstModule.GameObject.transform.position);
+                ShipBuildManager.FirstModule.GameObject.transform.position);
     }
 
     private bool IsPlacementValid()
     {
-        bool valid = Manager.IsPlacementValid(_newModule);
+        bool valid = ShipBuildManager.IsPlacementValid(_newModule);
 
         _newModule.GameObject.GetComponent<SpriteRenderer>().color =
             valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
@@ -192,141 +152,24 @@ public class ShipBuildUIManager : MonoBehaviour
     private void PlaceModule()
     {
         _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
-        Manager.AddModule(_newModule);
-        CancelPlaceMode();
-    }
-
-    private void CancelPlaceMode()
-    {
+        ShipBuildManager.AddModule(_newModule);
         _placeMode = false;
-
-        foreach (var obj in _activeObjects)
-            obj.SetActive(true);
+        Menu.ModulePlaced(_newModule.ModuleBlueprint);
     }
 
-    private void ConfigureModuleDetailsView(ModuleBlueprint blueprint, GameObject view)
+    public void Build(ModuleBlueprint blueprint)
     {
-        switch (blueprint.ModuleSubtype)
+        _newModule = Module.Create(blueprint);
+
+        if (ShipBuildManager.FirstModule == null)
         {
-            case ControlCentreTypes.SmallShip:
-                BindSmallShipDetailsView((CommandModuleBlueprint)blueprint, view);
-                break;
-
-            case WeaponTypes.Projectile:
-                BindProjectileWeaponsView((WeaponBlueprint)blueprint, view);
-                break;
-        }
-    }
-
-    private static void SetDetailsViewActive(GameObject view, bool active)
-    {
-        var p1 = view.transform.parent;
-        if (p1 == null) return;
-        var p2 = p1.parent;
-        if (p2 == null) return;
-        var p3 = p2.parent;
-        if (p3 == null) return;
-        p3.gameObject.SetActive(active);
-    }
-
-    #region View Bindings
-    private void BindSmallShipDetailsView(CommandModuleBlueprint blueprint, GameObject view)
-    {
-        var script = view.GetComponent<SmallShip>();
-
-        script.Title.text = blueprint.Name;
-        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
-        script.Image.type = Image.Type.Simple;
-        script.Image.preserveAspect = true;
-        script.Description.text = blueprint.Description;
-        script.Command.text = blueprint.CommandSupplied.ToString();
-        script.Health.text = blueprint.Health.ToString();
-        script.Crew.text = blueprint.CrewRequirement.ToString();
-        script.Weight.text = blueprint.Weight.ToSiUnit("g");
-        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
-        script.Cost.text = blueprint.Cost.ToString();
-    }
-
-    private void BindProjectileWeaponsView(WeaponBlueprint blueprint, GameObject view)
-    {
-        var script = view.GetComponent<ProjectileWeapons>();
-
-        script.Title.text = blueprint.Name;
-        script.Image.sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
-        script.Image.type = Image.Type.Simple;
-        script.Image.preserveAspect = true;
-        script.Description.text = blueprint.Description;
-        script.Command.text = blueprint.CommandRequirement.ToString();
-        script.Health.text = blueprint.Health.ToString();
-        script.Crew.text = blueprint.CrewRequirement.ToString();
-        script.Weight.text = blueprint.Weight.ToSiUnit("g");
-        script.Power.text = blueprint.PowerConumption.ToSiUnit("W");
-        script.Rof.text = blueprint.RateOfFire.ToString();
-        script.Ammo.text = blueprint.AmmoStorage.ToString();
-        script.DmgVsFlesh.text = blueprint.Damage.VsFlesh.ToString();
-        script.DmgVsHull.text = blueprint.Damage.VsHull.ToString();
-        script.DmgVsArmor.text = blueprint.Damage.VsArmor.ToString();
-        script.DmgVsShields.text = blueprint.Damage.VsShields.ToString();
-        script.Range.text = blueprint.Range.ToString();
-        script.Cost.text = blueprint.Cost.ToString();
-        script.Cost.text = blueprint.Cost.ToString();
-    }
-
-    #endregion
-
-    public void Build()
-    {
-        if (Manager.FirstModule == null)
-        {
-            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
-            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
-
-            foreach (var obj in _activeObjects)
-                obj.SetActive(false);
-
-            _newModule = Module.Create(_selected);
+            //Autoplace first modules at {0, 0}
             _newModule.GameObject.transform.position = Vector3.zero;
-
-            if (_newModule.ModuleBlueprint is CockpitModuleBlueprint)
-                ControlCentresToggle.isOn = false;
-
             PlaceModule();
-            CancelPlaceMode();
+            _placeMode = false;
         }
         else
-        {
-            _activeObjects.Add(GameObject.FindGameObjectWithTag("Base Menu"));
-            _activeObjects.AddRange(GameObject.FindGameObjectsWithTag("Submenu"));
-            _activeObjects.Add(GameObject.FindGameObjectsWithTag("Details View").First().transform.parent.parent.parent.gameObject);
-
-            foreach (var obj in _activeObjects)
-                obj.SetActive(false);
-
             _placeMode = true;
-            _newModule = Module.Create(_selected);
-        }
-    }
-
-    #endregion
-
-    #region Modals
-    public void ShowCommandModulePopup(Toggle t)
-    {
-        if (t.isOn)
-        {
-            Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
-            Modal.ShowModal();
-        }
-    }
-
-    public void ShowCockpitModulePopup(Toggle t)
-    {
-        if (t.isOn)
-        {
-            Modal.Initialize(Modals.BuildMenu.CockpitModalData);
-            Modal.ShowModal();
-        }
     }
 
     #endregion

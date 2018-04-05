@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Common.Utils;
 using Assets.Scenes.ShipBuild;
@@ -125,6 +124,8 @@ public class ShipBuildManager : MonoBehaviour
 
     }
 
+    #region Rules
+
     public bool IsPlacementValid(Module newModule)
     {
         if (!Modules.Any()) return true;
@@ -132,17 +133,24 @@ public class ShipBuildManager : MonoBehaviour
         var valid = true;
         var pos = newModule.Position;
 
-        #region If is overlapping
+        if (valid)
+            valid = DoesModuleOverlap(newModule);
 
-        if (Modules.Any(
-            x => x.GameObject.transform.position.x == newModule.GameObject.transform.position.x &&
-                 x.GameObject.transform.position.y == newModule.GameObject.transform.position.y &&
-                 x.Position.Z == DeckManager.CurrentDeck))
-            return false;
+        if (valid)
+            valid = DoesModuleExistInExclusionSpace(pos);
 
-        #endregion
+        if (valid)
+            valid = DoesModuleConnect(newModule, pos);
 
-        #region Exclusion Vectors
+        return valid;
+    }
+
+    #region 1. Exclusion Vectors and Connectors
+    
+    //1.a. Modules may not be placed in the space defined by the exclusion vector of other modules
+    private bool DoesModuleExistInExclusionSpace(IntVector pos)
+    {
+        bool valid = true;
 
         foreach (var module in Modules)
         {
@@ -218,11 +226,13 @@ public class ShipBuildManager : MonoBehaviour
                 }
             }
         }
-        if (!valid) return false;
 
-        #endregion
-
-        #region Connectors
+        return valid;
+    }
+    //1.b. A new module must connect to a previously-placed module where the connector of the new module matches the location of any existing module
+    private bool DoesModuleConnect(Module newModule, IntVector pos)
+    {
+        bool valid = true;
 
         foreach (var connector in newModule.ModuleBlueprint.Connectors)
         {
@@ -302,12 +312,20 @@ public class ShipBuildManager : MonoBehaviour
                     break;
             }
         }
-        if (!valid) return false;
-
-        #endregion
-
-        //TODO: Miscellanious invalid conditions?
 
         return valid;
     }
+    //A module may not exist in the same space as another module
+    private bool DoesModuleOverlap(Module newModule)
+    {
+        //TODO: Replace with raycast
+        return !Modules.Any(
+            x => x.GameObject.transform.position.x == newModule.GameObject.transform.position.x &&
+                 x.GameObject.transform.position.y == newModule.GameObject.transform.position.y &&
+                 x.Position.Z == DeckManager.CurrentDeck);
+    }
+
+    #endregion
+
+    #endregion
 }
