@@ -37,7 +37,13 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             if (_menu == null) return;
 
             foreach (var toggle in _menu.MenuToggles)
-                ToggleSubmenu(toggle);
+            {
+
+                if (!toggle.GameObject.GetComponent<Toggle>().isOn)
+                    SetTreeActive(toggle.Menu, false);
+                else
+                    ToggleSubmenu(toggle);
+            }
         }
 
         private Transform GetContentAreaTransform(GameObject o)
@@ -148,7 +154,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 }
                 else
                 {
-                    var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
+                    var obj = Instantiate(detailObj.DetailsPrefabQuarterWidth, detailObj.DetailsArea.transform);
                     var qwInfo = obj.GetComponent<DetailViewQw>();
 
                     qwInfo.Icon1.preserveAspect = true;
@@ -226,7 +232,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             var mt = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
             var t = mt.GameObject.GetComponent<Toggle>();
             t.isOn = false;
-            t.enabled = false;
+            //t.enabled = false;
         }
 
         #endregion

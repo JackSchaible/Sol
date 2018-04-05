@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Assets.Utils
 {
@@ -6,10 +7,17 @@ namespace Assets.Utils
     {
         public static Sprite GetSpriteFromPath(string path, bool center = false)
         {
-            var texture = Resources.Load<Texture2D>(path);
-            var pivot = center ? new Vector2(0.5f, 0.5f) : Vector2.zero;
+            try
+            {
+                var texture = Resources.Load<Texture2D>(path);
+                var pivot = center ? new Vector2(0.5f, 0.5f) : Vector2.zero;
 
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, 1f);
+                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, 1f);
+            }
+            catch (NullReferenceException)
+            {
+                throw new Exception("File does not exist: " + path);
+            }
         }
     }
 }

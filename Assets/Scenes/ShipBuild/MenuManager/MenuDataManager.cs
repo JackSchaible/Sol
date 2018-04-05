@@ -97,7 +97,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             return new ToggleData
             (
-                "Ships/Weapons/Weapons Icon", "Weapons", true, new MenuData
+                "Ships/Weapons Icon", "Weapons", true, new MenuData
                 (
                     new List<ToggleData>
                     {
@@ -111,9 +111,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             Func<List<DetailsField>> getFields = () => new List<DetailsField>()
             {
-                new DetailsField("Rate of Fire", "Ship Build/Rate of Fire Icon", "", "Range", "Ship Build/Range Icon", ""),
-                new DetailsField("Ammo Storage", "Ship Build/Ammo Storage Icon", "", "Damage Radius", "Ship Build/Damage Radius Icon", ""),
-                new DetailsFieldQw("Damage vs Flesh", "Ship Build/Damage Vs Flesh Icon", "", "Damage vs Hull", "Ship Build/Damage Vs Hull Icon", "", "Damage vs Armor", "Ship Build/Damage Vs Armor Icon", "", "Damage vs Shields", "Ship Build/Damage Vs Shields Icon", "")
+                new DetailsField("Rate of Fire", "ShipBuild/Rate of Fire Icon", "", "Range", "ShipBuild/Range Icon", ""),
+                new DetailsField("Ammo Storage", "ShipBuild/Ammo Storage Icon", "", "Damage Radius", "ShipBuild/Splash Damage Icon", ""),
+                new DetailsFieldQw("Damage vs Flesh", "ShipBuild/Damage Vs Flesh Icon", "", "Damage vs Hull", "ShipBuild/Damage Vs Hull Icon", "", "Damage vs Armor", "ShipBuild/Damage Vs Armor Icon", "", "Damage vs Shields", "ShipBuild/Damage Vs Shields Icon", "")
             };
 
             WeaponBlueprint lmgbp = _blueprints.First(x => x.Name == "Light Machine Gun") as WeaponBlueprint;
