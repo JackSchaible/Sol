@@ -1064,14 +1064,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ac68c1dd5554642843946f5f039fe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Modal: {fileID: 2086298812}
   Menu: {fileID: 1419604328}
   ShipBuildManager: {fileID: 1507601628}
+  DeckManager: {fileID: 594233524}
+  Camera: {fileID: 491572714}
   ModulesText: {fileID: 377438262}
   PowerText: {fileID: 1860672296}
   PeopleText: {fileID: 1477001408}
-  Camera: {fileID: 491572714}
-  DeckManager: {fileID: 594233524}
+  Modal: {fileID: 2086298812}
 --- !u!4 &842667963
 Transform:
   m_ObjectHideFlags: 0
