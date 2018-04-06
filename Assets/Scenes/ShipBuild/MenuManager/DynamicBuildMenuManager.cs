@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Utils;
@@ -12,15 +10,24 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 {
     public class DynamicBuildMenuManager : MonoBehaviour
     {
+        #region Props & fields
+        
+        //Other GameObject managers
         public ShipBuildUIManager UIManager;
 
+        //Prefabs needed to display menus
         public GameObject LayoutGroup;
         public GameObject MenuPrefab;
         public GameObject TogglePrefab;
         public GameObject DetailsPrefab;
 
+        //The information to create the menus from, and the menu that was created
         private MenuData _menuDatas;
         private Menu _menu;
+
+        #endregion
+
+        #region Main methods
 
         void Start()
         {
@@ -30,6 +37,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             foreach (var toggle in _menu.MenuToggles)
                 SetTreeActive(toggle.Menu, false);
 
+            //TODO: Call this from here?
+            Initialize();
+        }
+
+        //TODO: Where to call this from?
+        public void Initialize()
+        {
+            //TODO: Where to get this from
+            var isNew = true;
+
+            if (isNew)
+                NewShipInitialization();
+            else
+                InitializeShip();
         }
 
         void Update()
@@ -46,6 +67,19 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             }
         }
 
+        #endregion
+
+        #region Helper methods
+
+        private void InitializeShip()
+        {
+
+        }
+        private void NewShipInitialization()
+        {
+            DisabledAllButCommand();
+            //TODO: Other initialization -- grab user prefs, show/hide tut modals accordingly
+        }
         private Transform GetContentAreaTransform(GameObject o)
         {
             var scrollView = o.transform.GetChild(0);
@@ -206,6 +240,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             }
         }
 
+        #endregion
+
         #region Rules
 
         public void ModulePlaced(ModuleBlueprint blueprint)
@@ -219,6 +255,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
         private void ProcessCommandModuleRules()
         {
+            EnableAllButCommand();
+
             //3.a.ii.2) If a command module other than a cockpit module is placed, no cockpit modules may be placed.
             var pt = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
             var mt = pt.Menu.MenuToggles.First(x => x.GameObject.name == "Small Ships");
@@ -229,10 +267,38 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         private void ProcessCockpitRules()
         {
             //3.a.ii.1) If a cockpit module is placed, no other command modules may be placed.
+            EnableAllButCommand();
+
             var mt = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
-            var t = mt.GameObject.GetComponent<Toggle>();
-            t.isOn = false;
-            //t.enabled = false;
+            var cct = mt.GameObject.GetComponent<Toggle>();
+            cct.interactable = false;
+            cct.isOn = false;
+        }
+        private void EnableAllButCommand()
+        {
+            var gos = _menu.MenuToggles.Where(x => x.GameObject.name != "Control Centres").ToArray();
+            for (var i = 0; i < gos.Count(); i++)
+            {
+                var t = gos[i].GameObject.GetComponent<Toggle>();
+                t.interactable = true;
+                t.isOn = i == 0;
+            }
+        }
+
+        private void DisabledAllButCommand()
+        {
+            //3.n) First module on a new ship must be a command module
+            var toggles = _menu.MenuToggles.Where(x => x.GameObject.name != "Control Centres");
+
+            foreach (var go in toggles)
+            {
+                var t = go.GameObject.GetComponent<Toggle>();
+                t.interactable = false;
+                t.isOn = false;
+            }
+
+            var cct = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
+            cct.GameObject.GetComponent<Toggle>().isOn = true;
         }
 
         #endregion

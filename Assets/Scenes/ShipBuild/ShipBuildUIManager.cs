@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Assets.Common.Utils;
+﻿using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
@@ -11,25 +9,28 @@ using UnityEngine.UI;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
-    public Modal Modal;
-
+    #region Props & fields
+    //Other GameObject Manager
     public DynamicBuildMenuManager Menu;
     public ShipBuildManager ShipBuildManager;
+    public DeckManager DeckManager;
 
+    //Reference to the scene's main camera (used for the transformation matrix)
+    public Camera Camera;
+
+    //UI Elements needing to be updates
     public Text ModulesText;
     public Text PowerText;
     public Text PeopleText;
+    public Modal Modal;
 
-    public Camera Camera;
-
-    public DeckManager DeckManager;
-
-    /// <summary>
-    /// A list of the active toggles and menu game objects in the tree, used to hide the menus when placing a module
-    /// </summary>
+    //Internal state-tracking variables
     private bool _placeMode;
     private Module _newModule;
     private IntVector _previousPos;
+    #endregion
+
+    #region Main methods
 
     void Start()
     {
@@ -38,12 +39,6 @@ public class ShipBuildUIManager : MonoBehaviour
 
         //TODO: Only run this if ship is new
         NewShipInitialization();
-    }
-
-    private void NewShipInitialization()
-    {
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
     }
 
     void Update()
@@ -64,8 +59,28 @@ public class ShipBuildUIManager : MonoBehaviour
         UpdatePlace();
     }
 
+    #endregion
+
+    #region Helper methods
+
+    /// <summary>
+    /// Preform any initialization needed when this scene is loaded to make a new ship 
+    /// (i.e., one that doesn't already exist)
+    /// </summary>
+    private void NewShipInitialization()
+    {
+        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+    }
+
+    #endregion
+
     #region Place Mode
 
+    /// <summary>
+    /// Handles moving the new module sprite around the screen, locking it to the 50*50 pixel grid,
+    /// and handling the controls (Escape, R/LCTRL+R, T/LCTRL+T, LMB Click)
+    /// </summary>
     private void UpdatePlace()
     {
         if (!_placeMode) return;
@@ -139,6 +154,11 @@ public class ShipBuildUIManager : MonoBehaviour
                 ShipBuildManager.FirstModule.GameObject.transform.position);
     }
 
+    /// <summary>
+    /// Updates the color of the module and disables placement if the ShipBuildManager says the
+    /// placement isn't valid
+    /// </summary>
+    /// <returns></returns>
     private bool IsPlacementValid()
     {
         bool valid = ShipBuildManager.IsPlacementValid(_newModule);
@@ -149,6 +169,10 @@ public class ShipBuildUIManager : MonoBehaviour
         return valid;
     }
 
+    /// <summary>
+    /// Handles the moving of the build sprite to the UI BG layer, and notifies the 
+    /// ShipBuildManager to add a new module to the ship
+    /// </summary>
     private void PlaceModule()
     {
         _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
@@ -157,6 +181,12 @@ public class ShipBuildUIManager : MonoBehaviour
         Menu.ModulePlaced(_newModule.ModuleBlueprint);
     }
 
+    /// <summary>
+    /// An external event called by the DynamicBuildMenuManager when the build button of
+    /// a module details description is clicked. Enabled the place mode, and creates a 
+    /// new sprite of whatever module was clicked on.
+    /// </summary>
+    /// <param name="blueprint">The blueprint to build</param>
     public void Build(ModuleBlueprint blueprint)
     {
         _newModule = Module.Create(blueprint);
