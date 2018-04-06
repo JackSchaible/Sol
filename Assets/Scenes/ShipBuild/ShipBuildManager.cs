@@ -28,12 +28,16 @@ public class ShipBuildManager : MonoBehaviour
 
     private List<Toggle> _firstLevelToggles;
 
-    void Start()
+    void Awake()
     {
         Modules = new List<Module>();
         HasCommandModule = false;
 
         _firstLevelToggles = new List<Toggle>();
+    }
+
+    void Start()
+    {
         var gos = GameObject.FindGameObjectsWithTag("First-Level Menu Button");
         foreach (var go in gos)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Data;
 using Assets.Ships;
+using Assets.Ships.Modules.Miscellanious;
 
 namespace Assets.Scenes.ShipBuild.MenuManager
 {
@@ -17,7 +18,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             return new MenuData(new List<ToggleData>
             {
                 GetCommandCentres(),
-                GetWeapons()
+                GetWeapons(),
+                GetMiscellanious()
             });
         }
 
@@ -134,6 +136,51 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 {
                     lmg
                 })
+            );
+        }
+
+        #endregion
+
+        #region Miscellanious
+
+        private ToggleData GetMiscellanious()
+        {
+            return new ToggleData
+            (
+                "Ships/Misc Icon", "Miscellanious", true, new MenuData
+                (
+                    new List<ToggleData>
+                    {
+                        GetDecorative()
+                    }
+                )
+            );
+        }
+        private ToggleData GetDecorative()
+        {
+            var cockpits = new List<ToggleData>
+            {
+                new ToggleData("Ships/Miscellanious/Decorative/Panel - Build",
+                    "Panel", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "Panel") as DecorativeModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Decorative/Crossbeam Connector - Build",
+                    "Crossbeam Connector", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "Crossbeam Connector") as DecorativeModuleBlueprint
+                    )
+                ),
+            };
+
+            return new ToggleData
+            (
+                "Ships/Miscellanious/Decorative Icon", "Decorative", true, new MenuData(cockpits)
             );
         }
 

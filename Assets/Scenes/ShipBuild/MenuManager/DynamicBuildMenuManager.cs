@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Utils;
 using Assets.Utils.Extensions;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +29,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         private MenuData _menuDatas;
         private Menu _menu;
 
+        //Constants
+        private Color _fade = new Color(1, 1, 1, 0.3f);
+        private Color _normal = new Color(1, 1, 1, 1);
+        private List<GameObject> fadedObjs;
+
         #endregion
 
         #region Main methods
@@ -39,6 +48,13 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             //TODO: Call this from here?
             Initialize();
+
+            //TODO: for testing only
+            var cc = _menuDatas.MenuDatas
+                .First(x => x.Text == "Control Centres");
+            var ss = cc.ChildMenu.MenuDatas.First(x => x.Text == "Small Ships");
+            var cp = ss.ChildMenu.MenuDatas.First(x => x.Text == "Basic Cockpit");
+           // UIManager.Build((cp.ChildMenu as CommandModuleDetailsMenuData).Blueprint as CockpitModuleBlueprint);
         }
 
         //TODO: Where to call this from?
@@ -143,7 +159,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             var dv = dm.GameObject.GetComponent<DetailView>();
             dv.Name.text = td.Text;
-            dv.BuildButton.onClick.AddListener(() => UIManager.Build(data.Blueprint));
+            dv.BuildButton.onClick.AddListener(() => OnBuild(data.Blueprint));
             dv.ModuleImage.preserveAspect = true;
             dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
             dv.Description.text = data.Blueprint.Description;
@@ -239,19 +255,100 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 ToggleSubmenu(subtoggle);
             }
         }
+        private void SetMenuToPlaceMode(Color c, Menu menu)
+        {
+            if (c == _fade)
+                fadedObjs = GetMenuToPlaceMode(menu);
+
+            foreach (var obj in fadedObjs)
+            {
+                var img = obj.GetComponent<Image>();
+                if (img != null)
+                    img.color = c;
+
+                var text = obj.GetComponent<Text>();
+                if (text != null)
+                    text.color = c;
+
+                var toggle = obj.GetComponent<Toggle>();
+                if (toggle != null)
+                    toggle.interactable = c == _normal;
+
+                var scroll = obj.GetComponent<ScrollRect>();
+                if (scroll != null)
+                    scroll.scrollSensitivity = c == _fade ? 0 : 10;
+
+                var button = obj.GetComponent<Button>();
+                if (button != null)
+                    button.interactable = c == _normal;
+            }
+        }
+        private List<GameObject> GetChildrenMenuToPlaceMode(GameObject m)
+        {
+            var dv = m.GetComponent<DetailView>();
+
+            var images = m.GetComponentsInChildren<Image>().ToList();
+            var texts = m.GetComponentsInChildren<Text>().ToList();
+            var scrolls = dv.GetComponentsInChildren<ScrollRect>().ToList();
+
+            images.AddRange(dv.GetComponentsInChildren<Image>().ToList());
+            texts.AddRange(dv.GetComponentsInChildren<Text>().ToList());
+
+            var r = images.Select(x => x.gameObject).ToList();
+            r.AddRange(texts.Select(x => x.gameObject));
+            r.AddRange(scrolls.Select(x => x.gameObject));
+            r.Add(dv.BuildButton.gameObject);
+            return r;
+        }
+        private List<GameObject> GetMenuToPlaceMode(Menu m)
+        {
+            var gos = new List<GameObject>();
+
+            if (m.MenuToggles == null)
+            {
+                gos.AddRange(GetChildrenMenuToPlaceMode(m.GameObject));
+                return gos;
+            }
+
+            gos.Add(m.GameObject);
+
+            foreach (var mt in m.MenuToggles)
+            {
+                gos.Add(mt.GameObject);
+                gos.AddRange(GetMenuToPlaceMode(mt.Menu));
+            }
+
+            return gos;
+        }
 
         #endregion
 
-        #region Rules
+        #region Events
+
+        private void OnBuild(ModuleBlueprint blueprint)
+        {
+            SetMenuToPlaceMode(_fade, _menu);
+            UIManager.Build(blueprint);
+        }
 
         public void ModulePlaced(ModuleBlueprint blueprint)
         {
+            SetMenuToPlaceMode(_normal, _menu);
             //Process rules
             if (blueprint is CockpitModuleBlueprint)
                 ProcessCockpitRules();
             else if (blueprint is CommandModuleBlueprint)
                 ProcessCommandModuleRules();
         }
+
+        public void PlaceCancelled()
+        {
+            SetMenuToPlaceMode(_normal, _menu);
+        }
+
+        #endregion
+
+        #region Rules
 
         private void ProcessCommandModuleRules()
         {
@@ -284,7 +381,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 t.isOn = i == 0;
             }
         }
-
         private void DisabledAllButCommand()
         {
             //3.n) First module on a new ship must be a command module

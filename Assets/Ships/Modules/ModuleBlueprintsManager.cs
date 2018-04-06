@@ -2,7 +2,6 @@
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Miscellanious;
 using Assets.Ships.Weapons;
-using UnityEngine;
 
 namespace Assets.Ships
 {
@@ -72,7 +71,8 @@ namespace Assets.Ships
                 #region Miscellanious
 
                 #region Decorative Modules
-                new DecorativeModuleBlueprint("Panel", "Panel", "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.", 0, 0, 0, new ConnectorPosition[]
+
+                new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Panel - Build", "Panel", "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.", 0, 0, 0, new ConnectorPosition[]
                 {
                     new ConnectorPosition(ConnectorPositions.Backward),
                     new ConnectorPosition(ConnectorPositions.Left),
@@ -82,6 +82,14 @@ namespace Assets.Ships
                     new ConnectorPosition(ConnectorPositions.Up)
                 },
                 new ExclusionVectors[]{}),
+
+                new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Crossbeam Connector - Build", "Crossbeam Connector", "A basic connector. Provides no armor or hull. Holds pieces of your ship together on the top or bottom.", 0, 0, 0, new ConnectorPosition[]
+                {
+                    new ConnectorPosition(ConnectorPositions.Down),
+                    new ConnectorPosition(ConnectorPositions.Up)
+                },
+                new ExclusionVectors[]{}),
+
                 #endregion
 
                 #endregion

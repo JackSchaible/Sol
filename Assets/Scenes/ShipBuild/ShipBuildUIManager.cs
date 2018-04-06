@@ -103,6 +103,7 @@ public class ShipBuildUIManager : MonoBehaviour
         {
             Destroy(_newModule.GameObject);
             _placeMode = false;
+            Menu.PlaceCancelled();
         }
 
         #region Rotate/Flip Controls
@@ -175,7 +176,6 @@ public class ShipBuildUIManager : MonoBehaviour
     /// </summary>
     private void PlaceModule()
     {
-        _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         ShipBuildManager.AddModule(_newModule);
         _placeMode = false;
         Menu.ModulePlaced(_newModule.ModuleBlueprint);
@@ -190,13 +190,15 @@ public class ShipBuildUIManager : MonoBehaviour
     public void Build(ModuleBlueprint blueprint)
     {
         _newModule = Module.Create(blueprint);
+        var sprite = _newModule.GameObject.GetComponent<SpriteRenderer>();
+        sprite.sortingLayerName = "UI BG";
+        sprite.sortingOrder = DeckManager.CurrentDeck;
 
         if (ShipBuildManager.FirstModule == null)
         {
             //Autoplace first modules at {0, 0}
             _newModule.GameObject.transform.position = Vector3.zero;
             PlaceModule();
-            _placeMode = false;
         }
         else
             _placeMode = true;
