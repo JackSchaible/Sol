@@ -1,4 +1,6 @@
-﻿using Assets.Ships.Modules;
+﻿using System.Collections.Generic;
+using Assets.Common.Utils;
+using Assets.Ships.Modules;
 
 namespace Assets.Ships
 {
@@ -12,10 +14,10 @@ namespace Assets.Ships
             
         }
 
-        public CommandModuleBlueprint(string moduleType, string buildSprite, string name, string description, 
-            int health, int weight, int cost, ConnectorPosition[] connectors, ExclusionVectors[] exclusionVectors,
-            int crewRequirement, int powerConumption, int commandSupplied)
-            : base(ModuleTypes.ControlCentre, moduleType, buildSprite, name, description, health, weight, cost,
+        public CommandModuleBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name,
+            string description, int health, int weight, int cost, ConnectorPosition[] connectors,
+            ExclusionVectors[] exclusionVectors, int crewRequirement, int powerConumption, int commandSupplied)
+            : base(ModuleTypes.ControlCentre, moduleType, buildSprite, space, name, description, health, weight, cost,
                 connectors, exclusionVectors, crewRequirement, powerConumption, 0)
         {
             CommandSupplied = commandSupplied;

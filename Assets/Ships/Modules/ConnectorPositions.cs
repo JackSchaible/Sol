@@ -1,4 +1,6 @@
-﻿using Assets.Common.Utils;
+﻿using System;
+using System.Threading;
+using Assets.Common.Utils;
 
 namespace Assets.Ships.Modules
 {
@@ -13,11 +15,22 @@ namespace Assets.Ships.Modules
         /// Where in the module does this connector sit?
         /// <value>{0, 0, 0} by default</value>
         /// </summary>
-        public IntVector Position { get; set; }
+        public IntVector Position
+        {
+            get
+            {
+                if (_pos == null)
+                    _pos = IntVector.Zero;
+
+                return _pos;
+            }
+            set { _pos = value; }
+        }
+        private IntVector _pos;
 
         public ConnectorPosition()
         {
-            
+            Position = IntVector.Zero;
         }
 
         public ConnectorPosition(ConnectorPositions direction, IntVector position = null)
@@ -25,6 +38,37 @@ namespace Assets.Ships.Modules
             Direction = direction;
 
             Position = position ?? IntVector.Zero;
+        }
+
+        public static ConnectorPositions GetOpposite(ConnectorPositions direction)
+        {
+            ConnectorPositions r;
+
+            switch (direction)
+            {
+                case ConnectorPositions.Up:
+                    r = ConnectorPositions.Down;
+                    break;
+                case ConnectorPositions.Right:
+                    r = ConnectorPositions.Left;
+                    break;
+                case ConnectorPositions.Down:
+                    r = ConnectorPositions.Up;
+                    break;
+                case ConnectorPositions.Left:
+                    r = ConnectorPositions.Right;
+                    break;
+                case ConnectorPositions.Forward:
+                    r = ConnectorPositions.Backward;
+                    break;
+                case ConnectorPositions.Backward:
+                    r = ConnectorPositions.Forward;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return r;
         }
     }
 

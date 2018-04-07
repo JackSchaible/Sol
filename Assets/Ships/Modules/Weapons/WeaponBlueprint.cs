@@ -1,4 +1,6 @@
-﻿using Assets.Ships.Modules;
+﻿using System.Collections.Generic;
+using Assets.Common.Utils;
+using Assets.Ships.Modules;
 using Assets.Ships.Weapons;
 
 namespace Assets.Ships
@@ -17,11 +19,11 @@ namespace Assets.Ships
 
         }
 
-        public WeaponBlueprint(string moduleType, string buildSprite, string name, string description, int weight,
-            int cost, ConnectorPosition[] connectors, ExclusionVectors[] exclusionVectors, int crewRequirement,
-            int powerConumption, int commandRequirement, int rateOfFire, WeaponDamage damage, int range, int ammoStorage,
-            int damageRadius)
-            : base(ModuleTypes.Weapon, moduleType, buildSprite, name, description, 10, weight, cost,
+        public WeaponBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name, 
+            string description, int weight, int cost, ConnectorPosition[] connectors, 
+            ExclusionVectors[] exclusionVectors, int crewRequirement, int powerConumption, int commandRequirement,
+            int rateOfFire, WeaponDamage damage, int range, int ammoStorage, int damageRadius)
+            : base(ModuleTypes.Weapon, moduleType, buildSprite, space, name, description, 10, weight, cost,
                   connectors, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
         {
             RateOfFire = rateOfFire;

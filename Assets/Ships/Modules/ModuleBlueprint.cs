@@ -1,4 +1,6 @@
-﻿using Assets.Ships.Modules;
+﻿using System.Collections.Generic;
+using Assets.Common.Utils;
+using Assets.Ships.Modules;
 
 namespace Assets.Ships
 {
@@ -7,13 +9,13 @@ namespace Assets.Ships
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
         public string BuildSprite { get; set; }
+        public List<IntVector> Space { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Health { get; set; }
         public int Weight { get; set; }
         public int Cost { get; set; }
         public ConnectorPosition[] Connectors { get; set; }
-        public bool[] ConnectorIsMandatory { get; set; }
         public ExclusionVectors[] ExclusionVectors { get; set; }
         public int CrewRequirement { get; set; }
         public int PowerConumption { get; set; }
@@ -25,13 +27,15 @@ namespace Assets.Ships
 
         }
 
-        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite, string name,
-            string description, int health, int weight, int cost, ConnectorPosition[] connectors, 
-            ExclusionVectors[] exclusionVectors, int crewRequirement, int powerConumption, int commandRequirement)
+        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite, 
+            List<IntVector> space, string name, string description, int health, int weight, int cost,
+            ConnectorPosition[] connectors, ExclusionVectors[] exclusionVectors,
+            int crewRequirement, int powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;
             BuildSprite = buildSprite;
+            Space = space;
             Name = name;
             Description = description;
             Health = health;

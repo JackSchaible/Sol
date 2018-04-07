@@ -1,4 +1,5 @@
-﻿using Assets.Ships.Modules;
+﻿using System;
+using Assets.Ships.Modules;
 using UnityEngine;
 
 namespace Assets.Common.Utils
@@ -9,12 +10,33 @@ namespace Assets.Common.Utils
 
         #region Static Properties
 
+        /// <summary>
+        /// {0, 0, 0}
+        /// </summary>
         public static IntVector Zero = new IntVector(0, 0, 0);
+        /// <summary>
+        /// {-1, 0, 0}
+        /// </summary>
         public static IntVector Left = new IntVector(-1, 0, 0);
+        /// <summary>
+        /// {1, 0, 0}
+        /// </summary>
         public static IntVector Right = new IntVector(1, 0, 0);
-        public static IntVector Up = new IntVector(0, -1, 0);
-        public static IntVector Down = new IntVector(0, 1, 0);
+        /// <summary>
+        /// {0, 1, 0}
+        /// </summary>
+        public static IntVector Up = new IntVector(0, 1, 0);
+        /// <summary>
+        /// {0, -1, 0}
+        /// </summary>
+        public static IntVector Down = new IntVector(0, -1, 0);
+        /// <summary>
+        /// {0, 0, -1}
+        /// </summary>
         public static IntVector Backward = new IntVector(0, 0, -1);
+        /// <summary>
+        /// {0, 0, 1}
+        /// </summary>
         public static IntVector Forward = new IntVector(0, 0, 1);
 
         #endregion
@@ -69,7 +91,7 @@ namespace Assets.Common.Utils
         /// <returns>The IntVector represented by the difference in Vector3's</returns>
         public static IntVector GetRelativeVector(Vector3 a, Vector3 b)
         {
-            return new IntVector((int)((b.x - a.x) / 50), (int)((b.y - a.y) / 50), (int)((b.z - a.z) / 50));
+            return new IntVector((int)((b.x - a.x) / 50), (int)((b.y - a.y) / 50), (int)(b.z - a.z));
         }
 
         #endregion
@@ -125,6 +147,32 @@ namespace Assets.Common.Utils
         public bool DoesExclusionVectorBlock(ExclusionVectors ev, IntVector other)
         {
             return false;
+        }
+
+        public IntVector Adjust(ConnectorPositions cp)
+        {
+            switch (cp)
+            {
+                case ConnectorPositions.Up:
+                    return new IntVector(X, Y + 1, Z);
+
+                case ConnectorPositions.Right:
+                    return new IntVector(X + 1, Y, Z);
+
+                case ConnectorPositions.Down:
+                    return new IntVector(X, Y - 1, Z);
+
+                case ConnectorPositions.Left:
+                    return new IntVector(X - 1, Y, Z);
+
+                case ConnectorPositions.Forward:
+                    return new IntVector(X, Y, Z + 1);
+
+                case ConnectorPositions.Backward:
+                    return new IntVector(X, Y, Z - 1);
+            }
+
+            return this;
         }
 
         #endregion

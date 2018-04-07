@@ -1,4 +1,6 @@
-﻿using Assets.Ships.Modules;
+﻿using System.Collections.Generic;
+using Assets.Common.Utils;
+using Assets.Ships.Modules;
 
 namespace Assets.Ships
 {
@@ -11,11 +13,11 @@ namespace Assets.Ships
             
         }
 
-        public CockpitModuleBlueprint(string moduleType, string buildSprite, string name, string description,
-            int health, int weight, int cost, ConnectorPosition[] connectors, int crewRequirement, int powerConumption,
-            int personnelHoused, int commandSupplied)
-            : base(moduleType, buildSprite, name, description, health, weight, cost, connectors,
-                  new []{ Modules.ExclusionVectors.PlaneAndAbove }, crewRequirement, powerConumption, commandSupplied)
+        public CockpitModuleBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name,
+            string description, int health, int weight, int cost, ConnectorPosition[] connectors, int crewRequirement,
+            int powerConumption, int personnelHoused, int commandSupplied)
+            : base(moduleType, buildSprite, space, name, description, health, weight, cost, connectors,
+                  new []{ Modules.ExclusionVectors.PlaneAndForward }, crewRequirement, powerConumption, commandSupplied)
         {
             PersonnelHoused = personnelHoused;
         }

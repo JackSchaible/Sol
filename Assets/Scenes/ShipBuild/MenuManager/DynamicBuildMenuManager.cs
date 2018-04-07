@@ -54,7 +54,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 .First(x => x.Text == "Control Centres");
             var ss = cc.ChildMenu.MenuDatas.First(x => x.Text == "Small Ships");
             var cp = ss.ChildMenu.MenuDatas.First(x => x.Text == "Basic Cockpit");
-           // UIManager.Build((cp.ChildMenu as CommandModuleDetailsMenuData).Blueprint as CockpitModuleBlueprint);
+            OnBuild((cp.ChildMenu as CommandModuleDetailsMenuData).Blueprint as CockpitModuleBlueprint);
         }
 
         //TODO: Where to call this from?
