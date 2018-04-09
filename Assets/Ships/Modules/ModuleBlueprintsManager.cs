@@ -82,13 +82,14 @@ namespace Assets.Ships
                     {
                         IntVector.Zero, IntVector.Up, new IntVector(1, 1, 0),new IntVector(2, 1, 0),new IntVector(3, 1, 0),
                         IntVector.Right, new IntVector(2, 0, 0), new IntVector(3, 1, 0)
-                    }, "Heavy Machine Gun",
-                    "A heavier machine gun boasting higher damage at the cost of power consumption, ammo storage, rate of fire, and accuracy.",
-                    400, 20, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
+                    }, "Amber Quarantine Gun",
+                    "A gun that fires a projectile which erupts with an inert gas, covering but not harming a 10-m radius with a thick smog. After 5s, the smog solidifies into a substance harder than steel.",
+                    1750, 85, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[]
                     {
-                        new ExclusionVector(new []{ExclusionVectorDirections.RightLine})
-                    }, 0, 400, 1, 3000, new WeaponDamage(3, 3, 2, 1), 1000, 6800, 1),
+                        new ExclusionVector(new []{ExclusionVectorDirections.RightLine}),
+                        new ExclusionVector(new []{ExclusionVectorDirections.RightLine}, IntVector.Up)
+                    }, 8, 4000, 6, 1500, new WeaponDamage(0, 0, 0, 0), 2000, 3500, 10),
                 #endregion
 
                 #endregion

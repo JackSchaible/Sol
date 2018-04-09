@@ -130,11 +130,37 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             ((lmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = lmgbp.Damage.VsArmor.ToString();
             ((lmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = lmgbp.Damage.VsShields.ToString();
 
+            WeaponBlueprint hmgbp = _blueprints.First(x => x.Name == "Heavy Machine Gun") as WeaponBlueprint;
+            var hmg = new ToggleData("Ships/Weapons/Projectiles/HMG - Build",
+                "Heavy Machine Gun", false, new DetailsMenuData(getFields(), hmgbp));
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = hmgbp.RateOfFire.ToString();
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = hmgbp.Range.ToString();
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = hmgbp.AmmoStorage.ToString();
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value2 = hmgbp.DamageRadius.ToString();
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value1 = hmgbp.Damage.VsFlesh.ToString();
+            (hmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value2 = hmgbp.Damage.VsHull.ToString();
+            ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = hmgbp.Damage.VsArmor.ToString();
+            ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = hmgbp.Damage.VsShields.ToString();
+
+            WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Gun") as WeaponBlueprint;
+            var amberGun = new ToggleData("Ships/Weapons/Projectiles/Amber Gun - Build",
+                "Amber Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = amberGunBlueprint.RateOfFire.ToString();
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = amberGunBlueprint.Range.ToString();
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = amberGunBlueprint.AmmoStorage.ToString();
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[1].Value2 = amberGunBlueprint.DamageRadius.ToString();
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[2].Value1 = amberGunBlueprint.Damage.VsFlesh.ToString();
+            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[2].Value2 = amberGunBlueprint.Damage.VsHull.ToString();
+            ((amberGun.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = amberGunBlueprint.Damage.VsArmor.ToString();
+            ((amberGun.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = amberGunBlueprint.Damage.VsShields.ToString();
+
             return new ToggleData
             (
                 "Ships/Weapons/Projectiles Icon", "Projectiles", true, new MenuData(new List<ToggleData>
                 {
-                    lmg
+                    lmg,
+                    hmg,
+                    amberGun
                 })
             );
         }

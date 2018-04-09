@@ -13,8 +13,8 @@ namespace Assets.Ships.Modules
 
             if (position == null)
                 position = IntVector.Zero;
-            else
-                Position = position;
+
+            Position = position;
         }
     }
 
