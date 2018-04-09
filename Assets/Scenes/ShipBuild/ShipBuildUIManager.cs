@@ -94,6 +94,7 @@ public class ShipBuildUIManager : MonoBehaviour
             1);
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
+        _newModule.Position.SetZ(DeckManager.CurrentDeck);
 
         //Module pos has changed, recalculate the placement viability
         if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
@@ -101,53 +102,18 @@ public class ShipBuildUIManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            Destroy(_newModule.GameObject);
-            _placeMode = false;
-            Menu.PlaceCancelled();
+            if (_placeMode)
+            {
+                Destroy(_newModule.GameObject);
+                _placeMode = false;
+                Menu.PlaceCancelled();
+            }
+            else
+                Application.Quit();
         }
 
-        #region Rotate/Flip Controls
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
-        {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), 90);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CW);
-        }
-        else if (Input.GetKeyDown(KeyCode.R))
-        {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), -90);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CCW);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CCW);
-        } else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
-        {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x,
-                _newModule.GameObject.transform.localScale.y * -1,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Horizontal);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Horizontal);
-        } else if (Input.GetKeyDown(KeyCode.T))
-        {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x * -1,
-                _newModule.GameObject.transform.localScale.y,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
-        }
-
-        #endregion
-
-        if (Input.GetMouseButtonDown(0) && IsPlacementValid())
+        //Don't call the IsPlacementValid function unless you have to, it's expensive to run
+        if (Input.GetMouseButtonDown(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
             PlaceModule();
 
         if (ShipBuildManager.FirstModule != null)

@@ -35,7 +35,7 @@ public class ShipBuildManager : MonoBehaviour
         HasCommandModule = false;
         _availableSlots = new List<Slot>
         {
-            new Slot(IntVector.Forward, new List<ConnectorPositions>())
+            new Slot(IntVector.Forward, new List<Connector>())
         };
     }
 
@@ -45,10 +45,7 @@ public class ShipBuildManager : MonoBehaviour
     }
 
     void Update()
-    {
-        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
-    }
+    {}
 
     public void AddModule(Module module)
     {
@@ -90,26 +87,29 @@ public class ShipBuildManager : MonoBehaviour
         //Disable decks if module has an x/y plane or space exclusion vector
         if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
         {
-            foreach (var vector in module.ModuleBlueprint.ExclusionVectors)
+            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
             {
-                //Disable whatever it is
-                switch (vector)
+                foreach (var vector in vectors.Direction)
                 {
-                    case ExclusionVectors.Plane:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        break;
+                    //Disable whatever it is
+                    switch (vector)
+                    {
+                        case ExclusionVectorDirections.Plane:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            break;
 
-                    case ExclusionVectors.PlaneAndForward:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-                        DeckManager.AddLowerDeck();
-                        break;
+                        case ExclusionVectorDirections.PlaneAndForward:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+                            DeckManager.AddLowerDeck();
+                            break;
 
-                    case ExclusionVectors.PlaneAndBackward:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                        DeckManager.AddUpperDeck();
-                        break;
+                        case ExclusionVectorDirections.PlaneAndBackward:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
+                            DeckManager.AddUpperDeck();
+                            break;
+                    }
                 }
             }
         }
@@ -134,9 +134,9 @@ public class ShipBuildManager : MonoBehaviour
 
             if (existingSlot == null)
                 _availableSlots.Add(new Slot(newPos,
-                    new List<ConnectorPositions> { newD }));
+                    new List<Connector> { new Connector(newD, connector.CanConveyAtmosphere) }));
             else
-                existingSlot.RequiredConnector.Add(newD);
+                existingSlot.RequiredConnector.Add(new Connector(newD, connector.CanConveyAtmosphere));
         }
     }
 
@@ -146,13 +146,16 @@ public class ShipBuildManager : MonoBehaviour
     {
         var hasConnector = false;
         var spaceValid = true;
-        //TODO: Undo ToList(), for debugging only
 
         foreach (var slot in _availableSlots)
             foreach (var con in slot.RequiredConnector)
                 foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-                    if (con == modCon.Direction && slot.Position.Equals(modCon.Position + newModule.Position))
-                        hasConnector = true;
+                    if (con.Position == modCon.Direction && slot.Position.Equals(modCon.Position + newModule.Position))
+                    {
+                        if ((con.SupportsAtmosphere && modCon.CanConveyAtmosphere) || 
+                            (!con.SupportsAtmosphere && !modCon.CanConveyAtmosphere))
+                            hasConnector = true;
+                    }
 
         foreach (var space in newModule.ModuleBlueprint.Space)
         {
@@ -185,72 +188,76 @@ public class ShipBuildManager : MonoBehaviour
             //Exclusion Vector Stuff
             foreach (var ev in module.ModuleBlueprint.ExclusionVectors)
             {
-                switch (ev)
+                foreach (var e in ev.Direction)
                 {
-                    case ExclusionVectors.ForwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z < pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.BackwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z > pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.UpwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y < pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.DownwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y > pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.RightLine:
-                        if (module.Position.X < pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.LeftLine:
-                        if (module.Position.X > pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.Plane:
-                        if (module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndAbove:
-                        if (module.Position.Y <= pos.Y)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndBelow:
-                        if (module.Position.Y >= pos.Y)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndForward:
-                        if (module.Position.Z <= pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndBackward:
-                        if (module.Position.Z >= pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndRight:
-                        if (module.Position.X <= pos.X)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndLeft:
-                        if (module.Position.X >= pos.X)
-                            valid = false;
-                        break;
+                    var ePos = module.Position + ev.Position;
+                    switch (e)
+                    {
+                        case ExclusionVectorDirections.ForwardLine:
+                            if (ePos.X == pos.X &&
+                                ePos.Y == pos.Y &&
+                                ePos.Z < pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.BackwardLine:
+                            if (ePos.X == pos.X &&
+                                ePos.Y == pos.Y &&
+                                ePos.Z > pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.UpwardLine:
+                            if (ePos.X == pos.X &&
+                                ePos.Y < pos.Y &&
+                                ePos.Z == pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.DownwardLine:
+                            if (ePos.X == pos.X &&
+                                ePos.Y > pos.Y &&
+                                ePos.Z == pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.RightLine:
+                            if (ePos.X < pos.X &&
+                                ePos.Y == pos.Y &&
+                                ePos.Z == pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.LeftLine:
+                            if (ePos.X > pos.X &&
+                                ePos.Y == pos.Y &&
+                                ePos.Z == pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.Plane:
+                            if (ePos.Z == pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndAbove:
+                            if (ePos.Y <= pos.Y)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndBelow:
+                            if (ePos.Y >= pos.Y)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndForward:
+                            if (ePos.Z <= pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndBackward:
+                            if (ePos.Z >= pos.Z)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndRight:
+                            if (ePos.X <= pos.X)
+                                valid = false;
+                            break;
+                        case ExclusionVectorDirections.PlaneAndLeft:
+                            if (ePos.X >= pos.X)
+                                valid = false;
+                            break;
+                    }
                 }
             }
         }
@@ -270,17 +277,29 @@ public class ShipBuildManager : MonoBehaviour
     private class Slot
     {
         public IntVector Position { get; set; }
-        public List<ConnectorPositions> RequiredConnector { get; set; }
+        public List<Connector> RequiredConnector { get; set; }
 
         public Slot()
         {
 
         }
 
-        public Slot(IntVector position, List<ConnectorPositions> requiredConnector) : this()
+        public Slot(IntVector position, List<Connector> requiredConnector) : this()
         {
             Position = position;
             RequiredConnector = requiredConnector;
+        }
+    }
+
+    private struct Connector
+    {
+        public ConnectorPositions Position;
+        public bool SupportsAtmosphere;
+
+        public Connector(ConnectorPositions position, bool supportsAtmosphere)
+        {
+            Position = position;
+            SupportsAtmosphere = supportsAtmosphere;
         }
     }
 }

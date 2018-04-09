@@ -69,8 +69,26 @@ namespace Assets.Ships
                     new List<IntVector> {IntVector.Zero, IntVector.Right}, "Light Machine Gun",
                     "A lighter machine gun firing smaller rounds at a higher rate of fire. Does poorly against shields and armor, but the higher projectile speed means higher accuracy at longer ranges.",
                     200, 15, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
-                    new[] {ExclusionVectors.RightLine}, 0, 200, 1, 6000, new WeaponDamage(1, 1, 0, 0), 700, 15000, 1),
+                    new[] {new ExclusionVector(new []{ExclusionVectorDirections.RightLine})}, 0, 200, 1, 6000, new WeaponDamage(1, 1, 0, 0), 700, 15000, 1),
 
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/HMG - Build",
+                    new List<IntVector> {IntVector.Zero, IntVector.Right}, "Heavy Machine Gun",
+                    "A heavier machine gun boasting higher damage at the cost of power consumption, ammo storage, rate of fire, and accuracy.",
+                    400, 20, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
+                    new[] {new ExclusionVector(new []{ExclusionVectorDirections.RightLine})}, 0, 400, 1, 3000, new WeaponDamage(3, 3, 2, 1), 1000, 6800, 1),
+
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Amber Gun - Build",
+                    new List<IntVector>
+                    {
+                        IntVector.Zero, IntVector.Up, new IntVector(1, 1, 0),new IntVector(2, 1, 0),new IntVector(3, 1, 0),
+                        IntVector.Right, new IntVector(2, 0, 0), new IntVector(3, 1, 0)
+                    }, "Heavy Machine Gun",
+                    "A heavier machine gun boasting higher damage at the cost of power consumption, ammo storage, rate of fire, and accuracy.",
+                    400, 20, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
+                    new[]
+                    {
+                        new ExclusionVector(new []{ExclusionVectorDirections.RightLine})
+                    }, 0, 400, 1, 3000, new WeaponDamage(3, 3, 2, 1), 1000, 6800, 1),
                 #endregion
 
                 #endregion
@@ -82,28 +100,106 @@ namespace Assets.Ships
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Panel - Build",
                     new List<IntVector> {IntVector.Zero}, "Panel",
                     "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
-                    0, 0, 0, new[]
+                    0, 1000, 0, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward),
-                        new ConnectorPosition(ConnectorPositions.Left),
-                        new ConnectorPosition(ConnectorPositions.Down),
-                        new ConnectorPosition(ConnectorPositions.Forward),
-                        new ConnectorPosition(ConnectorPositions.Right),
-                        new ConnectorPosition(ConnectorPositions.Up)
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Left, false),
+                        new ConnectorPosition(ConnectorPositions.Down, false),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Right, false),
+                        new ConnectorPosition(ConnectorPositions.Up, false)
                     },
-                    new ExclusionVectors[] { }),
+                    new ExclusionVector[] { }),
+
+                new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Panel 2 - Build",
+                    new List<IntVector> {IntVector.Zero}, "Panel 2",
+                    "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
+                    0, 1000, 0, new[]
+                    {
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Left, false),
+                        new ConnectorPosition(ConnectorPositions.Down, false),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Right, false),
+                        new ConnectorPosition(ConnectorPositions.Up, false)
+                    },
+                    new ExclusionVector[] { }),
 
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Crossbeam Connector - Build",
                     new List<IntVector> {IntVector.Zero},
                     "Crossbeam Connector",
                     "A basic connector. Provides no armor or hull. Holds pieces of your ship together on the top or bottom.",
-                    0, 0, 0, new ConnectorPosition[]
+                    0, 1000, 0, new []
                     {
-                        new ConnectorPosition(ConnectorPositions.Down),
-                        new ConnectorPosition(ConnectorPositions.Up)
+                        new ConnectorPosition(ConnectorPositions.Down, false),
+                        new ConnectorPosition(ConnectorPositions.Up, false)
                     },
-                    new ExclusionVectors[] { }),
+                    new ExclusionVector[] { }),
 
+                #endregion
+
+                #region Hallways
+
+                new HallwayModuleBlueprint("Ships/Miscellanious/Hallways/EW Hallway - Build",
+                    new List<IntVector> {IntVector.Zero},
+                    "EW Hallway",
+                    "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
+                    0, 1000, 0, new []
+                    {
+                        new ConnectorPosition(ConnectorPositions.Left, true),
+                        new ConnectorPosition(ConnectorPositions.Right, true),
+                        new ConnectorPosition(ConnectorPositions.Up, false),
+                        new ConnectorPosition(ConnectorPositions.Down, false),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                    },
+                    new ExclusionVector[] { }),
+
+                new HallwayModuleBlueprint("Ships/Miscellanious/Hallways/NS Hallway - Build",
+                    new List<IntVector> {IntVector.Zero},
+                    "NS Hallway",
+                    "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
+                    0, 1000, 0, new []
+                    {
+                        new ConnectorPosition(ConnectorPositions.Left, false),
+                        new ConnectorPosition(ConnectorPositions.Right, false),
+                        new ConnectorPosition(ConnectorPositions.Up, true),
+                        new ConnectorPosition(ConnectorPositions.Down, true),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                    },
+                    new ExclusionVector[] { }),
+
+                new HallwayModuleBlueprint("Ships/Miscellanious/Hallways/NE-SW Hallway - Build",
+                    new List<IntVector> {IntVector.Zero, IntVector.Up},
+                    "NE-SW Hallway",
+                    "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
+                    0, 1000, 0, new []
+                    {
+                        new ConnectorPosition(ConnectorPositions.Left, true),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Right, true, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Forward, false, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
+                    },
+                    new ExclusionVector[] { }),
+
+                new HallwayModuleBlueprint("Ships/Miscellanious/Hallways/NW-SE Hallway - Build",
+                    new List<IntVector> {IntVector.Zero, IntVector.Up},
+                    "NW-SE Hallway",
+                    "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
+                    0, 1000, 0, new []
+                    {
+                        new ConnectorPosition(ConnectorPositions.Right, true),
+                        new ConnectorPosition(ConnectorPositions.Forward, false),
+                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Left, true, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Forward, false, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
+                    },
+                    new ExclusionVector[] { }),
+                
                 #endregion
 
                 #endregion

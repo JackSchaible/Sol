@@ -151,14 +151,15 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 (
                     new List<ToggleData>
                     {
-                        GetDecorative()
+                        GetDecorative(),
+                        GetHallway()
                     }
                 )
             );
         }
         private ToggleData GetDecorative()
         {
-            var cockpits = new List<ToggleData>
+            var decoratives = new List<ToggleData>
             {
                 new ToggleData("Ships/Miscellanious/Decorative/Panel - Build",
                     "Panel", false,
@@ -166,6 +167,14 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     (
                         new List<DetailsField>(),
                         _blueprints.First(x => x.Name == "Panel") as DecorativeModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Decorative/Panel 2 - Build",
+                    "Panel", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "Panel 2") as DecorativeModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Miscellanious/Decorative/Crossbeam Connector - Build",
@@ -180,7 +189,50 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             return new ToggleData
             (
-                "Ships/Miscellanious/Decorative Icon", "Decorative", true, new MenuData(cockpits)
+                "Ships/Miscellanious/Decorative Icon", "Decorative", true, new MenuData(decoratives)
+            );
+        }
+        private ToggleData GetHallway()
+        {
+            var hallways = new List<ToggleData>
+            {
+                new ToggleData("Ships/Miscellanious/Hallways/EW Hallway - Build",
+                    "Hallway", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "EW Hallway") as HallwayModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Hallways/NS Hallway - Build",
+                    "Hallway", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "NS Hallway") as HallwayModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Hallways/NE-SW Hallway - Build",
+                    "Hallway", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "NE-SW Hallway") as HallwayModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Hallways/NW-SE Hallway - Build",
+                    "Hallway", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "NW-SE Hallway") as HallwayModuleBlueprint
+                    )
+                ),
+            };
+
+            return new ToggleData
+            (
+                "Ships/Miscellanious/Hallway Icon", "Hallways", true, new MenuData(hallways)
             );
         }
 

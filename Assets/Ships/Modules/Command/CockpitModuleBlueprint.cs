@@ -17,7 +17,7 @@ namespace Assets.Ships
             string description, int health, int weight, int cost, ConnectorPosition[] connectors, int crewRequirement,
             int powerConumption, int personnelHoused, int commandSupplied)
             : base(moduleType, buildSprite, space, name, description, health, weight, cost, connectors,
-                  new []{ Modules.ExclusionVectors.PlaneAndForward }, crewRequirement, powerConumption, commandSupplied)
+                  new []{ new ExclusionVector(new [] {ExclusionVectorDirections.PlaneAndForward}) }, crewRequirement, powerConumption, commandSupplied)
         {
             PersonnelHoused = personnelHoused;
         }

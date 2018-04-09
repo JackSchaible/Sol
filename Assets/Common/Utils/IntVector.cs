@@ -144,11 +144,6 @@ namespace Assets.Common.Utils
             return isAdjacent;
         }
 
-        public bool DoesExclusionVectorBlock(ExclusionVectors ev, IntVector other)
-        {
-            return false;
-        }
-
         public IntVector Adjust(ConnectorPositions cp)
         {
             switch (cp)

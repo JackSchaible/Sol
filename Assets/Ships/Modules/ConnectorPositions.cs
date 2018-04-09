@@ -12,6 +12,11 @@ namespace Assets.Ships.Modules
         public ConnectorPositions Direction { get; set; }
 
         /// <summary>
+        /// Is this connector closed, can it convey atmosphere?
+        /// </summary>
+        public bool CanConveyAtmosphere { get; set; }
+
+        /// <summary>
         /// Where in the module does this connector sit?
         /// <value>{0, 0, 0} by default</value>
         /// </summary>
@@ -33,10 +38,10 @@ namespace Assets.Ships.Modules
             Position = IntVector.Zero;
         }
 
-        public ConnectorPosition(ConnectorPositions direction, IntVector position = null)
+        public ConnectorPosition(ConnectorPositions direction, bool canConveyAtmosphere, IntVector position = null)
         {
             Direction = direction;
-
+            CanConveyAtmosphere = canConveyAtmosphere;
             Position = position ?? IntVector.Zero;
         }
 
