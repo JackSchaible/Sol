@@ -16,6 +16,7 @@ namespace Assets.Ships
         public int Weight { get; set; }
         public int Cost { get; set; }
         public ConnectorPosition[] Connectors { get; set; }
+        public bool AreConnectorsMandatory { get; set; }
         public ExclusionVector[] ExclusionVectors { get; set; }
         public int CrewRequirement { get; set; }
         public int PowerConumption { get; set; }
@@ -27,9 +28,9 @@ namespace Assets.Ships
 
         }
 
-        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite, 
+        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
             List<IntVector> space, string name, string description, int health, int weight, int cost,
-            ConnectorPosition[] connectors, ExclusionVector[] exclusionVectors,
+            bool areConnectorsMandatory, ConnectorPosition[] connectors, ExclusionVector[] exclusionVectors,
             int crewRequirement, int powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
@@ -41,6 +42,7 @@ namespace Assets.Ships
             Health = health;
             Weight = weight;
             Cost = cost;
+            AreConnectorsMandatory = areConnectorsMandatory;
             Connectors = connectors;
             ExclusionVectors = exclusionVectors;
             CrewRequirement = crewRequirement;

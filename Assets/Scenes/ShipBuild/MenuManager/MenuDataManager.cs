@@ -142,9 +142,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = hmgbp.Damage.VsArmor.ToString();
             ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = hmgbp.Damage.VsShields.ToString();
 
-            WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Gun") as WeaponBlueprint;
+            WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Quarantine Gun") as WeaponBlueprint;
             var amberGun = new ToggleData("Ships/Weapons/Projectiles/Amber Gun - Build",
-                "Amber Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
+                "Amber Quarantine Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
             (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = amberGunBlueprint.RateOfFire.ToString();
             (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = amberGunBlueprint.Range.ToString();
             (amberGun.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = amberGunBlueprint.AmmoStorage.ToString();

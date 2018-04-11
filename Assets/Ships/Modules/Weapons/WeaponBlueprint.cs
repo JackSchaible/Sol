@@ -20,11 +20,11 @@ namespace Assets.Ships
         }
 
         public WeaponBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name, 
-            string description, int weight, int cost, ConnectorPosition[] connectors, 
+            string description, int weight, int cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, 
             ExclusionVector[] exclusionVectors, int crewRequirement, int powerConumption, int commandRequirement,
             int rateOfFire, WeaponDamage damage, int range, int ammoStorage, int damageRadius)
             : base(ModuleTypes.Weapon, moduleType, buildSprite, space, name, description, 10, weight, cost,
-                  connectors, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
+                  areConnectorsMandatory, connectors, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
         {
             RateOfFire = rateOfFire;
             Damage = damage;

@@ -45,7 +45,7 @@ public class ShipBuildManager : MonoBehaviour
     }
 
     void Update()
-    {}
+    { }
 
     public void AddModule(Module module)
     {
@@ -66,7 +66,7 @@ public class ShipBuildManager : MonoBehaviour
         var slotsToRemove =
             _availableSlots.Where(x => module.ModuleBlueprint.Space.Any(y => (y + module.Position).Equals(x.Position))).ToList();
 
-        foreach(var remove in slotsToRemove)
+        foreach (var remove in slotsToRemove)
             _availableSlots.Remove(remove);
 
         Modules.Add(module);
@@ -144,18 +144,18 @@ public class ShipBuildManager : MonoBehaviour
 
     public bool IsPlacementValid(Module newModule)
     {
-        var hasConnector = false;
         var spaceValid = true;
+        var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
 
         foreach (var slot in _availableSlots)
             foreach (var con in slot.RequiredConnector)
                 foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-                    if (con.Position == modCon.Direction && slot.Position.Equals(modCon.Position + newModule.Position))
-                    {
-                        if ((con.SupportsAtmosphere && modCon.CanConveyAtmosphere) || 
-                            (!con.SupportsAtmosphere && !modCon.CanConveyAtmosphere))
-                            hasConnector = true;
-                    }
+                    if (
+                        con.Position == modCon.Direction &&
+                        slot.Position.Equals(modCon.Position + newModule.Position) &&
+                        (con.SupportsAtmosphere && modCon.CanConveyAtmosphere ||
+                            !con.SupportsAtmosphere && !modCon.CanConveyAtmosphere))
+                        conCount--;
 
         foreach (var space in newModule.ModuleBlueprint.Space)
         {
@@ -164,16 +164,16 @@ public class ShipBuildManager : MonoBehaviour
             if (IsPositionOutsideOfExclusionSpaces(spacePos))
             {
                 foreach (var module in Modules)
-                foreach (var mSpace in module.ModuleBlueprint.Space)
-                    if ((module.Position + mSpace).Equals(spacePos))
-                        spaceValid = false;
+                    foreach (var mSpace in module.ModuleBlueprint.Space)
+                        if ((module.Position + mSpace).Equals(spacePos))
+                            spaceValid = false;
             }
             else
                 spaceValid = false;
 
         }
 
-        return hasConnector && spaceValid;
+        return conCount <= 0 && spaceValid;
     }
 
     #region 1. Exclusion Vectors and Connectors
