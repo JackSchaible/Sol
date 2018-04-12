@@ -13,7 +13,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
         public MenuData Get()
         {
-            _blueprints = new ModuleBlueprintsManager().Get();
+            _blueprints = ModuleBlueprintsManager.Generate();
 
             return new MenuData(new List<ToggleData>
             {
@@ -121,38 +121,27 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             WeaponBlueprint lmgbp = _blueprints.First(x => x.Name == "Light Machine Gun") as WeaponBlueprint;
             var lmg = new ToggleData("Ships/Weapons/Projectiles/LMG - Build",
                 "Light Machine Gun", false, new DetailsMenuData(getFields(), lmgbp));
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = lmgbp.RateOfFire.ToString();
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = lmgbp.Range.ToString();
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = lmgbp.AmmoStorage.ToString();
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value2 = lmgbp.DamageRadius.ToString();
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value1 = lmgbp.Damage.VsFlesh.ToString();
-            (lmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value2 = lmgbp.Damage.VsHull.ToString();
-            ((lmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = lmgbp.Damage.VsArmor.ToString();
-            ((lmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = lmgbp.Damage.VsShields.ToString();
+            AssignProjectileFieldValues(lmg.ChildMenu as DetailsMenuData, lmgbp);
 
             WeaponBlueprint hmgbp = _blueprints.First(x => x.Name == "Heavy Machine Gun") as WeaponBlueprint;
             var hmg = new ToggleData("Ships/Weapons/Projectiles/HMG - Build",
                 "Heavy Machine Gun", false, new DetailsMenuData(getFields(), hmgbp));
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = hmgbp.RateOfFire.ToString();
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = hmgbp.Range.ToString();
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = hmgbp.AmmoStorage.ToString();
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[1].Value2 = hmgbp.DamageRadius.ToString();
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value1 = hmgbp.Damage.VsFlesh.ToString();
-            (hmg.ChildMenu as DetailsMenuData).DetailsFields[2].Value2 = hmgbp.Damage.VsHull.ToString();
-            ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = hmgbp.Damage.VsArmor.ToString();
-            ((hmg.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = hmgbp.Damage.VsShields.ToString();
+            AssignProjectileFieldValues(hmg.ChildMenu as DetailsMenuData, hmgbp);
+
+            WeaponBlueprint flakBlueprint = _blueprints.First(x => x.Name == "Flak Cannon") as WeaponBlueprint;
+            var flak = new ToggleData("Ships/Weapons/Projectiles/AA Gun - Build",
+                "Flak Cannon", false, new DetailsMenuData(getFields(), flakBlueprint));
+            AssignProjectileFieldValues(flak.ChildMenu as DetailsMenuData, flakBlueprint);
+
+            WeaponBlueprint heCannonBlueprint = _blueprints.First(x => x.Name == "HE Cannon") as WeaponBlueprint;
+            var heCannon = new ToggleData("Ships/Weapons/Projectiles/HE Cannon - Build",
+                "High-Explosive Cannon", false, new DetailsMenuData(getFields(), heCannonBlueprint));
+            AssignProjectileFieldValues(heCannon.ChildMenu as DetailsMenuData, heCannonBlueprint);
 
             WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Quarantine Gun") as WeaponBlueprint;
             var amberGun = new ToggleData("Ships/Weapons/Projectiles/Amber Gun - Build",
                 "Amber Quarantine Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value1 = amberGunBlueprint.RateOfFire.ToString();
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[0].Value2 = amberGunBlueprint.Range.ToString();
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[1].Value1 = amberGunBlueprint.AmmoStorage.ToString();
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[1].Value2 = amberGunBlueprint.DamageRadius.ToString();
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[2].Value1 = amberGunBlueprint.Damage.VsFlesh.ToString();
-            (amberGun.ChildMenu as DetailsMenuData).DetailsFields[2].Value2 = amberGunBlueprint.Damage.VsHull.ToString();
-            ((amberGun.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value3 = amberGunBlueprint.Damage.VsArmor.ToString();
-            ((amberGun.ChildMenu as DetailsMenuData).DetailsFields[2] as DetailsFieldQw).Value4 = amberGunBlueprint.Damage.VsShields.ToString();
+            AssignProjectileFieldValues(amberGun.ChildMenu as DetailsMenuData, amberGunBlueprint);
 
             return new ToggleData
             (
@@ -160,11 +149,24 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 {
                     lmg,
                     hmg,
+                    flak,
+                    heCannon,
                     amberGun
                 })
             );
         }
 
+        private void AssignProjectileFieldValues(DetailsMenuData menu, WeaponBlueprint blueprint)
+        {
+            menu.DetailsFields[0].Value1 = blueprint.RateOfFire.ToString();
+            menu.DetailsFields[0].Value2 = blueprint.Range.ToString();
+            menu.DetailsFields[1].Value1 = blueprint.AmmoStorage.ToString();
+            menu.DetailsFields[1].Value2 = blueprint.DamageRadius.ToString();
+            menu.DetailsFields[2].Value1 = blueprint.Damage.VsFlesh.ToString();
+            menu.DetailsFields[2].Value2 = blueprint.Damage.VsHull.ToString();
+            (menu.DetailsFields[2] as DetailsFieldQw).Value3 = blueprint.Damage.VsArmor.ToString();
+            (menu.DetailsFields[2] as DetailsFieldQw).Value4 = blueprint.Damage.VsShields.ToString();
+        }
         #endregion
 
         #region Miscellanious
@@ -209,6 +211,14 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     (
                         new List<DetailsField>(),
                         _blueprints.First(x => x.Name == "Crossbeam Connector") as DecorativeModuleBlueprint
+                    )
+                ),
+                new ToggleData("Ships/Miscellanious/Decorative/Weapon Mount - Build",
+                    "Weapon Mount", false,
+                    new DetailsMenuData
+                    (
+                        new List<DetailsField>(),
+                        _blueprints.First(x => x.Name == "Weapon Mount") as DecorativeModuleBlueprint
                     )
                 ),
             };

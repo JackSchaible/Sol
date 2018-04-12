@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Assets.Common.Utils;
 
 namespace Assets.Ships.Modules

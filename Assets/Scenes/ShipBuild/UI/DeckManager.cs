@@ -44,7 +44,23 @@ namespace Assets.Scenes.ShipBuild
 
         void Update()
         {
-            
+            if (!NewUpperDeck.interactable || !NewLowerDeck.interactable) return;
+
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (_deckButtons.ContainsKey(CurrentDeck - 1))
+                    SelectDeck(CurrentDeck - 1);
+                else
+                    AddLowerDeck();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                if (_deckButtons.ContainsKey(CurrentDeck + 1))
+                    SelectDeck(CurrentDeck + 1);
+                else
+                    AddUpperDeck();
+            }
         }
 
         public void DisableDeck(int deckNumber, bool autoAddNewDeck = false)
