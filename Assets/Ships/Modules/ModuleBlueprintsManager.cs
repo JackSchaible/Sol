@@ -113,6 +113,13 @@ namespace Assets.Ships
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 0, 400, 1, 3000,
                     new WeaponDamage(3, 3, 2, 1), 1000, 6800, 1),
 
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Chain Gun - Build",
+                    new List<IntVector> {IntVector.Zero, IntVector.Right}, "Chain Gun",
+                    "This weapon has six barrels that rotate rapidly. It uses energy from the ship's power source to reload the weapon chambers, rather than diverting energy from the combustion of the projectile. The result is an extremely high rate of fire with negligible energy drain from the projectiles.",
+                    750, 30, false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Forward}},
+                    new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 0, 750, 2, 12000,
+                    new WeaponDamage(1, 1, 0, 0), 700, 27000, 1),
+
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/AA Gun - Build",
                     new List<IntVector>
                     {
@@ -146,6 +153,13 @@ namespace Assets.Ships
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 6, 2000, 4, 2000,
                     new WeaponDamage(10, 10, 5, 5), 5000, 4500, 1),
 
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Incendiary Cannon - Build",
+                    new List<IntVector> {IntVector.Zero, IntVector.Right}, "Incendiary Cannon",
+                    "A gun firing a shell filled with a combustible phosphorus powder. The powder is spread on contact, and subsequently ignites, burning anyone or anything caught in the cloud. Does high damage against flesh and hull, a small bit of damage to shields, but no damage to armor.",
+                    1000, 50, false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
+                    new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 8, 2500, 6, 2500,
+                    new WeaponDamage(30, 15, 0, 5), 5000, 4500, 1),
+
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Amber Gun - Build",
                     new List<IntVector>
                     {
@@ -170,7 +184,14 @@ namespace Assets.Ships
                     {
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}),
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, IntVector.Up)
-                    }, 8, 4000, 6, 1500, new WeaponDamage(0, 0, 0, 0), 2000, 3500, 10)
+                    }, 8, 4000, 6, 1500, new WeaponDamage(0, 0, 0, 0), 2000, 3500, 10),
+
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Tracer Gun - Build",
+                    new List<IntVector> {IntVector.Zero}, "Tracer Gun",
+                    "A gun that fires a projectile that emits a moderately-strong radio frequency. On a hit, it embeds itself in the hull or skin of an enemy, allowing your other weapons to more accurately target that unit. Negates the cloaking units of any enemies hit.",
+                    1000, 75, false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Forward}},
+                    new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 3, 5000, 2, 500,
+                    new WeaponDamage(0, 0, 0, 0), 10000, 1000, 0),
             };
         }
 

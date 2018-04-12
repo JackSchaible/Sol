@@ -128,6 +128,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 "Heavy Machine Gun", false, new DetailsMenuData(getFields(), hmgbp));
             AssignProjectileFieldValues(hmg.ChildMenu as DetailsMenuData, hmgbp);
 
+            WeaponBlueprint chaingunBlueprint = _blueprints.First(x => x.Name == "Chain Gun") as WeaponBlueprint;
+            var chaingun = new ToggleData("Ships/Weapons/Projectiles/Chain Gun - Build",
+                "Chain Gun", false, new DetailsMenuData(getFields(), chaingunBlueprint));
+            AssignProjectileFieldValues(chaingun.ChildMenu as DetailsMenuData, chaingunBlueprint);
+
             WeaponBlueprint flakBlueprint = _blueprints.First(x => x.Name == "Flak Cannon") as WeaponBlueprint;
             var flak = new ToggleData("Ships/Weapons/Projectiles/AA Gun - Build",
                 "Flak Cannon", false, new DetailsMenuData(getFields(), flakBlueprint));
@@ -138,10 +143,20 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 "High-Explosive Cannon", false, new DetailsMenuData(getFields(), heCannonBlueprint));
             AssignProjectileFieldValues(heCannon.ChildMenu as DetailsMenuData, heCannonBlueprint);
 
+            WeaponBlueprint incendiaryCannonBlueprint = _blueprints.First(x => x.Name == "Incendiary Cannon") as WeaponBlueprint;
+            var incendiary = new ToggleData("Ships/Weapons/Projectiles/Incendiary Cannon - Build",
+                "Incendiary Cannon", false, new DetailsMenuData(getFields(), incendiaryCannonBlueprint));
+            AssignProjectileFieldValues(incendiary.ChildMenu as DetailsMenuData, incendiaryCannonBlueprint);
+
             WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Quarantine Gun") as WeaponBlueprint;
             var amberGun = new ToggleData("Ships/Weapons/Projectiles/Amber Gun - Build",
                 "Amber Quarantine Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
             AssignProjectileFieldValues(amberGun.ChildMenu as DetailsMenuData, amberGunBlueprint);
+
+            WeaponBlueprint tracerBlueprint = _blueprints.First(x => x.Name == "Tracer Gun") as WeaponBlueprint;
+            var tracer = new ToggleData("Ships/Weapons/Projectiles/Tracer Gun - Build",
+                "Tracer Gun", false, new DetailsMenuData(getFields(), tracerBlueprint));
+            AssignProjectileFieldValues(tracer.ChildMenu as DetailsMenuData, tracerBlueprint);
 
             return new ToggleData
             (
@@ -149,9 +164,12 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 {
                     lmg,
                     hmg,
+                    chaingun,
                     flak,
                     heCannon,
-                    amberGun
+                    incendiary,
+                    amberGun,
+                    tracer
                 })
             );
         }
