@@ -192,6 +192,49 @@ namespace Assets.Ships
                     1000, 75, false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Forward}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 3, 5000, 2, 500,
                     new WeaponDamage(0, 0, 0, 0), 10000, 1000, 0),
+
+                new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Depleted-Uranium Slug Cannon - Build",
+                    new List<IntVector>
+                    {
+                        new IntVector(0, 0, 0), new IntVector(0, 1, 0), new IntVector(0, 2, 0), new IntVector(0, 3, 0), new IntVector(0, 4, 0), new IntVector(0, 5, 0),
+                        new IntVector(1, 0, 0), new IntVector(1, 1, 0), new IntVector(1, 2, 0), new IntVector(1, 3, 0), new IntVector(1, 4, 0), new IntVector(1, 5, 0),
+                        new IntVector(2, 2, 0), new IntVector(2, 3, 0), new IntVector(2, 4, 0), new IntVector(2, 5, 0),
+                        new IntVector(3, 2, 0), new IntVector(3, 3, 0),
+                        new IntVector(4, 2, 0), new IntVector(4, 3, 0),
+                        new IntVector(5, 2, 0), new IntVector(5, 3, 0),
+
+                        new IntVector(0, 0, 1), new IntVector(0, 1, 1), new IntVector(0, 2, 1), new IntVector(0, 3, 1), new IntVector(0, 4, 1), new IntVector(0, 5, 1),
+                        new IntVector(1, 0, 1), new IntVector(1, 1, 1), new IntVector(1, 2, 1), new IntVector(1, 3, 1), new IntVector(1, 4, 1), new IntVector(1, 5, 1),
+                        new IntVector(2, 2, 1), new IntVector(2, 3, 1), new IntVector(2, 4, 1), new IntVector(2, 5, 1),
+                        new IntVector(3, 2, 1), new IntVector(3, 3, 1),
+                        new IntVector(4, 2, 1), new IntVector(4, 3, 1),
+                        new IntVector(5, 2, 1), new IntVector(5, 3, 1),
+                    }, "Depleted-Uranium Slug Cannon",
+                    "A large cannon that fires hyper-dense slugs of an alloy composed of tungsten and uranium-238 (aka, depleted uranium). Requires a large explosive force to fire the projectile. Less accurate than the other weapons, but does high damage against hull/flesh and armor.",
+                    50000000, 125, true, new[]
+                    {
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 2, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 3, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 4, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 5, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(1, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(1, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 2, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 3, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 4, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 5, 0)),
+                    },
+                    new[]
+                    {
+                        new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 2, 0)),
+                        new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 3, 0)),
+                        new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 2, 1)),
+                        new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 3, 1))
+                    }, 10, 10000, 5, 250, new WeaponDamage(30, 30, 25, 15), 10000, 750, 3),
             };
         }
 

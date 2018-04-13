@@ -158,6 +158,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 "Tracer Gun", false, new DetailsMenuData(getFields(), tracerBlueprint));
             AssignProjectileFieldValues(tracer.ChildMenu as DetailsMenuData, tracerBlueprint);
 
+            WeaponBlueprint duscBlueprint = _blueprints.First(x => x.Name == "Depleted-Uranium Slug Cannon") as WeaponBlueprint;
+            var dusc = new ToggleData("Ships/Weapons/Projectiles/Depleted-Uranium Slug Cannon - Build",
+                "Depleted-Uranium Slug Cannon", false, new DetailsMenuData(getFields(), duscBlueprint));
+            AssignProjectileFieldValues(dusc.ChildMenu as DetailsMenuData, duscBlueprint);
+
             return new ToggleData
             (
                 "Ships/Weapons/Projectiles Icon", "Projectiles", true, new MenuData(new List<ToggleData>
@@ -169,7 +174,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     heCannon,
                     incendiary,
                     amberGun,
-                    tracer
+                    tracer,
+                    dusc
                 })
             );
         }
