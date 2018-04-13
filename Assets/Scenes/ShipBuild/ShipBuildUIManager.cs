@@ -1,15 +1,17 @@
-﻿using Assets.Common.Utils;
+﻿using System;
+using System.Linq;
+using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
-using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ShipBuildUIManager : MonoBehaviour
 {
     #region Props & fields
+
     //Other GameObject Manager
     public DynamicBuildMenuManager Menu;
     public ShipBuildManager ShipBuildManager;
@@ -28,6 +30,7 @@ public class ShipBuildUIManager : MonoBehaviour
     private bool _placeMode;
     private Module _newModule;
     private IntVector _previousPos;
+
     #endregion
 
     #region Main methods
@@ -57,6 +60,20 @@ public class ShipBuildUIManager : MonoBehaviour
             new Color(1, 0, 0) : new Color(1, 1, 1);
 
         UpdatePlace();
+
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl))
+        {
+            var pos = Camera.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, -100f);
+            Ray r = new Ray(pos, Vector3.forward);
+            RaycastHit rh;
+            if (Physics.Raycast(r, out rh))
+            {
+                var obj = ShipBuildManager.Modules.FirstOrDefault(x => x.GameObject == rh.transform.gameObject);
+
+                if (obj != null)
+                    ShipBuildManager.DeleteModule(obj);
+            }
+        }
     }
 
     #endregion
@@ -113,7 +130,7 @@ public class ShipBuildUIManager : MonoBehaviour
         }
 
         //Don't call the IsPlacementValid function unless you have to, it's expensive to run
-        if (Input.GetMouseButtonDown(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
+        if (Input.GetMouseButton(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
             PlaceModule();
 
         if (ShipBuildManager.FirstModule != null)
@@ -156,6 +173,8 @@ public class ShipBuildUIManager : MonoBehaviour
     public void Build(ModuleBlueprint blueprint)
     {
         _newModule = Module.Create(blueprint);
+        _newModule.GameObject.SetActive(false);
+        _newModule.GameObject.SetActive(true);
         var sprite = _newModule.GameObject.GetComponent<SpriteRenderer>();
         sprite.sortingLayerName = "UI BG";
         sprite.sortingOrder = DeckManager.CurrentDeck;

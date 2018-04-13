@@ -45,7 +45,8 @@ public class ShipBuildManager : MonoBehaviour
     }
 
     void Update()
-    { }
+    {
+    }
 
     public void AddModule(Module module)
     {
@@ -138,6 +139,11 @@ public class ShipBuildManager : MonoBehaviour
             else
                 existingSlot.RequiredConnector.Add(new Connector(newD, connector.CanConveyAtmosphere));
         }
+    }
+
+    public void DeleteModule(Module module)
+    {
+        //TODO:Enforce connector rules before deleting
     }
 
     #region Rules

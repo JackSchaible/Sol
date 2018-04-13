@@ -336,6 +336,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 ProcessCockpitRules();
             else if (blueprint is CommandModuleBlueprint)
                 ProcessCommandModuleRules();
+
+            if (Input.GetKey(KeyCode.LeftShift))
+                OnBuild(blueprint);
         }
 
         public void PlaceCancelled()
