@@ -323,6 +323,7 @@
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewTw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
@@ -334,14 +335,15 @@
     <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
+    <Compile Include="Assets\Ships\Modules\Cost.cs" />
     <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
     <Compile Include="Assets\Ships\Modules\Miscellanious\DecorativeModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Miscellanious\HallwayModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />
+    <Compile Include="Assets\Ships\Modules\Weapons\ProjectileEnergies.cs" />
     <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprint.cs" />
-    <Compile Include="Assets\Ships\Modules\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Ship.cs" />
     <Compile Include="Assets\Ships\ShipStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />

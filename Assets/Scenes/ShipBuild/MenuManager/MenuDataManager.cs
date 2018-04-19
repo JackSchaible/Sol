@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Data;
 using Assets.Ships;
 using Assets.Ships.Modules.Miscellanious;
+using Assets.Utils;
 
 namespace Assets.Scenes.ShipBuild.MenuManager
 {
@@ -115,7 +116,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             {
                 new DetailsField("Rate of Fire", "ShipBuild/Rate of Fire Icon", "", "Range", "ShipBuild/Range Icon", ""),
                 new DetailsField("Ammo Storage", "ShipBuild/Ammo Storage Icon", "", "Damage Radius", "ShipBuild/Splash Damage Icon", ""),
-                new DetailsFieldQw("Damage vs Flesh", "ShipBuild/Damage Vs Flesh Icon", "", "Damage vs Hull", "ShipBuild/Damage Vs Hull Icon", "", "Damage vs Armor", "ShipBuild/Damage Vs Armor Icon", "", "Damage vs Shields", "ShipBuild/Damage Vs Shields Icon", "")
+                new DetailsFieldThird("Kinetic Energy", "Common/Kinetic Energy Symbol", "", "Thermal Energy", "Common/Thermal Energy Symbol", "", "Chemical Potential Energy", "Common/Chemical Potential Energy Symbol", "")
             };
 
             WeaponBlueprint lmgbp = _blueprints.First(x => x.Name == "Light Machine Gun") as WeaponBlueprint;
@@ -186,10 +187,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             menu.DetailsFields[0].Value2 = blueprint.Range.ToString();
             menu.DetailsFields[1].Value1 = blueprint.AmmoStorage.ToString();
             menu.DetailsFields[1].Value2 = blueprint.DamageRadius.ToString();
-            menu.DetailsFields[2].Value1 = blueprint.Damage.VsFlesh.ToString();
-            menu.DetailsFields[2].Value2 = blueprint.Damage.VsHull.ToString();
-            (menu.DetailsFields[2] as DetailsFieldQw).Value3 = blueprint.Damage.VsArmor.ToString();
-            (menu.DetailsFields[2] as DetailsFieldQw).Value4 = blueprint.Damage.VsShields.ToString();
+            menu.DetailsFields[2].Value1 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.Kinetic, "J");
+            menu.DetailsFields[2].Value2 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.Thermal, "J");
+            (menu.DetailsFields[2] as DetailsFieldThird).Value3 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.ChemicalPotential, "J");
         }
         #endregion
 

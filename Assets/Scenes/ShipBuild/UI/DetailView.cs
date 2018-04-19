@@ -7,7 +7,11 @@ public class DetailView : MonoBehaviour
     public Button BuildButton;
     public Image ModuleImage;
     public Text Description;
-    public Text Cost;
+    public Text Gasses;
+    public Text LightMetals;
+    public Text OrganicMinerals;
+    public Text HeavyMetals;
+    public Text FissileMaterials;
     public Text Health;
     public Text Weight;
     public Text Power;
