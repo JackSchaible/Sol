@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Common.Utils;
+using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Ships;
 using Assets.Ships.Modules;
@@ -12,8 +13,8 @@ public class ShipBuildManager : MonoBehaviour
 {
     public DeckManager DeckManager;
 
-    public int PowerAvailable;
-    public int PowerUsed;
+    public float PowerAvailable;
+    public float PowerUsed;
     public int ControlAvailable;
     public int ControlUsed;
     public int PersonnelAvailable;
@@ -135,7 +136,7 @@ public class ShipBuildManager : MonoBehaviour
 
             if (existingSlot == null)
                 _availableSlots.Add(new Slot(newPos,
-                    new List<Connector> { new Connector(newD, connector.CanConveyAtmosphere) }));
+                    new List<Connector> { new Connector(newD, connector.MaterialsConveyed) }));
             else
                 existingSlot.RequiredConnector.Add(new Connector(newD, connector.CanConveyAtmosphere));
         }
@@ -300,12 +301,12 @@ public class ShipBuildManager : MonoBehaviour
     private struct Connector
     {
         public ConnectorPositions Position;
-        public bool SupportsAtmosphere;
+        public Materials[] MaterialsConveyed;
 
-        public Connector(ConnectorPositions position, bool supportsAtmosphere)
+        public Connector(ConnectorPositions position, Materials[] materialsConveyed)
         {
             Position = position;
-            SupportsAtmosphere = supportsAtmosphere;
+            MaterialsConveyed = materialsConveyed;
         }
     }
 }

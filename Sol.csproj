@@ -312,6 +312,7 @@
     <Compile Include="Assets\Common\UI\ToggleHighlighter.cs" />
     <Compile Include="Assets\Common\Utils\IntVector.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
+    <Compile Include="Assets\Data\Materials.cs" />
     <Compile Include="Assets\Data\Modals.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\DynamicBuildMenuManager.cs" />

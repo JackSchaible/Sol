@@ -13,13 +13,13 @@ namespace Assets.Ships
         public string Name { get; set; }
         public string Description { get; set; }
         public int Health { get; set; }
-        public int Weight { get; set; }
+        public float Weight { get; set; }
         public Cost Cost { get; set; }
         public ConnectorPosition[] Connectors { get; set; }
         public bool AreConnectorsMandatory { get; set; }
         public ExclusionVector[] ExclusionVectors { get; set; }
         public int CrewRequirement { get; set; }
-        public int PowerConumption { get; set; }
+        public float PowerConumption { get; set; }
         public int CommandRequirement { get; set; }
         public abstract string[] RelatedAbilities { get; }
 
@@ -29,9 +29,9 @@ namespace Assets.Ships
         }
 
         protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
-            List<IntVector> space, string name, string description, int health, int weight, Cost cost,
+            List<IntVector> space, string name, string description, int health, float weight, Cost cost,
             bool areConnectorsMandatory, ConnectorPosition[] connectors, ExclusionVector[] exclusionVectors,
-            int crewRequirement, int powerConumption, int commandRequirement)
+            int crewRequirement, float powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;

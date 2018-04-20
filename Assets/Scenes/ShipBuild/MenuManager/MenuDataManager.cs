@@ -4,7 +4,7 @@ using System.Linq;
 using Assets.Data;
 using Assets.Ships;
 using Assets.Ships.Modules.Miscellanious;
-using Assets.Utils;
+using Assets.Utils.Extensions;
 
 namespace Assets.Scenes.ShipBuild.MenuManager
 {
@@ -183,13 +183,13 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
         private void AssignProjectileFieldValues(DetailsMenuData menu, WeaponBlueprint blueprint)
         {
+            //TODO: Reassign these
             menu.DetailsFields[0].Value1 = blueprint.RateOfFire.ToString();
-            menu.DetailsFields[0].Value2 = blueprint.Range.ToString();
             menu.DetailsFields[1].Value1 = blueprint.AmmoStorage.ToString();
             menu.DetailsFields[1].Value2 = blueprint.DamageRadius.ToString();
-            menu.DetailsFields[2].Value1 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.Kinetic, "J");
-            menu.DetailsFields[2].Value2 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.Thermal, "J");
-            (menu.DetailsFields[2] as DetailsFieldThird).Value3 = MathHelper.AdjustSi(blueprint.ProjectileEnergies.ChemicalPotential, "J");
+            menu.DetailsFields[2].Value1 = blueprint.ProjectileEnergies.Kinetic.ToSiUnit("J");
+            menu.DetailsFields[2].Value2 = blueprint.ProjectileEnergies.Thermal.ToSiUnit("J");
+            (menu.DetailsFields[2] as DetailsFieldThird).Value3 = blueprint.ProjectileEnergies.ChemicalPotential.ToSiUnit("J");
         }
         #endregion
 

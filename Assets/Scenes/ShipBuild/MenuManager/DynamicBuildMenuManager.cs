@@ -160,7 +160,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             dv.ModuleImage.preserveAspect = true;
             dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
             dv.Description.text = data.Blueprint.Description;
-            //TODO: COST CHANGES
+            //TODO: COST CHANGES 
             //dv.Cost.text = data.Blueprint.Cost.ToString();
             dv.Health.text = data.Blueprint.Health.ToString();
             dv.Weight.text = data.Blueprint.Weight.ToSiUnit("g");

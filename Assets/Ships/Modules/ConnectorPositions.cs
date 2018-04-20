@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Common.Utils;
+using Assets.Data;
 
 namespace Assets.Ships.Modules
 {
@@ -11,9 +12,9 @@ namespace Assets.Ships.Modules
         public ConnectorPositions Direction { get; set; }
 
         /// <summary>
-        /// Is this connector closed, can it convey atmosphere?
+        /// What different materials can this connector carry?
         /// </summary>
-        public bool CanConveyAtmosphere { get; set; }
+        public Materials[] MaterialsConveyed { get; set; }
 
         /// <summary>
         /// Where in the module does this connector sit?
@@ -37,10 +38,10 @@ namespace Assets.Ships.Modules
             Position = IntVector.Zero;
         }
 
-        public ConnectorPosition(ConnectorPositions direction, bool canConveyAtmosphere, IntVector position = null)
+        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed, IntVector position = null)
         {
             Direction = direction;
-            CanConveyAtmosphere = canConveyAtmosphere;
+            MaterialsConveyed = materialsConveyed;
             Position = position ?? IntVector.Zero;
         }
 

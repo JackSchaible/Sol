@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Common.Utils;
+using Assets.Data;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Miscellanious;
 using Assets.Ships.Modules.Weapons;
@@ -104,21 +105,21 @@ namespace Assets.Ships
                     "A lighter machine gun firing smaller rounds at a higher rate of fire. Does poorly against shields and armor, but the higher projectile speed means higher accuracy at longer ranges.",
                     200, new Cost(0, 0, 0, 10, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 0, 200, 1, 6000,
-                    new ProjectileEnergies(2050, 463, 0), 700, 15000, 1),
+                    new ProjectileEnergies(2050, 463, 0), 15000, 1),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/HMG - Build",
                     new List<IntVector> {IntVector.Zero, IntVector.Right}, "Heavy Machine Gun",
                     "A heavier machine gun boasting higher damage at the cost of power consumption, ammo storage, rate of fire, and accuracy.",
                     400, new Cost(0, 0, 0, 58, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 0, 400, 1, 3000,
-                    new ProjectileEnergies(17088, 924, 0), 1000, 6800, 1),
+                    new ProjectileEnergies(17088, 924, 0), 6800, 1),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Chain Gun - Build",
                     new List<IntVector> {IntVector.Zero, IntVector.Right}, "Chain Gun",
                     "This weapon has six barrels that rotate rapidly. It uses energy from the ship's power source to reload the weapon chambers, rather than diverting energy from the combustion of the projectile. The result is an extremely high rate of fire with negligible energy drain from the projectiles.",
                     750, new Cost(0, 0, 0, 112, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Forward}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 0, 750, 2, 12000,
-                    new ProjectileEnergies(56448, 11576, 0), 700, 27000, 1),
+                    new ProjectileEnergies(56448, 11576, 0), 27000, 1),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/AA Gun - Build",
                     new List<IntVector>
@@ -135,30 +136,30 @@ namespace Assets.Ships
                     "A four-barreled, high rate-of-fire cannon that fires explosive shells filled with shrapnel. These projectiles only detonate when they come in proximity of enemy strike craft. Useless against larger ships.",
                     750, new Cost(0, 0, 2750, 4750, 0), true, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Zero),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Right),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, new IntVector(1, 1, 0))
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Zero),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Right),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, new IntVector(1, 1, 0))
                     },
                     new[]
                     {
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}),
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, IntVector.Up)
-                    }, 4, 1000, 2, 5000, new ProjectileEnergies(1920643, 752166, 18328160), 4000, 11250, 5),
+                    }, 4, 1000, 2, 5000, new ProjectileEnergies(1920643, 752166, 18328160), 11250, 5),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/HE Cannon - Build",
                     new List<IntVector> {IntVector.Zero, IntVector.Right}, "HE Cannon",
                     "A gun firing high-explosive (HE) projectiles. These guns fire bullets filled with acids or powders that ignite on impact, creating large explosions on impact.",
                     1000, new Cost(0, 0, 1243, 6757, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 6, 2000, 4, 2000,
-                    new ProjectileEnergies(20270460, 2172045, 14504000), 5000, 4500, 1),
+                    new ProjectileEnergies(20270460, 2172045, 14504000), 4500, 1),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Incendiary Cannon - Build",
                     new List<IntVector> {IntVector.Zero, IntVector.Right}, "Incendiary Cannon",
                     "A gun firing a shell filled with a combustible phosphorus powder. The powder is spread on contact, and subsequently ignites, burning anyone or anything caught in the cloud. Does high damage against flesh and hull, a small bit of damage to shields, but no damage to armor.",
                     1000, new Cost(0, 0, 3000, 7000, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Down}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 8, 2500, 6, 2500,
-                    new ProjectileEnergies(19868750, 2210630, 30000000), 5000, 4500, 1),
+                    new ProjectileEnergies(19868750, 2210630, 30000000), 4500, 1),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Amber Gun - Build",
                     new List<IntVector>
@@ -175,23 +176,23 @@ namespace Assets.Ships
                     "A gun that fires a projectile which erupts with an inert gas, covering but not harming a 10-m radius with a thick smog. After 5s, the smog solidifies into a substance harder than steel.",
                     1750, new Cost(2000, 0, 3000, 72500, 0), true, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Zero),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Right),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, new IntVector(1, 1, 0))
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Zero),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Right),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat}, new IntVector(1, 1, 0))
                     },
                     new[]
                     {
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}),
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, IntVector.Up)
-                    }, 8, 4000, 6, 1500, new ProjectileEnergies(12500000, 803865, 0), 2000, 3500, 10),
+                    }, 8, 4000, 6, 1500, new ProjectileEnergies(12500000, 803865, 0), 3500, 10),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Tracer Gun - Build",
                     new List<IntVector> {IntVector.Zero}, "Tracer Gun",
                     "A gun that fires a projectile that emits a moderately-strong radio frequency. On a hit, it embeds itself in the hull or skin of an enemy, allowing your other weapons to more accurately target that unit. Negates the cloaking units of any enemies hit.",
                     1000, new Cost(0, 0.03f, 0, 320, 0), false, new[] {new ConnectorPosition {Direction = ConnectorPositions.Forward}},
                     new[] {new ExclusionVector(new[] {ExclusionVectorDirections.RightLine})}, 3, 5000, 2, 500,
-                    new ProjectileEnergies(625000, 500, 0), 10000, 1000, 0),
+                    new ProjectileEnergies(625000, 500, 0), 1000, 0),
 
                 new WeaponBlueprint(WeaponTypes.Projectile, "Ships/Weapons/Projectiles/Depleted-Uranium Slug Cannon - Build",
                     new List<IntVector>
@@ -213,20 +214,20 @@ namespace Assets.Ships
                     "A large cannon that fires hyper-dense slugs of an alloy composed of tungsten and uranium-238 (aka, depleted uranium). Requires a large explosive force to fire the projectile. Less accurate than the other weapons, but does high damage against hull/flesh and armor.",
                     50000000, new Cost(0, 0, 0, 2000000, 36720), true, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 0, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 1, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 2, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 3, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 4, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(0, 5, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(1, 0, 0)),
-                        new ConnectorPosition(ConnectorPositions.Backward, true, new IntVector(1, 1, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 0, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 1, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 2, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 3, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 4, 0)),
-                        new ConnectorPosition(ConnectorPositions.Left, true, new IntVector(0, 5, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 2, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 3, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 4, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 5, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(1, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Backward, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(1, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 0, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 1, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 2, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 3, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 4, 0)),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air}, new IntVector(0, 5, 0)),
                     },
                     new[]
                     {
@@ -234,7 +235,7 @@ namespace Assets.Ships
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 3, 0)),
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 2, 1)),
                         new ExclusionVector(new[] {ExclusionVectorDirections.RightLine}, new IntVector(0, 3, 1))
-                    }, 10, 10000, 5, 250, new ProjectileEnergies(14994E6f, 3587250240, 0), 10000, 750, 3),
+                    }, 10, 10000, 5, 250, new ProjectileEnergies(14994E6f, 3587250240, 0), 750, 3),
             };
         }
 
@@ -261,12 +262,12 @@ namespace Assets.Ships
                     "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
                     0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
-                        new ConnectorPosition(ConnectorPositions.Left, false),
-                        new ConnectorPosition(ConnectorPositions.Down, false),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Right, false),
-                        new ConnectorPosition(ConnectorPositions.Up, false)
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Left, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Down, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Right, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Up, new Materials[0])
                     },
                     new ExclusionVector[] { }),
 
@@ -275,12 +276,12 @@ namespace Assets.Ships
                     "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
                     0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
-                        new ConnectorPosition(ConnectorPositions.Left, false),
-                        new ConnectorPosition(ConnectorPositions.Down, false),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Right, false),
-                        new ConnectorPosition(ConnectorPositions.Up, false)
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Left, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Down, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Right, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Up, new Materials[0])
                     },
                     new ExclusionVector[] { }),
 
@@ -290,8 +291,8 @@ namespace Assets.Ships
                     "A basic connector. Provides no armor or hull. Holds pieces of your ship together on the top or bottom.",
                     0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Down, false),
-                        new ConnectorPosition(ConnectorPositions.Up, false)
+                        new ConnectorPosition(ConnectorPositions.Down, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Up, new Materials[0])
                     },
                     new ExclusionVector[] { }),
 
@@ -301,8 +302,8 @@ namespace Assets.Ships
                     "A simple weapon mount that allows small weapons to be attached to the underside of panels or wings.",
                     0, 250, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Up, false)
+                        new ConnectorPosition(ConnectorPositions.Forward, new []{Materials.Power, Materials.Heat}),
+                        new ConnectorPosition(ConnectorPositions.Up, new []{Materials.Power, Materials.Heat})
                     },
                     new ExclusionVector[] { })
             };
@@ -318,12 +319,12 @@ namespace Assets.Ships
                     "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
                     0, 1000, new Cost(0, 1, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Left, true),
-                        new ConnectorPosition(ConnectorPositions.Right, true),
-                        new ConnectorPosition(ConnectorPositions.Up, false),
-                        new ConnectorPosition(ConnectorPositions.Down, false),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Right, new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Up, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Down, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
                     },
                     new ExclusionVector[] { }),
 
@@ -333,12 +334,12 @@ namespace Assets.Ships
                     "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
                     0, 1000, new Cost(0, 1, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Left, false),
-                        new ConnectorPosition(ConnectorPositions.Right, false),
-                        new ConnectorPosition(ConnectorPositions.Up, true),
-                        new ConnectorPosition(ConnectorPositions.Down, true),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
+                        new ConnectorPosition(ConnectorPositions.Left, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Right, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Up,  new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Down,  new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
                     },
                     new ExclusionVector[] { }),
 
@@ -348,12 +349,12 @@ namespace Assets.Ships
                     "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
                     0, 1000, new Cost(0, 1, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Left, true),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
-                        new ConnectorPosition(ConnectorPositions.Right, true, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Forward, false, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Left,  new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Right,  new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0], IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0], IntVector.Up),
                     },
                     new ExclusionVector[] { }),
 
@@ -363,12 +364,12 @@ namespace Assets.Ships
                     "A basic hallway. Provides no armor or hull. Holds pieces of your ship together, and can hold an atmosphere.",
                     0, 1000, new Cost(0, 1, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Right, true),
-                        new ConnectorPosition(ConnectorPositions.Forward, false),
-                        new ConnectorPosition(ConnectorPositions.Backward, false),
-                        new ConnectorPosition(ConnectorPositions.Left, true, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Forward, false, IntVector.Up),
-                        new ConnectorPosition(ConnectorPositions.Backward, false, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Right, new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
+                        new ConnectorPosition(ConnectorPositions.Left, new []{Materials.Power, Materials.Heat, Materials.Air, Materials.Water, Materials.Waste}, IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Forward, new Materials[0], IntVector.Up),
+                        new ConnectorPosition(ConnectorPositions.Backward, new Materials[0], IntVector.Up),
                     },
                     new ExclusionVector[] { }),
             };
