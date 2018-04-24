@@ -29,6 +29,18 @@ namespace Assets.Ships
             Crew = new List<CrewMember>();
         }
 
+        private Module(ModuleBlueprint moduleBlueprint, GameObject gameObject, int currentHealth, int currentPower, List<CrewMember> crew, IntVector position, int ownerId, double efficiency)
+        {
+            ModuleBlueprint = moduleBlueprint;
+            GameObject = gameObject;
+            CurrentHealth = currentHealth;
+            CurrentPower = currentPower;
+            Crew = crew;
+            Position = position;
+            OwnerId = ownerId;
+            Efficiency = efficiency;
+        }
+
         public static Module Create(ModuleBlueprint blueprint)
         {
             var module = new Module(blueprint);
@@ -37,7 +49,10 @@ namespace Assets.Ships
             module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
             module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
             module.GameObject.AddComponent<BoxCollider>();
-            
+
+            blueprint.ExclusionVectors.CopyTo(module.ModuleBlueprint.ExclusionVectors, 0);
+            blueprint.Connectors.CopyTo(module.ModuleBlueprint.Connectors, 0);
+            blueprint.Space.CopyTo(module.ModuleBlueprint.Space, 0);
 
             return module;
         }

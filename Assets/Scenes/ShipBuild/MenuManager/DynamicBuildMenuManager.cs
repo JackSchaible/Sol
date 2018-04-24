@@ -160,8 +160,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             dv.ModuleImage.preserveAspect = true;
             dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
             dv.Description.text = data.Blueprint.Description;
-            //TODO: COST CHANGES 
-            //dv.Cost.text = data.Blueprint.Cost.ToString();
+            dv.Gasses.text = data.Blueprint.Cost.Gasses.ToSiUnit("g");
+            dv.LightMetals.text = data.Blueprint.Cost.LightMetals.ToSiUnit("g");
+            dv.OrganicMinerals.text = data.Blueprint.Cost.OrganicMinerals.ToSiUnit("g");
+            dv.HeavyMetals.text = data.Blueprint.Cost.HeavyMetals.ToSiUnit("g");
+            dv.FissileMaterials.text = data.Blueprint.Cost.FissileMaterials.ToSiUnit("g");
             dv.Health.text = data.Blueprint.Health.ToString();
             dv.Weight.text = data.Blueprint.Weight.ToSiUnit("g");
             dv.Power.text = data.Blueprint.PowerConumption.ToSiUnit("W");
@@ -185,8 +188,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             {
                 var detailObj = dm.GameObject.GetComponent<DetailView>();
                 var qw = d as DetailsFieldQw;
+                var tw = d as DetailsFieldThird;
 
-                if (qw == null)
+                if (qw == null && tw == null)
                 {
                     var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
                     var hfInfo = obj.GetComponent<DetailViewHw>();
@@ -199,6 +203,24 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     hfInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon2);
                     hfInfo.Text2.name = d.Name2;
                     hfInfo.Text2.text = d.Value2;
+                }
+                else if (qw == null)
+                {
+                    var obj = Instantiate(detailObj.DetailsPrefabThirdWidth, detailObj.DetailsArea.transform);
+                    var twInfo = obj.GetComponent<DetailViewTw>();
+
+                    twInfo.Icon1.preserveAspect = true;
+                    twInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon1);
+                    twInfo.Text1.name = tw.Name1;
+                    twInfo.Text1.text = tw.Value1;
+                    twInfo.Icon2.preserveAspect = true;
+                    twInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon2);
+                    twInfo.Text2.name = tw.Name2;
+                    twInfo.Text2.text = tw.Value2;
+                    twInfo.Icon3.preserveAspect = true;
+                    twInfo.Icon3.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon3);
+                    twInfo.Text3.name = tw.Name3;
+                    twInfo.Text3.text = tw.Value3;
                 }
                 else
                 {

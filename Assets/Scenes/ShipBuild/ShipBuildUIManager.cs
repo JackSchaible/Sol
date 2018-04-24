@@ -5,6 +5,7 @@ using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,6 +31,7 @@ public class ShipBuildUIManager : MonoBehaviour
     private bool _placeMode;
     private Module _newModule;
     private IntVector _previousPos;
+    private float _newModuleRotation;
 
     #endregion
 
@@ -58,6 +60,12 @@ public class ShipBuildUIManager : MonoBehaviour
 
         PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
             new Color(1, 0, 0) : new Color(1, 1, 1);
+
+        if (_newModuleRotation >= 360)
+            _newModuleRotation -= 360;
+
+        if (_newModuleRotation <= -360)
+            _newModuleRotation += 360;
 
         UpdatePlace();
 
@@ -105,9 +113,10 @@ public class ShipBuildUIManager : MonoBehaviour
         //Constrain to n-px increments
         const int n = 50;
         _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
+        var size = _newModule.GameObject.GetComponent<Renderer>().bounds.size;
         _newModule.GameObject.transform.position = new Vector3(
-            Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
-            Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
+            Mathf.Floor((_newModule.GameObject.transform.position.x + size.x / 2) / n) * n,
+            Mathf.Floor((_newModule.GameObject.transform.position.y + size.y / 2) / n) * n,
             1);
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
@@ -117,7 +126,7 @@ public class ShipBuildUIManager : MonoBehaviour
         if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
             IsPlacementValid();
 
-        if (Input.GetKeyUp(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
         {
             if (_placeMode)
             {
@@ -127,6 +136,51 @@ public class ShipBuildUIManager : MonoBehaviour
             }
             else
                 Application.Quit();
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+        {
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), 90);
+
+            //_newModule.ModuleBlueprint.ExclusionVectors =
+            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
+            //_newModule.ModuleBlueprint.Connectors =
+            //    ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CW);
+            _newModuleRotation += 90;
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), -90);
+
+            //_newModule.ModuleBlueprint.ExclusionVectors =
+            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CCW);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CCW);
+
+            _newModuleRotation -= 90;
+        }
+        else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+        {
+            _newModule.GameObject.transform.localScale = new Vector3(
+                _newModule.GameObject.transform.localScale.x,
+                _newModule.GameObject.transform.localScale.y * -1,
+                _newModule.GameObject.transform.localScale.z);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Horizontal);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Horizontal);
+        }
+        else if (Input.GetKeyDown(KeyCode.T))
+        {
+            _newModule.GameObject.transform.localScale = new Vector3(
+                _newModule.GameObject.transform.localScale.x * -1,
+                _newModule.GameObject.transform.localScale.y,
+                _newModule.GameObject.transform.localScale.z);
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
+            _newModule.ModuleBlueprint.Connectors =
+                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
         }
 
         //Don't call the IsPlacementValid function unless you have to, it's expensive to run
@@ -175,6 +229,10 @@ public class ShipBuildUIManager : MonoBehaviour
         _newModule = Module.Create(blueprint);
         _newModule.GameObject.SetActive(false);
         _newModule.GameObject.SetActive(true);
+
+        if (_newModuleRotation != 0)
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), _newModuleRotation);
+
         var sprite = _newModule.GameObject.GetComponent<SpriteRenderer>();
         sprite.sortingLayerName = "UI BG";
         sprite.sortingOrder = DeckManager.CurrentDeck;

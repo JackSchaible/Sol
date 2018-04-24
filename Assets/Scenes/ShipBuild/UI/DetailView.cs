@@ -20,6 +20,7 @@ public class DetailView : MonoBehaviour
     public Text Command;
     public GameObject DetailsArea;
     public GameObject DetailsPrefabHalfWidth;
+    public GameObject DetailsPrefabThirdWidth;
     public GameObject DetailsPrefabQuarterWidth;
 
 	// Use this for initialization

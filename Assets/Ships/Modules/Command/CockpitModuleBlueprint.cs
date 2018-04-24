@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Assets.Common.Utils;
+﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
 
 namespace Assets.Ships
@@ -13,9 +12,9 @@ namespace Assets.Ships
             
         }
 
-        public CockpitModuleBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name,
-            string description, int health, int weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, int crewRequirement,
-            int powerConumption, int personnelHoused, int commandSupplied)
+        public CockpitModuleBlueprint(string moduleType, string buildSprite, IntVector[] space, string name,
+            string description, int health, float weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, int crewRequirement,
+            float powerConumption, int personnelHoused, int commandSupplied)
             : base(moduleType, buildSprite, space, name, description, health, weight, cost, areConnectorsMandatory, connectors,
                   new []{ new ExclusionVector(new [] {ExclusionVectorDirections.PlaneAndForward}) }, crewRequirement, powerConumption, commandSupplied)
         {

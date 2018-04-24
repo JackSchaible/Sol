@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 using Assets.Ships.Modules;
 using UnityEngine;
 
 namespace Assets.Common.Utils
 {
-    public class IntVector
+    public struct IntVector
     {
         #region Properties
 
@@ -64,12 +65,6 @@ namespace Assets.Common.Utils
 
         public static IntVector operator +(IntVector a, IntVector b)
         {
-            if (a == null)
-                return b;
-
-            if (b == null)
-                return a;
-
             return new IntVector(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
@@ -105,11 +100,17 @@ namespace Assets.Common.Utils
 
         public override bool Equals(object obj)
         {
-            var intVector = obj as IntVector;
-            if (intVector != null)
-                return X == intVector.X && Y == intVector.Y && Z == intVector.Z;
+            if (obj == null) return false;
 
-            return false;
+            try
+            {
+                var intVector = (IntVector) obj;
+                return X == intVector.X && Y == intVector.Y && Z == intVector.Z;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
         }
 
         public override int GetHashCode()

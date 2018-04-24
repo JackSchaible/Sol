@@ -138,7 +138,7 @@ public class ShipBuildManager : MonoBehaviour
                 _availableSlots.Add(new Slot(newPos,
                     new List<Connector> { new Connector(newD, connector.MaterialsConveyed) }));
             else
-                existingSlot.RequiredConnector.Add(new Connector(newD, connector.CanConveyAtmosphere));
+                existingSlot.RequiredConnector.Add(new Connector(newD, connector.MaterialsConveyed));
         }
     }
 
@@ -159,9 +159,7 @@ public class ShipBuildManager : MonoBehaviour
                 foreach (var modCon in newModule.ModuleBlueprint.Connectors)
                     if (
                         con.Position == modCon.Direction &&
-                        slot.Position.Equals(modCon.Position + newModule.Position) &&
-                        (con.SupportsAtmosphere && modCon.CanConveyAtmosphere ||
-                            !con.SupportsAtmosphere && !modCon.CanConveyAtmosphere))
+                        slot.Position.Equals(modCon.Position + newModule.Position))
                         conCount--;
 
         foreach (var space in newModule.ModuleBlueprint.Space)

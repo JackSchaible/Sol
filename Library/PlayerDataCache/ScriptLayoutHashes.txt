@@ -93,7 +93,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 31aaf521b3ef8699466676591ea0efd4 UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 31aaf521b3ef8699466676591ea0efd4 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 df374c01140c2d578bf70cbd60073d1d UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
-dda72f4ffbfc8a5c9cad4efeb0db9144 Assembly-CSharp.dll:.ShipBuildManager
+a9cb2f7b826d0e64086a22ae34166cd0 Assembly-CSharp.dll:.ShipBuildManager
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 60b2bb652410a5867a5ab9a01cd38461 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -110,7 +110,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 9bb02933cf4c35d3aa57bbf6a6993b40 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.MenuManager.DynamicBuildMenuManager
-23740e685afb636becf7ff40105d22ca Assembly-CSharp.dll:.DetailView
+4273947f47370a55c5ecb86c96894339 Assembly-CSharp.dll:.DetailView
 322cb40e1e282f28af980cbef7922a90 UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsEventTracker
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
 b2f4e5bb9e8c0109a50e306c601890f3 Assembly-CSharp.dll:.PlayerShip
@@ -155,3 +155,4 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.AlphaHitbox
 35ddcf9387d330903cd2259c035425a6 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.UI.DetailViewQw
 a0c1b5edb41d8b608d2f5299b3161519 Assembly-CSharp.dll:.Modal
+01a65a67a5441bf7bab687fdb9ab9da1 Assembly-CSharp.dll:Assets.Scenes.ShipBuild.UI.DetailViewTw

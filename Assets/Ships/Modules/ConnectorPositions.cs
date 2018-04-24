@@ -4,7 +4,7 @@ using Assets.Data;
 
 namespace Assets.Ships.Modules
 {
-    public class ConnectorPosition
+    public struct ConnectorPosition
     {
         /// <summary>
         /// The position on the module this connector sits
@@ -20,29 +20,20 @@ namespace Assets.Ships.Modules
         /// Where in the module does this connector sit?
         /// <value>{0, 0, 0} by default</value>
         /// </summary>
-        public IntVector Position
-        {
-            get
-            {
-                if (_pos == null)
-                    _pos = IntVector.Zero;
+        public IntVector Position { get; set; }
 
-                return _pos;
-            }
-            set { _pos = value; }
-        }
-        private IntVector _pos;
-
-        public ConnectorPosition()
-        {
-            Position = IntVector.Zero;
-        }
-
-        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed, IntVector position = null)
+        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed)
         {
             Direction = direction;
             MaterialsConveyed = materialsConveyed;
-            Position = position ?? IntVector.Zero;
+            Position = IntVector.Zero;
+        }
+
+        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed, IntVector position)
+        {
+            Direction = direction;
+            MaterialsConveyed = materialsConveyed;
+            Position = position;
         }
 
         public static ConnectorPositions GetOpposite(ConnectorPositions direction)

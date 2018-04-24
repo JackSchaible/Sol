@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Assets.Common.Utils;
+﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
 
 namespace Assets.Ships
@@ -9,7 +8,7 @@ namespace Assets.Ships
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
         public string BuildSprite { get; set; }
-        public List<IntVector> Space { get; set; }
+        public IntVector[] Space { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Health { get; set; }
@@ -29,7 +28,7 @@ namespace Assets.Ships
         }
 
         protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
-            List<IntVector> space, string name, string description, int health, float weight, Cost cost,
+            IntVector[] space, string name, string description, int health, float weight, Cost cost,
             bool areConnectorsMandatory, ConnectorPosition[] connectors, ExclusionVector[] exclusionVectors,
             int crewRequirement, float powerConumption, int commandRequirement)
         {

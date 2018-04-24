@@ -2,10 +2,11 @@
 {
     public enum Materials
     {
-        Power,
-        Water,
-        Air,
-        Waste,
-        Heat,
+        Power = 0,
+        Water = 1,
+        Air = 2,
+        Waste = 3,
+        Heat = 4,
+        People = 5,
     }
 }

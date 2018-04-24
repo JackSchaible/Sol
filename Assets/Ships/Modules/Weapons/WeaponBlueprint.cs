@@ -2,7 +2,6 @@
 using Assets.Common.Utils;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Weapons;
-using UnityEngine;
 
 namespace Assets.Ships
 {
@@ -20,9 +19,9 @@ namespace Assets.Ships
 
         }
 
-        public WeaponBlueprint(string moduleType, string buildSprite, List<IntVector> space, string name, 
-            string description, int weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, 
-            ExclusionVector[] exclusionVectors, int crewRequirement, int powerConumption, int commandRequirement,
+        public WeaponBlueprint(string moduleType, string buildSprite, IntVector[] space, string name, 
+            string description, float weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, 
+            ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption, int commandRequirement,
             int rateOfFire, ProjectileEnergies projectileEnergies, int ammoStorage, int damageRadius)
             : base(ModuleTypes.Weapon, moduleType, buildSprite, space, name, description, 10, weight, cost,
                   areConnectorsMandatory, connectors, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
