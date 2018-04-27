@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
@@ -25,7 +24,7 @@ public class ShipBuildUIManager : MonoBehaviour
     public Text ModulesText;
     public Text PowerText;
     public Text PeopleText;
-    //public Text DebugText;
+    public Text DebugText;
     public Modal Modal;
 
     //Internal state-tracking variables
@@ -114,15 +113,26 @@ public class ShipBuildUIManager : MonoBehaviour
         //Constrain to n-px increments
         const int n = 50;
         _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
-        //var size = _newModule.GameObject.GetComponent<Renderer>().bounds.size;
-        //_newModule.GameObject.transform.position = new Vector3(
-        //    Mathf.Floor((_newModule.GameObject.transform.position.x + size.x / 2) / n) * n,
-        //    Mathf.Floor((_newModule.GameObject.transform.position.y + size.y / 2) / n) * n,
-        //    1);
+
         _newModule.GameObject.transform.position = new Vector3(
             Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
             Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
             1);
+
+        //if (_newModule.ModuleBlueprint.Space.Length > 1)
+        //{
+        //    if (_newModule.ModuleBlueprint.Space.Any(a => a.X != 0))
+        //        _newModule.GameObject.transform.position = new Vector3(
+        //            _newModule.GameObject.transform.position.x + 25,
+        //            _newModule.GameObject.transform.position.y,
+        //            1);
+
+        //    if (_newModule.ModuleBlueprint.Space.Any(a => a.Y != 0))
+        //        _newModule.GameObject.transform.position = new Vector3(
+        //            _newModule.GameObject.transform.position.x,
+        //            _newModule.GameObject.transform.position.y + 25,
+        //            1);
+        //}
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
         _newModule.Position.SetZ(DeckManager.CurrentDeck);
@@ -137,13 +147,19 @@ public class ShipBuildUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), -90);
+            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position,
+                new Vector3(0, 0, 1), -90);
 
-            //_newModule.ModuleBlueprint.ExclusionVectors =
-            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CCW);
             _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CCW);
+                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
+                    ModuleVectorUtils.RotationDirection.CW);
+
+            _newModule.ModuleBlueprint.ExclusionVectors =
+                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
+
+            _newModule.ModuleBlueprint.Space =
+                ModuleVectorUtils.RotateSpace(_newModule.ModuleBlueprint.Space,
+                    ModuleVectorUtils.RotationDirection.CW);
 
             _newModuleRotation -= 90;
         }
@@ -182,6 +198,9 @@ public class ShipBuildUIManager : MonoBehaviour
                 Application.Quit();
         }
 
+        var collider = _newModule.GameObject.GetComponent<BoxCollider>();
+
+        DebugText.text = string.Format("x1: {0} y1: {1} x2: {2} y2: {3}", collider.bounds.min.x, collider.bounds.min.y, collider.bounds.max.x, collider.bounds.max.y);
         //this.DebugText.text = _newModule.GameObject.GetComponent<BoxCollider>().bounds.center.ToString();
         //_newModule.GameObject.transform.RotateAround(_newModule.GameObject.GetComponent<BoxCollider>().bounds.center, Vector3.back, 1f);
     }

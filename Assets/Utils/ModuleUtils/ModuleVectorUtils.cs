@@ -239,5 +239,29 @@ namespace Assets.Utils.ModuleUtils
 
             return vectors;
         }
+
+        public static IntVector[] RotateSpace(IntVector[] space, RotationDirection rd)
+        {
+            if (rd == RotationDirection.CW)
+                for (int i = 0; i < space.Length; i++)
+                    space[i] = new IntVector(space[i].Y, -space[i].X, space[i].Z);
+            else
+                for (int i = 0; i < space.Length; i++)
+                    space[i] = new IntVector(-space[i].Y, space[i].X, space[i].Z);
+            
+            return space;
+        }
+
+        public static IntVector[] FlipSpace(IntVector[] space, FlipDirection fd)
+        {
+            if (fd == FlipDirection.Horizontal)
+                for(int i = 0; i < space.Length; i++)
+                    space[i] = new IntVector(-space[i].X, space[i].Y, space[i].Z);
+            else
+                for (int i = 0; i < space.Length; i++)
+                    space[i] = new IntVector(space[i].X, -space[i].Y, space[i].Z);
+
+            return space;
+        }
     }
 }

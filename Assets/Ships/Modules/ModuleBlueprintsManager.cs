@@ -9,7 +9,6 @@ namespace Assets.Ships
 {
     public static class ModuleBlueprintsManager
     {
-
         public static ModuleBlueprint[] Generate()
         {
             var blueprints = new List<ModuleBlueprint>();
@@ -255,12 +254,12 @@ namespace Assets.Ships
 
         private static DecorativeModuleBlueprint[] GetDecorativeModules()
         {
-            return new []
+            return new[]
             {
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Panel - Build",
-                    new [] {IntVector.Zero}, "Panel",
+                    new[] {IntVector.Zero}, "Panel",
                     "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
-                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new []
+                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
                         new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
                         new ConnectorPosition(ConnectorPositions.Left, new Materials[0]),
@@ -272,9 +271,9 @@ namespace Assets.Ships
                     new ExclusionVector[] { }),
 
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Panel 2 - Build",
-                    new [] {IntVector.Zero}, "Panel 2",
+                    new[] {IntVector.Zero}, "Panel 2",
                     "A basic panel. Provides no armor or hull, merely helps to connect pieces of your ship together.",
-                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new []
+                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
                         new ConnectorPosition(ConnectorPositions.Backward, new Materials[0]),
                         new ConnectorPosition(ConnectorPositions.Left, new Materials[0]),
@@ -286,10 +285,10 @@ namespace Assets.Ships
                     new ExclusionVector[] { }),
 
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Crossbeam Connector - Build",
-                    new [] {IntVector.Zero},
+                    new[] {IntVector.Zero},
                     "Crossbeam Connector",
                     "A basic connector. Provides no armor or hull. Holds pieces of your ship together on the top or bottom.",
-                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new []
+                    0, 1000, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
                         new ConnectorPosition(ConnectorPositions.Down, new Materials[0]),
                         new ConnectorPosition(ConnectorPositions.Up, new Materials[0])
@@ -297,13 +296,14 @@ namespace Assets.Ships
                     new ExclusionVector[] { }),
 
                 new DecorativeModuleBlueprint("Ships/Miscellanious/Decorative/Weapon Mount - Build",
-                    new [] {IntVector.Zero},
+                    new[] {IntVector.Zero},
                     "Weapon Mount",
                     "A simple weapon mount that allows small weapons to be attached to the underside of panels or wings.",
-                    0, 250, new Cost(0, 0, 0, 1, 0), false, new []
+                    0, 250, new Cost(0, 0, 0, 1, 0), false, new[]
                     {
-                        new ConnectorPosition(ConnectorPositions.Forward, new []{Materials.Power, Materials.Heat}),
-                        new ConnectorPosition(ConnectorPositions.Up, new []{Materials.Power, Materials.Heat})
+                        new ConnectorPosition(ConnectorPositions.Forward, new[] {Materials.Power}),
+                        new ConnectorPosition(ConnectorPositions.Up, new[] {Materials.Power}),
+                        new ConnectorPosition(ConnectorPositions.Down, new[] {Materials.Power})
                     },
                     new ExclusionVector[] { })
             };
