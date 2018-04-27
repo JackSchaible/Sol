@@ -43,10 +43,10 @@ namespace Assets.Ships
 
         public static Module Create(ModuleBlueprint blueprint)
         {
-            var module = new Module(blueprint);
+            var module = new Module(blueprint.Copy());
             module.GameObject = new GameObject();
             module.GameObject.AddComponent<SpriteRenderer>();
-            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
+            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite, true);
             module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
             module.GameObject.AddComponent<BoxCollider>();
 

@@ -48,5 +48,7 @@ namespace Assets.Ships
             PowerConumption = powerConumption;
             CommandRequirement = commandRequirement;
         }
+
+        public abstract ModuleBlueprint Copy();
     }
 }

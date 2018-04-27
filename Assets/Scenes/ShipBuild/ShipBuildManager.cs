@@ -20,7 +20,7 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
-    private List<Slot> _availableSlots;
+    private List<ConnectorPosition> _availableSlots;
 
     public List<Module> Modules
     {
@@ -34,9 +34,8 @@ public class ShipBuildManager : MonoBehaviour
     {
         Modules = new List<Module>();
         HasCommandModule = false;
-        _availableSlots = new List<Slot>
+        _availableSlots = new List<ConnectorPosition>
         {
-            new Slot(IntVector.Forward, new List<Connector>())
         };
     }
 
@@ -132,13 +131,7 @@ public class ShipBuildManager : MonoBehaviour
                 continue;
 
             ConnectorPositions newD = ConnectorPosition.GetOpposite(connector.Direction);
-            var existingSlot = _availableSlots.FirstOrDefault(x => x.Position.Equals(newPos));
-
-            if (existingSlot == null)
-                _availableSlots.Add(new Slot(newPos,
-                    new List<Connector> { new Connector(newD, connector.MaterialsConveyed) }));
-            else
-                existingSlot.RequiredConnector.Add(new Connector(newD, connector.MaterialsConveyed));
+            _availableSlots.Add(new ConnectorPosition(newD, connector.MaterialsConveyed, newPos));
         }
     }
 
@@ -154,13 +147,12 @@ public class ShipBuildManager : MonoBehaviour
         var spaceValid = true;
         var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
 
+        if (FirstModule == null) return true;
+
         foreach (var slot in _availableSlots)
-            foreach (var con in slot.RequiredConnector)
-                foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-                    if (
-                        con.Position == modCon.Direction &&
-                        slot.Position.Equals(modCon.Position + newModule.Position))
-                        conCount--;
+            foreach (var modCon in newModule.ModuleBlueprint.Connectors)
+                if (modCon.Equals(newModule.Position, slot))
+                    conCount--;
 
         foreach (var space in newModule.ModuleBlueprint.Space)
         {
@@ -169,13 +161,12 @@ public class ShipBuildManager : MonoBehaviour
             if (IsPositionOutsideOfExclusionSpaces(spacePos))
             {
                 foreach (var module in Modules)
-                    foreach (var mSpace in module.ModuleBlueprint.Space)
-                        if ((module.Position + mSpace).Equals(spacePos))
-                            spaceValid = false;
+                foreach (var mSpace in module.ModuleBlueprint.Space)
+                    if ((module.Position + mSpace).Equals(spacePos))
+                        spaceValid = false;
             }
             else
                 spaceValid = false;
-
         }
 
         return conCount <= 0 && spaceValid;
@@ -272,39 +263,10 @@ public class ShipBuildManager : MonoBehaviour
     //1.c A module may not exist in the same space as another module
     private bool DoesModuleOverlap(IntVector pos)
     {
-        return Modules.SelectMany(a => a.ModuleBlueprint.Space.Select(b => a.Position + b)).Any(c => c.Equals(pos));
+        return Modules.SelectMany(a => a.ModuleBlueprint.Space.Select(b => a.Position + b)).Any(c => c == pos);
     }
 
     #endregion
 
     #endregion
-
-    private class Slot
-    {
-        public IntVector Position { get; set; }
-        public List<Connector> RequiredConnector { get; set; }
-
-        public Slot()
-        {
-
-        }
-
-        public Slot(IntVector position, List<Connector> requiredConnector) : this()
-        {
-            Position = position;
-            RequiredConnector = requiredConnector;
-        }
-    }
-
-    private struct Connector
-    {
-        public ConnectorPositions Position;
-        public Materials[] MaterialsConveyed;
-
-        public Connector(ConnectorPositions position, Materials[] materialsConveyed)
-        {
-            Position = position;
-            MaterialsConveyed = materialsConveyed;
-        }
-    }
 }

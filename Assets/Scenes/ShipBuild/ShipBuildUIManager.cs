@@ -21,10 +21,11 @@ public class ShipBuildUIManager : MonoBehaviour
     //Reference to the scene's main camera (used for the transformation matrix)
     public Camera Camera;
 
-    //UI Elements needing to be updates
+    //UI Elements needing to be updated
     public Text ModulesText;
     public Text PowerText;
     public Text PeopleText;
+    //public Text DebugText;
     public Modal Modal;
 
     //Internal state-tracking variables
@@ -113,40 +114,26 @@ public class ShipBuildUIManager : MonoBehaviour
         //Constrain to n-px increments
         const int n = 50;
         _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
-        var size = _newModule.GameObject.GetComponent<Renderer>().bounds.size;
+        //var size = _newModule.GameObject.GetComponent<Renderer>().bounds.size;
+        //_newModule.GameObject.transform.position = new Vector3(
+        //    Mathf.Floor((_newModule.GameObject.transform.position.x + size.x / 2) / n) * n,
+        //    Mathf.Floor((_newModule.GameObject.transform.position.y + size.y / 2) / n) * n,
+        //    1);
         _newModule.GameObject.transform.position = new Vector3(
-            Mathf.Floor((_newModule.GameObject.transform.position.x + size.x / 2) / n) * n,
-            Mathf.Floor((_newModule.GameObject.transform.position.y + size.y / 2) / n) * n,
+            Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
+            Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
             1);
 
         _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
         _newModule.Position.SetZ(DeckManager.CurrentDeck);
 
         //Module pos has changed, recalculate the placement viability
-        if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
+        if (ShipBuildManager.FirstModule != null && _newModule.Position != _previousPos)
             IsPlacementValid();
-
-        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
-        {
-            if (_placeMode)
-            {
-                Destroy(_newModule.GameObject);
-                _placeMode = false;
-                Menu.PlaceCancelled();
-            }
-            else
-                Application.Quit();
-        }
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
         {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), 90);
-
-            //_newModule.ModuleBlueprint.ExclusionVectors =
-            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
-            //_newModule.ModuleBlueprint.Connectors =
-            //    ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CW);
-            _newModuleRotation += 90;
+            
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
@@ -162,34 +149,41 @@ public class ShipBuildUIManager : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
         {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x,
-                _newModule.GameObject.transform.localScale.y * -1,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Horizontal);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Horizontal);
         }
         else if (Input.GetKeyDown(KeyCode.T))
         {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x * -1,
-                _newModule.GameObject.transform.localScale.y,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
+            //_newModule.GameObject.transform.localScale = new Vector3(
+            //    _newModule.GameObject.transform.localScale.x * -1,
+            //    _newModule.GameObject.transform.localScale.y,
+            //    _newModule.GameObject.transform.localScale.z);
+            //_newModule.ModuleBlueprint.ExclusionVectors =
+            //    ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
+            //_newModule.ModuleBlueprint.Connectors =
+            //    ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
         }
+
+        if (ShipBuildManager.FirstModule != null)
+            _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
+                ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
 
         //Don't call the IsPlacementValid function unless you have to, it's expensive to run
         if (Input.GetMouseButton(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
             PlaceModule();
 
-        if (ShipBuildManager.FirstModule != null)
-            _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-                ShipBuildManager.FirstModule.GameObject.transform.position);
+        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
+        {
+            if (_placeMode)
+            {
+                Destroy(_newModule.GameObject);
+                CancelPlaceMode();
+                Menu.PlaceCancelled();
+            }
+            else
+                Application.Quit();
+        }
+
+        //this.DebugText.text = _newModule.GameObject.GetComponent<BoxCollider>().bounds.center.ToString();
+        //_newModule.GameObject.transform.RotateAround(_newModule.GameObject.GetComponent<BoxCollider>().bounds.center, Vector3.back, 1f);
     }
 
     /// <summary>
@@ -214,8 +208,8 @@ public class ShipBuildUIManager : MonoBehaviour
     private void PlaceModule()
     {
         ShipBuildManager.AddModule(_newModule);
-        _placeMode = false;
         Menu.ModulePlaced(_newModule.ModuleBlueprint);
+        CancelPlaceMode();
     }
 
     /// <summary>
@@ -230,8 +224,16 @@ public class ShipBuildUIManager : MonoBehaviour
         _newModule.GameObject.SetActive(false);
         _newModule.GameObject.SetActive(true);
 
-        if (_newModuleRotation != 0)
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), _newModuleRotation);
+        //if (_newModuleRotation != 0)
+        //{
+        //    _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1),
+        //        _newModuleRotation);
+
+        //    for(int rotations = (int)Math.Abs(_newModuleRotation) / 90; rotations > 0; rotations--)
+        //        _newModule.ModuleBlueprint.Connectors =
+        //            ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
+        //                ModuleVectorUtils.RotationDirection.CCW);
+        //}
 
         var sprite = _newModule.GameObject.GetComponent<SpriteRenderer>();
         sprite.sortingLayerName = "UI BG";
@@ -245,6 +247,12 @@ public class ShipBuildUIManager : MonoBehaviour
         }
         else
             _placeMode = true;
+    }
+
+    private void CancelPlaceMode()
+    {
+        _placeMode = false;
+        _newModule = null;
     }
 
     #endregion

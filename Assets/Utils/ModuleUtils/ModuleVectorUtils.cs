@@ -28,7 +28,11 @@ namespace Assets.Utils.ModuleUtils
                 switch (positions[i].Direction)
                 {
                     case ConnectorPositions.Forward:
+                        direction = ConnectorPositions.Forward;
+                        break;
+
                     case ConnectorPositions.Backward:
+                        direction = ConnectorPositions.Backward;
                         break;
 
                     case ConnectorPositions.Up:

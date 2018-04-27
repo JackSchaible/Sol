@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Assets.Common.Utils;
+﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Weapons;
 
@@ -30,6 +29,21 @@ namespace Assets.Ships
             ProjectileEnergies = projectileEnergies;
             AmmoStorage = ammoStorage;
             DamageRadius = damageRadius;
+        }
+
+        public override ModuleBlueprint Copy()
+        {
+            var connectors = new ConnectorPosition[Connectors.Length];
+            var exclusionVectors = new ExclusionVector[ExclusionVectors.Length];
+            var space = new IntVector[Space.Length];
+
+            Connectors.CopyTo(connectors, 0);
+            ExclusionVectors.CopyTo(exclusionVectors, 0);
+            Space.CopyTo(space, 0);
+
+            return new WeaponBlueprint(ModuleSubtype, BuildSprite, space, Name, Description, Weight,
+                Cost, AreConnectorsMandatory, connectors, exclusionVectors, CrewRequirement, PowerConumption,
+                CommandRequirement, RateOfFire, ProjectileEnergies, AmmoStorage, DamageRadius);
         }
     }
 }

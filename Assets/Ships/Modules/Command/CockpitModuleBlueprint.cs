@@ -20,5 +20,18 @@ namespace Assets.Ships
         {
             PersonnelHoused = personnelHoused;
         }
+
+        public override ModuleBlueprint Copy()
+        {
+            var connectors = new ConnectorPosition[Connectors.Length];
+            var space = new IntVector[Space.Length];
+
+            Connectors.CopyTo(connectors, 0);
+            Space.CopyTo(space, 0);
+
+            return new CockpitModuleBlueprint(
+                ModuleSubtype, BuildSprite, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory,
+                connectors, CrewRequirement, PowerConumption, PersonnelHoused, CommandSupplied);
+        }
     }
 }

@@ -21,5 +21,20 @@ namespace Assets.Ships
         {
             CommandSupplied = commandSupplied;
         }
+
+        public override ModuleBlueprint Copy()
+        {
+            var connectors = new ConnectorPosition[Connectors.Length];
+            var exclusionVectors = new ExclusionVector[ExclusionVectors.Length];
+            var space = new IntVector[Space.Length];
+
+            Connectors.CopyTo(connectors, 0);
+            ExclusionVectors.CopyTo(exclusionVectors, 0);
+            Space.CopyTo(space, 0);
+
+            return new CommandModuleBlueprint(
+                ModuleSubtype, BuildSprite, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory,
+                connectors, exclusionVectors, CrewRequirement, PowerConumption, CommandSupplied);
+        }
     }
 }

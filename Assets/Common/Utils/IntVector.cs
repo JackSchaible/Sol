@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
 using Assets.Ships.Modules;
 using UnityEngine;
 
@@ -66,6 +65,14 @@ namespace Assets.Common.Utils
         public static IntVector operator +(IntVector a, IntVector b)
         {
             return new IntVector(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+        }
+        public static bool operator ==(IntVector a, IntVector b)
+        {
+            return (a.X == b.X && a.Y == b.Y && a.Z == b.Z);
+        }
+        public static bool operator !=(IntVector a, IntVector b)
+        {
+            return !(a == b);
         }
 
         /// <summary>
