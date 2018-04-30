@@ -20,7 +20,8 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
-    private List<ConnectorPosition> _availableSlots;
+    public GameObject ComponentPrefab;
+    public ModuleComponent[,,] Grid { get; set; }
 
     public List<Module> Modules
     {
@@ -30,13 +31,18 @@ public class ShipBuildManager : MonoBehaviour
     public bool HasCommandModule { get; private set; }
     public Module FirstModule { get; private set; }
 
+    private readonly Dictionary<string, Vector3Int> _shipSizes = new Dictionary<string, Vector3Int>
+    {
+        {ShipTypes.StrikeCraft, new Vector3Int(10, 10, 3)},
+        {ShipTypes.Frigate, new Vector3Int(25, 25, 10)},
+        {ShipTypes.Cruiser, new Vector3Int(40, 40, 20)},
+        {ShipTypes.CapitalShip, new Vector3Int(80, 80, 40)},
+    };
+
     void Awake()
     {
         Modules = new List<Module>();
         HasCommandModule = false;
-        _availableSlots = new List<ConnectorPosition>
-        {
-        };
     }
 
     void Start()
@@ -48,27 +54,49 @@ public class ShipBuildManager : MonoBehaviour
     {
     }
 
+    public void InitializeGrid(string shipType)
+    {
+        var size = _shipSizes[shipType];
+
+        Grid = new ModuleComponent[size.x, size.y, size.z];
+
+        for (var z = 0; z < size.z; z++)
+        {
+            if (z > 0)
+                DeckManager.AddLowerDeck();
+
+            for (var x = 0; x < size.x; x++)
+                for (var y = 0; y < size.y; y++)
+                {
+                    Grid[x, y, z] = new ModuleComponent(Vector3Int.zero, new Connector[0], new ExclusionVector[0]);
+                    Grid[x, y, z].GameObject = Instantiate(ComponentPrefab);
+                    Grid[x, y, z].GameObject.transform.position = new Vector3Int(x, y, z);
+                    Grid[x, y, z].GameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                }
+        }
+
+        DeckManager.SelectDeck(0);
+    }
+
     public void AddModule(Module module)
     {
         if (Modules.Count == 0)
         {
-            module.Position = new IntVector(0, 0, 1);
+            module.Position = new Vector3Int(0, 0, 1);
             FirstModule = module;
-
-            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
         }
         else
         {
-            module.Position = IntVector.GetRelativeVector(FirstModule.GameObject.transform.position, module.GameObject.transform.position)
-                .SetZ(DeckManager.CurrentDeck);
+            //TODO: Redo, maybe?
+            //module.Position = IntVector.GetRelativeVector(FirstModule.GameObject.transform.position, module.GameObject.transform.position)
+            //    .SetZ(DeckManager.CurrentDeck);
         }
 
-        var slotsToRemove =
-            _availableSlots.Where(x => module.ModuleBlueprint.Space.Any(y => (y + module.Position).Equals(x.Position))).ToList();
+        //var slotsToRemove =
+        //    _availableSlots.Where(x => module.ModuleBlueprint.Space.Any(y => (y + module.Position).Equals(x.Position))).ToList();
 
-        foreach (var remove in slotsToRemove)
-            _availableSlots.Remove(remove);
+        //foreach (var remove in slotsToRemove)
+        //    _availableSlots.Remove(remove);
 
         Modules.Add(module);
 
@@ -101,39 +129,35 @@ public class ShipBuildManager : MonoBehaviour
 
                         case ExclusionVectorDirections.PlaneAndForward:
                             DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-                            DeckManager.AddLowerDeck();
                             break;
 
                         case ExclusionVectorDirections.PlaneAndBackward:
                             DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                            DeckManager.AddUpperDeck();
                             break;
                     }
                 }
             }
         }
 
-        AddConnectedSlots(module);
+        //AddConnectedSlots(module);
     }
-    private void AddConnectedSlots(Module module)
-    {
-        foreach (var connector in module.ModuleBlueprint.Connectors)
-        {
-            var pos = module.Position + connector.Position;
-            var newPos = pos.Adjust(connector.Direction);
+    //private void AddConnectedSlots(Module module)
+    //{
+    //    foreach (var connector in module.ModuleBlueprint.Connectors)
+    //    {
+    //        //var pos = module.Position + connector.Position;
+    //        var newPos = pos.Adjust(connector.Direction);
 
-            if (!IsPositionOutsideOfExclusionSpaces(newPos))
-                continue;
+    //        if (!IsPositionOutsideOfExclusionSpaces(newPos))
+    //            continue;
 
-            if (DoesModuleOverlap(newPos))
-                continue;
+    //        if (DoesModuleOverlap(newPos))
+    //            continue;
 
-            ConnectorPositions newD = ConnectorPosition.GetOpposite(connector.Direction);
-            _availableSlots.Add(new ConnectorPosition(newD, connector.MaterialsConveyed, newPos));
-        }
-    }
+    //        ConnectorDirections newD = Connector.GetOpposite(connector.Direction);
+    //        //_availableSlots.Add(new Connector(newD, connector.MaterialsConveyed, newPos));
+    //    }
+    //}
 
     public void DeleteModule(Module module)
     {
@@ -149,124 +173,36 @@ public class ShipBuildManager : MonoBehaviour
 
         if (FirstModule == null) return true;
 
-        foreach (var slot in _availableSlots)
-            foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-                if (modCon.Equals(newModule.Position, slot))
-                    conCount--;
+        //foreach (var slot in _availableSlots)
+        //    foreach (var modCon in newModule.ModuleBlueprint.Connectors)
+        //        if (modCon.Equals(newModule.Position, slot))
+        //            conCount--;
 
-        foreach (var space in newModule.ModuleBlueprint.Space)
-        {
-            var spacePos = newModule.Position + space;
+        //foreach (var space in newModule.ModuleBlueprint.Space)
+        //{
+        //    var spacePos = newModule.Position + space;
 
-            if (IsPositionOutsideOfExclusionSpaces(spacePos))
-            {
-                foreach (var module in Modules)
-                foreach (var mSpace in module.ModuleBlueprint.Space)
-                    if ((module.Position + mSpace).Equals(spacePos))
-                        spaceValid = false;
-            }
-            else
-                spaceValid = false;
-        }
+        //    if (IsPositionOutsideOfExclusionSpaces(spacePos))
+        //    {
+        //        foreach (var module in Modules)
+        //        foreach (var mSpace in module.ModuleBlueprint.Space)
+        //            if ((module.Position + mSpace).Equals(spacePos))
+        //                spaceValid = false;
+        //    }
+        //    else
+        //        spaceValid = false;
+        //}
 
         return conCount <= 0 && spaceValid;
     }
 
-    #region 1. Exclusion Vectors and Connectors
-
-    //1.a. Modules may not be placed in the space defined by the exclusion vector of other modules
-    private bool IsPositionOutsideOfExclusionSpaces(IntVector pos)
-    {
-        bool valid = true;
-
-        foreach (var module in Modules)
-        {
-            //Exclusion Vector Stuff
-            foreach (var ev in module.ModuleBlueprint.ExclusionVectors)
-            {
-                foreach (var e in ev.Direction)
-                {
-                    var ePos = module.Position + ev.Position;
-                    switch (e)
-                    {
-                        case ExclusionVectorDirections.ForwardLine:
-                            if (ePos.X == pos.X &&
-                                ePos.Y == pos.Y &&
-                                ePos.Z < pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.BackwardLine:
-                            if (ePos.X == pos.X &&
-                                ePos.Y == pos.Y &&
-                                ePos.Z > pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.UpwardLine:
-                            if (ePos.X == pos.X &&
-                                ePos.Y < pos.Y &&
-                                ePos.Z == pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.DownwardLine:
-                            if (ePos.X == pos.X &&
-                                ePos.Y > pos.Y &&
-                                ePos.Z == pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.RightLine:
-                            if (ePos.X < pos.X &&
-                                ePos.Y == pos.Y &&
-                                ePos.Z == pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.LeftLine:
-                            if (ePos.X > pos.X &&
-                                ePos.Y == pos.Y &&
-                                ePos.Z == pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.Plane:
-                            if (ePos.Z == pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndAbove:
-                            if (ePos.Y <= pos.Y)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndBelow:
-                            if (ePos.Y >= pos.Y)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndForward:
-                            if (ePos.Z <= pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndBackward:
-                            if (ePos.Z >= pos.Z)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndRight:
-                            if (ePos.X <= pos.X)
-                                valid = false;
-                            break;
-                        case ExclusionVectorDirections.PlaneAndLeft:
-                            if (ePos.X >= pos.X)
-                                valid = false;
-                            break;
-                    }
-                }
-            }
-        }
-
-        return valid;
-    }
-    //1.c A module may not exist in the same space as another module
-    private bool DoesModuleOverlap(IntVector pos)
-    {
-        return Modules.SelectMany(a => a.ModuleBlueprint.Space.Select(b => a.Position + b)).Any(c => c == pos);
-    }
-
     #endregion
 
-    #endregion
+    private static class ShipTypes
+    {
+        public static string StrikeCraft = "StrikeCraft";
+        public static string Frigate = "Frigate";
+        public static string Cruiser = "Cruiser";
+        public static string CapitalShip = "CapitalShip";
+    }
 }

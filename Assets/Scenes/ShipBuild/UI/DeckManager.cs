@@ -9,9 +9,6 @@ namespace Assets.Scenes.ShipBuild
 {
     public class DeckManager : MonoBehaviour
     {
-        public Button NewUpperDeck;
-        public Button NewLowerDeck;
-
         public GameObject Content;
         public ShipBuildManager BuildManager;
         public GameObject DeckPrefab;
@@ -44,22 +41,16 @@ namespace Assets.Scenes.ShipBuild
 
         void Update()
         {
-            if (!NewUpperDeck.interactable || !NewLowerDeck.interactable) return;
-
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 if (_deckButtons.ContainsKey(CurrentDeck - 1))
                     SelectDeck(CurrentDeck - 1);
-                else
-                    AddLowerDeck();
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 if (_deckButtons.ContainsKey(CurrentDeck + 1))
                     SelectDeck(CurrentDeck + 1);
-                else
-                    AddUpperDeck();
             }
         }
 
@@ -75,36 +66,6 @@ namespace Assets.Scenes.ShipBuild
             SelectDeck(deckNumber - 1);
         }
 
-        public void DisableNewDeckButtons(NewDeckButtons button)
-        {
-            switch (button)
-            {
-                case NewDeckButtons.Upper:
-                    NewUpperDeck.interactable = false;
-                    break;
-                case NewDeckButtons.Lower:
-                    NewLowerDeck.interactable = false;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("button", button, null);
-            }
-        }
-
-        public void EnableNewDeckButtons(NewDeckButtons button)
-        {
-            switch (button)
-            {
-                case NewDeckButtons.Upper:
-                    NewUpperDeck.interactable = true;
-                    break;
-                case NewDeckButtons.Lower:
-                    NewLowerDeck.interactable = true;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("button", button, null);
-            }
-        }
-
         public void AddUpperDeck()
         {
             var topDeck = _deckButtons.OrderByDescending(x => x.Key).First();
@@ -118,24 +79,20 @@ namespace Assets.Scenes.ShipBuild
             go.transform.SetAsFirstSibling();
 
             _deckButtons.Add(topDeck.Key + 1, go);
-
-            SelectDeck(topDeck.Key + 1);
         }
 
         public void AddLowerDeck()
         {
-            var bottomDeck = _deckButtons.OrderBy(x => x.Key).First();
+            var bottomDeck = _deckButtons.OrderBy(x => x.Key).Last();
             var go = Instantiate(DeckPrefab, Content.transform);
 
             go.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(go); });
-            var key = bottomDeck.Key - 1;
+            var key = bottomDeck.Key + 1;
 
             go.GetComponentInChildren<Text>().text = key.ToString();
             go.name = key + " Deck Button";
 
-            _deckButtons.Add(bottomDeck.Key - 1, go);
-
-            SelectDeck(bottomDeck.Key - 1);
+            _deckButtons.Add(bottomDeck.Key + 1, go);
         }
 
         public void SelectDeck(int deck)
@@ -143,32 +100,36 @@ namespace Assets.Scenes.ShipBuild
             foreach (var deckKvp in _deckButtons)
                 deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == deck ? activeColor : inactiveColor;
 
-            foreach (var module in BuildManager.Modules)
-            {
-                Color color;
-
-                if (module.Position.Z == deck)
-                    color = SelectedDeckModuleColor;
-                else if (module.Position.Z == deck - 1 || module.Position.Z == deck + 1)
-                    color = AdjacentDeckModuleColor;
-                else
-                    color = UnattachedDeckModuleColor;
-
-                module.GameObject.GetComponent<SpriteRenderer>().color = color;
-            }
-
             CurrentDeck = deck;
+
+            if (BuildManager.Grid == null) return;
+
+            for (var z = 0; z < BuildManager.Grid.GetLength(2); z++)
+                for (var x = 0; x < BuildManager.Grid.GetLength(0); x++)
+                    for (var y = 0; y < BuildManager.Grid.GetLength(1); y++)
+                    {
+                        if (z > deck + 1 || z < deck - 1) continue;
+
+                        var module = BuildManager.Grid[x, y, z];
+                        Color color;
+
+                        if (z == deck)
+                            color = SelectedDeckModuleColor;
+                        else if (z == deck - 1 || z == deck + 1)
+                            color = AdjacentDeckModuleColor;
+                        else
+                            color = UnattachedDeckModuleColor;
+
+                        var go = module.GameObject;
+                        var sr = go.GetComponent<SpriteRenderer>();
+                            sr.color = color;
+                    }
+
         }
 
         void OnDeckSelected(GameObject button)
         {
             SelectDeck(button.name.ParseUntil());
-        }
-
-        public enum NewDeckButtons
-        {
-            Upper,
-            Lower
         }
     }
 }

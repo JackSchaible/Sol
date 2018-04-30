@@ -335,7 +335,8 @@
     <Compile Include="Assets\Ships\Module.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprint.cs" />
-    <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleComponent.cs" />
+    <Compile Include="Assets\Ships\Modules\Connector.cs" />
     <Compile Include="Assets\Ships\Modules\Cost.cs" />
     <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
     <Compile Include="Assets\Ships\Modules\Miscellanious\DecorativeModuleBlueprint.cs" />

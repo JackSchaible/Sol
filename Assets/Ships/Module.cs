@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Common.Utils;
 using Assets.Ships.Crew;
+using Assets.Ships.Modules;
 using Assets.Utils;
 using UnityEngine;
 
@@ -14,9 +15,10 @@ namespace Assets.Ships
         public int CurrentHealth;
         public int CurrentPower;
         public List<CrewMember> Crew;
-        public IntVector Position;
+        public Vector3Int Position;
         public int OwnerId;
         public double Efficiency;
+        public ModuleComponent[] Components { get; set; }
 
         public Module()
         {
@@ -29,18 +31,6 @@ namespace Assets.Ships
             Crew = new List<CrewMember>();
         }
 
-        private Module(ModuleBlueprint moduleBlueprint, GameObject gameObject, int currentHealth, int currentPower, List<CrewMember> crew, IntVector position, int ownerId, double efficiency)
-        {
-            ModuleBlueprint = moduleBlueprint;
-            GameObject = gameObject;
-            CurrentHealth = currentHealth;
-            CurrentPower = currentPower;
-            Crew = crew;
-            Position = position;
-            OwnerId = ownerId;
-            Efficiency = efficiency;
-        }
-
         public static Module Create(ModuleBlueprint blueprint)
         {
             var module = new Module(blueprint.Copy());
@@ -50,9 +40,25 @@ namespace Assets.Ships
             module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
             module.GameObject.AddComponent<BoxCollider>();
 
-            blueprint.ExclusionVectors.CopyTo(module.ModuleBlueprint.ExclusionVectors, 0);
-            blueprint.Connectors.CopyTo(module.ModuleBlueprint.Connectors, 0);
-            blueprint.Space.CopyTo(module.ModuleBlueprint.Space, 0);
+            var components = new List<ModuleComponent>();
+
+            foreach (var space in module.ModuleBlueprint.Space)
+            {
+                List<Connector> connectors = new List<Connector>();
+                List<ExclusionVector> exclusionVectors = new List<ExclusionVector>();
+                    
+                foreach (Connector connector in module.ModuleBlueprint.Connectors)
+                    if (connector.Position == space)
+                        connectors.Add(connector);
+
+                foreach (ExclusionVector vector in module.ModuleBlueprint.ExclusionVectors)
+                    if (vector.Position == space)
+                        exclusionVectors.Add(vector);
+
+                components.Add(new ModuleComponent(space, connectors.ToArray(), exclusionVectors.ToArray()));
+            }
+
+            module.Components = components.ToArray();
 
             return module;
         }

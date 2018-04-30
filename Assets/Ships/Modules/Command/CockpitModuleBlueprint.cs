@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
+using UnityEngine;
 
 namespace Assets.Ships
 {
@@ -12,8 +13,8 @@ namespace Assets.Ships
             
         }
 
-        public CockpitModuleBlueprint(string moduleType, string buildSprite, IntVector[] space, string name,
-            string description, int health, float weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, int crewRequirement,
+        public CockpitModuleBlueprint(string moduleType, string buildSprite, Vector3Int[] space, string name,
+            string description, int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, int crewRequirement,
             float powerConumption, int personnelHoused, int commandSupplied)
             : base(moduleType, buildSprite, space, name, description, health, weight, cost, areConnectorsMandatory, connectors,
                   new []{ new ExclusionVector(new [] {ExclusionVectorDirections.PlaneAndForward}) }, crewRequirement, powerConumption, commandSupplied)
@@ -23,8 +24,8 @@ namespace Assets.Ships
 
         public override ModuleBlueprint Copy()
         {
-            var connectors = new ConnectorPosition[Connectors.Length];
-            var space = new IntVector[Space.Length];
+            var connectors = new Connector[Connectors.Length];
+            var space = new Vector3Int[Space.Length];
 
             Connectors.CopyTo(connectors, 0);
             Space.CopyTo(space, 0);

@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Common.Utils;
 using Assets.Ships.Modules;
+using UnityEngine;
 
 namespace Assets.Utils.ModuleUtils
 {
@@ -18,77 +19,77 @@ namespace Assets.Utils.ModuleUtils
             Vertical
         }
 
-        public static ConnectorPosition[] RotateConnectorPositions(ConnectorPosition[] positions, RotationDirection rd)
+        public static Connector[] RotateConnectorPositions(Connector[] positions, RotationDirection rd)
         {
             for (var i = 0; i < positions.Length; i++)
             {
-                var pos = new IntVector(positions[i].Position.Y, -positions[i].Position.X, positions[i].Position.Z);
-                ConnectorPositions direction = ConnectorPositions.Forward;
+                var pos = new Vector3Int(positions[i].Position.y, -positions[i].Position.x, positions[i].Position.z);
+                ConnectorDirections direction = ConnectorDirections.Forward;
 
                 switch (positions[i].Direction)
                 {
-                    case ConnectorPositions.Forward:
-                        direction = ConnectorPositions.Forward;
+                    case ConnectorDirections.Forward:
+                        direction = ConnectorDirections.Forward;
                         break;
 
-                    case ConnectorPositions.Backward:
-                        direction = ConnectorPositions.Backward;
+                    case ConnectorDirections.Backward:
+                        direction = ConnectorDirections.Backward;
                         break;
 
-                    case ConnectorPositions.Up:
-                        direction = rd == RotationDirection.CW ? ConnectorPositions.Right : ConnectorPositions.Left;
+                    case ConnectorDirections.Up:
+                        direction = rd == RotationDirection.CW ? ConnectorDirections.Right : ConnectorDirections.Left;
                         break;
 
-                    case ConnectorPositions.Right:
-                        direction = rd == RotationDirection.CW ? ConnectorPositions.Down : ConnectorPositions.Up;
+                    case ConnectorDirections.Right:
+                        direction = rd == RotationDirection.CW ? ConnectorDirections.Down : ConnectorDirections.Up;
                         break;
 
-                    case ConnectorPositions.Down:
-                        direction = rd == RotationDirection.CW ? ConnectorPositions.Left : ConnectorPositions.Right;
+                    case ConnectorDirections.Down:
+                        direction = rd == RotationDirection.CW ? ConnectorDirections.Left : ConnectorDirections.Right;
                         break;
 
-                    case ConnectorPositions.Left:
-                        direction = rd == RotationDirection.CW ? ConnectorPositions.Up : ConnectorPositions.Down;
+                    case ConnectorDirections.Left:
+                        direction = rd == RotationDirection.CW ? ConnectorDirections.Up : ConnectorDirections.Down;
                         break;
 
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
-                positions[i] = new ConnectorPosition(direction, positions[i].MaterialsConveyed, pos);
+                positions[i] = new Connector(direction, positions[i].MaterialsConveyed, pos);
             }
 
             return positions;
         }
 
-        public static ConnectorPosition[] FlipConnectorPositions(ConnectorPosition[] positions, FlipDirection fd)
+        public static Connector[] FlipConnectorPositions(Connector[] positions, FlipDirection fd)
         {
-            foreach (ConnectorPosition cp in positions)
+            foreach (Connector cp in positions)
             {
                 //switch (cp.Direction)
                 //{
-                //    case ConnectorPositions.Forward:
-                //    case ConnectorPositions.Backward:
+                //    case ConnectorDirections.Forward:
+                //    case ConnectorDirections.Backward:
                 //        break;
 
-                //    case ConnectorPositions.Up:
+                //    case ConnectorDirections.Up:
                 //        if (fd == FlipDirection.Horizontal)
-                //            cp.Direction = ConnectorPositions.Down;
+                //            cp.Direction = ConnectorDirections.Down;
                 //        break;
 
-                //    case ConnectorPositions.Right:
+                //    case ConnectorDirections.Right:
                 //        if (fd == FlipDirection.Vertical)
-                //            cp.Direction = ConnectorPositions.Left;
+                //            cp.Direction = ConnectorDirections.Left;
                 //        break;
 
-                //    case ConnectorPositions.Down:
+                //    case ConnectorDirections.Down:
                 //        if (fd == FlipDirection.Horizontal)
-                //            cp.Direction = ConnectorPositions.Up;
+                //            cp.Direction = ConnectorDirections.Up;
                 //        break;
 
-                //    case ConnectorPositions.Left:
+                //    case ConnectorDirections.Left:
                 //        if (fd == FlipDirection.Vertical)
-                //            cp.Direction = ConnectorPositions.Right;
+                //            cp.Direction = ConnectorDirections.Right;
                 //        break;
                     
                 //    default:

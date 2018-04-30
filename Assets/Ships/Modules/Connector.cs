@@ -1,15 +1,15 @@
 ﻿using System;
-using Assets.Common.Utils;
 using Assets.Data;
+using UnityEngine;
 
 namespace Assets.Ships.Modules
 {
-    public struct ConnectorPosition
+    public struct Connector
     {
         /// <summary>
         /// The position on the module this connector sits
         /// </summary>
-        public ConnectorPositions Direction { get; set; }
+        public ConnectorDirections Direction { get; set; }
 
         /// <summary>
         /// What different materials can this connector carry?
@@ -20,45 +20,45 @@ namespace Assets.Ships.Modules
         /// Where in the module does this connector sit?
         /// <value>{0, 0, 0} by default</value>
         /// </summary>
-        public IntVector Position { get; set; }
+        public Vector3Int Position { get; set; }
 
-        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed)
+        public Connector(ConnectorDirections direction, Materials[] materialsConveyed)
         {
             Direction = direction;
             MaterialsConveyed = materialsConveyed;
-            Position = IntVector.Zero;
+            Position = Vector3Int.zero;
         }
 
-        public ConnectorPosition(ConnectorPositions direction, Materials[] materialsConveyed, IntVector position)
+        public Connector(ConnectorDirections direction, Materials[] materialsConveyed, Vector3Int position)
         {
             Direction = direction;
             MaterialsConveyed = materialsConveyed;
             Position = position;
         }
 
-        public static ConnectorPositions GetOpposite(ConnectorPositions direction)
+        public static ConnectorDirections GetOpposite(ConnectorDirections direction)
         {
-            ConnectorPositions r;
+            ConnectorDirections r;
 
             switch (direction)
             {
-                case ConnectorPositions.Up:
-                    r = ConnectorPositions.Down;
+                case ConnectorDirections.Up:
+                    r = ConnectorDirections.Down;
                     break;
-                case ConnectorPositions.Right:
-                    r = ConnectorPositions.Left;
+                case ConnectorDirections.Right:
+                    r = ConnectorDirections.Left;
                     break;
-                case ConnectorPositions.Down:
-                    r = ConnectorPositions.Up;
+                case ConnectorDirections.Down:
+                    r = ConnectorDirections.Up;
                     break;
-                case ConnectorPositions.Left:
-                    r = ConnectorPositions.Right;
+                case ConnectorDirections.Left:
+                    r = ConnectorDirections.Right;
                     break;
-                case ConnectorPositions.Forward:
-                    r = ConnectorPositions.Backward;
+                case ConnectorDirections.Forward:
+                    r = ConnectorDirections.Backward;
                     break;
-                case ConnectorPositions.Backward:
-                    r = ConnectorPositions.Forward;
+                case ConnectorDirections.Backward:
+                    r = ConnectorDirections.Forward;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -67,7 +67,7 @@ namespace Assets.Ships.Modules
             return r;
         }
 
-        public static bool operator ==(ConnectorPosition a, ConnectorPosition b)
+        public static bool operator ==(Connector a, Connector b)
         {
             var isSame = true;
 
@@ -110,12 +110,12 @@ namespace Assets.Ships.Modules
             return isSame;
         }
 
-        public static bool operator !=(ConnectorPosition a, ConnectorPosition b)
+        public static bool operator !=(Connector a, Connector b)
         {
             return !(a == b);
         }
 
-        public bool Equals(ConnectorPosition other)
+        public bool Equals(Connector other)
         {
             var isSame = true;
 
@@ -158,59 +158,10 @@ namespace Assets.Ships.Modules
             return isSame;
         }
 
-        /// <summary>
-        /// Compares this connector with the specified connector, adjusting this connector with the position supplied
-        /// </summary>
-        /// <param name="thisPosition">If this connector's position is relative to a module, the position of the module (if not, use ==)</param>
-        /// <param name="other">The ConnectorPosition to compare against</param>
-        /// <returns></returns>
-        public bool Equals(IntVector thisPosition, ConnectorPosition other)
-        {
-            var isSame = true;
-
-            if (Position + thisPosition != other.Position)
-                isSame = false;
-            else if (Direction != other.Direction)
-                isSame = false;
-            else
-            {
-                if (MaterialsConveyed == null)
-                {
-                    if (other.MaterialsConveyed != null)
-                    {
-                        if (other.MaterialsConveyed.Length > 0)
-                            isSame = false;
-                    }
-                }
-                else if (other.MaterialsConveyed == null)
-                {
-                    if (MaterialsConveyed != null)
-                    {
-                        if (MaterialsConveyed.Length > 0)
-                            isSame = false;
-                    }
-                }
-                else
-                    foreach (var matA in MaterialsConveyed)
-                    {
-                        var matchFound = false;
-
-                        foreach (var matB in other.MaterialsConveyed)
-                            if (matA == matB)
-                                matchFound = true;
-
-                        if (!matchFound)
-                            isSame = false;
-                    }
-            }
-
-            return isSame;
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is ConnectorPosition && Equals((ConnectorPosition)obj);
+            return obj is Connector && Equals((Connector)obj);
         }
 
         public override int GetHashCode()
@@ -230,7 +181,7 @@ namespace Assets.Ships.Modules
         }
     }
 
-    public enum ConnectorPositions
+    public enum ConnectorDirections
     {
         Up = 1,
         Right = 2,

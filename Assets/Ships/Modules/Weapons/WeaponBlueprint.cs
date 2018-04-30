@@ -1,6 +1,7 @@
 ﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Weapons;
+using UnityEngine;
 
 namespace Assets.Ships
 {
@@ -18,8 +19,8 @@ namespace Assets.Ships
 
         }
 
-        public WeaponBlueprint(string moduleType, string buildSprite, IntVector[] space, string name, 
-            string description, float weight, Cost cost, bool areConnectorsMandatory, ConnectorPosition[] connectors, 
+        public WeaponBlueprint(string moduleType, string buildSprite, Vector3Int[] space, string name, 
+            string description, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, 
             ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption, int commandRequirement,
             int rateOfFire, ProjectileEnergies projectileEnergies, int ammoStorage, int damageRadius)
             : base(ModuleTypes.Weapon, moduleType, buildSprite, space, name, description, 10, weight, cost,
@@ -33,9 +34,9 @@ namespace Assets.Ships
 
         public override ModuleBlueprint Copy()
         {
-            var connectors = new ConnectorPosition[Connectors.Length];
+            var connectors = new Connector[Connectors.Length];
             var exclusionVectors = new ExclusionVector[ExclusionVectors.Length];
-            var space = new IntVector[Space.Length];
+            var space = new Vector3Int[Space.Length];
 
             Connectors.CopyTo(connectors, 0);
             ExclusionVectors.CopyTo(exclusionVectors, 0);

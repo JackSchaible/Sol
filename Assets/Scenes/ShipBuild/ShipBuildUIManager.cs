@@ -4,7 +4,6 @@ using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
-using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,11 +25,12 @@ public class ShipBuildUIManager : MonoBehaviour
     public Text PeopleText;
     public Text DebugText;
     public Modal Modal;
+    public GameObject ShipSizeSelect;
 
     //Internal state-tracking variables
     private bool _placeMode;
     private Module _newModule;
-    private IntVector _previousPos;
+    private GameObject _previousModule;
     private float _newModuleRotation;
 
     #endregion
@@ -67,20 +67,34 @@ public class ShipBuildUIManager : MonoBehaviour
         if (_newModuleRotation <= -360)
             _newModuleRotation += 360;
 
+        var rh = new RaycastHit();
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rh) && rh.transform.tag == "GridCell")
+        {
+            if (_previousModule != rh.transform.gameObject)
+            {
+                if (_previousModule != null)
+                    _previousModule.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+
+                _previousModule = rh.transform.gameObject;
+                _previousModule.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 1);
+            }
+        }
+
+
         UpdatePlace();
 
         if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl))
         {
             var pos = Camera.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, -100f);
             Ray r = new Ray(pos, Vector3.forward);
-            RaycastHit rh;
-            if (Physics.Raycast(r, out rh))
-            {
-                var obj = ShipBuildManager.Modules.FirstOrDefault(x => x.GameObject == rh.transform.gameObject);
+            //RaycastHit rh;
+            //if (Physics.Raycast(r, out rh))
+            //{
+            //    var obj = ShipBuildManager.Modules.FirstOrDefault(x => x.GameObject == rh.transform.gameObject);
 
-                if (obj != null)
-                    ShipBuildManager.DeleteModule(obj);
-            }
+            //    if (obj != null)
+            //        ShipBuildManager.DeleteModule(obj);
+            //}
         }
     }
 
@@ -94,8 +108,6 @@ public class ShipBuildUIManager : MonoBehaviour
     /// </summary>
     private void NewShipInitialization()
     {
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
     }
 
     #endregion
@@ -109,15 +121,6 @@ public class ShipBuildUIManager : MonoBehaviour
     private void UpdatePlace()
     {
         if (!_placeMode) return;
-
-        //Constrain to n-px increments
-        const int n = 50;
-        _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
-
-        _newModule.GameObject.transform.position = new Vector3(
-            Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
-            Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
-            1);
 
         //if (_newModule.ModuleBlueprint.Space.Length > 1)
         //{
@@ -134,12 +137,13 @@ public class ShipBuildUIManager : MonoBehaviour
         //            1);
         //}
 
-        _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
-        _newModule.Position.SetZ(DeckManager.CurrentDeck);
+        //_newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
+        //_newModule.Position.SetZ(DeckManager.CurrentDeck);
 
         //Module pos has changed, recalculate the placement viability
-        if (ShipBuildManager.FirstModule != null && _newModule.Position != _previousPos)
-            IsPlacementValid();
+
+        //if (ShipBuildManager.FirstModule != null && _newModule.Position != _previousPos)
+        //    ShipBuildManager.IsPlacementValid(_newModule);
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
         {
@@ -147,19 +151,19 @@ public class ShipBuildUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position,
-                new Vector3(0, 0, 1), -90);
+            //_newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position,
+            //    new Vector3(0, 0, 1), -90);
 
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
-                    ModuleVectorUtils.RotationDirection.CW);
+            //_newModule.ModuleBlueprint.Connectors =
+            //    ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
+            //        ModuleVectorUtils.RotationDirection.CW);
 
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
+            //_newModule.ModuleBlueprint.ExclusionVectors =
+            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
 
-            _newModule.ModuleBlueprint.Space =
-                ModuleVectorUtils.RotateSpace(_newModule.ModuleBlueprint.Space,
-                    ModuleVectorUtils.RotationDirection.CW);
+            //_newModule.ModuleBlueprint.Space =
+            //    ModuleVectorUtils.RotateSpace(_newModule.ModuleBlueprint.Space,
+            //        ModuleVectorUtils.RotationDirection.CW);
 
             _newModuleRotation -= 90;
         }
@@ -178,9 +182,9 @@ public class ShipBuildUIManager : MonoBehaviour
             //    ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
         }
 
-        if (ShipBuildManager.FirstModule != null)
-            _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-                ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
+        //if (ShipBuildManager.FirstModule != null)
+        //    _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
+        //        ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
 
         //Don't call the IsPlacementValid function unless you have to, it's expensive to run
         if (Input.GetMouseButton(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
@@ -190,34 +194,12 @@ public class ShipBuildUIManager : MonoBehaviour
         {
             if (_placeMode)
             {
-                Destroy(_newModule.GameObject);
                 CancelPlaceMode();
                 Menu.PlaceCancelled();
             }
             else
                 Application.Quit();
         }
-
-        var collider = _newModule.GameObject.GetComponent<BoxCollider>();
-
-        DebugText.text = string.Format("x1: {0} y1: {1} x2: {2} y2: {3}", collider.bounds.min.x, collider.bounds.min.y, collider.bounds.max.x, collider.bounds.max.y);
-        //this.DebugText.text = _newModule.GameObject.GetComponent<BoxCollider>().bounds.center.ToString();
-        //_newModule.GameObject.transform.RotateAround(_newModule.GameObject.GetComponent<BoxCollider>().bounds.center, Vector3.back, 1f);
-    }
-
-    /// <summary>
-    /// Updates the color of the module and disables placement if the ShipBuildManager says the
-    /// placement isn't valid
-    /// </summary>
-    /// <returns></returns>
-    private bool IsPlacementValid()
-    {
-        bool valid = ShipBuildManager.IsPlacementValid(_newModule);
-
-        _newModule.GameObject.GetComponent<SpriteRenderer>().color =
-            valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
-
-        return valid;
     }
 
     /// <summary>
@@ -270,8 +252,19 @@ public class ShipBuildUIManager : MonoBehaviour
 
     private void CancelPlaceMode()
     {
+        Destroy(_newModule.GameObject);
         _placeMode = false;
         _newModule = null;
+    }
+
+    #endregion
+
+    #region Event Handlers
+
+    public void OnShipTypeSelected(string shipType)
+    {
+        ShipSizeSelect.SetActive(false);
+        ShipBuildManager.InitializeGrid(shipType);
     }
 
     #endregion

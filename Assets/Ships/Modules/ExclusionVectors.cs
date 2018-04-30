@@ -1,19 +1,19 @@
-﻿using Assets.Common.Utils;
+﻿using UnityEngine;
 
 namespace Assets.Ships.Modules
 {
     public class ExclusionVector
     {
         public ExclusionVectorDirections[] Direction { get; set; }
-        public IntVector Position { get; set; }
+        public Vector3Int Position { get; set; }
 
         public ExclusionVector(ExclusionVectorDirections[] direction)
         {
             Direction = direction;
-            Position = IntVector.Zero;
+            Position = Vector3Int.zero;
         }
 
-        public ExclusionVector(ExclusionVectorDirections[] direction, IntVector position)
+        public ExclusionVector(ExclusionVectorDirections[] direction, Vector3Int position)
         {
             Direction = direction;
             Position = position;

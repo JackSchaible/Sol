@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Utils;
 using Assets.Ships.Modules;
+using UnityEngine;
 
 namespace Assets.Ships
 {
@@ -8,13 +9,13 @@ namespace Assets.Ships
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
         public string BuildSprite { get; set; }
-        public IntVector[] Space { get; set; }
+        public Vector3Int[] Space { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Health { get; set; }
         public float Weight { get; set; }
         public Cost Cost { get; set; }
-        public ConnectorPosition[] Connectors { get; set; }
+        public Connector[] Connectors { get; set; }
         public bool AreConnectorsMandatory { get; set; }
         public ExclusionVector[] ExclusionVectors { get; set; }
         public int CrewRequirement { get; set; }
@@ -28,8 +29,8 @@ namespace Assets.Ships
         }
 
         protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
-            IntVector[] space, string name, string description, int health, float weight, Cost cost,
-            bool areConnectorsMandatory, ConnectorPosition[] connectors, ExclusionVector[] exclusionVectors,
+            Vector3Int[] space, string name, string description, int health, float weight, Cost cost,
+            bool areConnectorsMandatory, Connector[] connectors, ExclusionVector[] exclusionVectors,
             int crewRequirement, float powerConumption, int commandRequirement)
         {
             ModuleType = moduleType;
