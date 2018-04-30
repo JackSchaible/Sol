@@ -152,32 +152,6 @@ namespace Assets.Common.Utils
             return isAdjacent;
         }
 
-        public IntVector Adjust(ConnectorDirections cp)
-        {
-            switch (cp)
-            {
-                case ConnectorDirections.Up:
-                    return new IntVector(X, Y + 1, Z);
-
-                case ConnectorDirections.Right:
-                    return new IntVector(X + 1, Y, Z);
-
-                case ConnectorDirections.Down:
-                    return new IntVector(X, Y - 1, Z);
-
-                case ConnectorDirections.Left:
-                    return new IntVector(X - 1, Y, Z);
-
-                case ConnectorDirections.Forward:
-                    return new IntVector(X, Y, Z + 1);
-
-                case ConnectorDirections.Backward:
-                    return new IntVector(X, Y, Z - 1);
-            }
-
-            return this;
-        }
-
         #endregion
     }
 }

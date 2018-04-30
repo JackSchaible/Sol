@@ -10,10 +10,8 @@ namespace Assets.Ships.Modules.Miscellanious
             get { return new string[0]; }
         }
 
-        public HallwayModuleBlueprint(string buildSprite, Vector3Int[] space, string name, string description,
-            int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, ExclusionVector[] exclusionVectors)
-            : base(ModuleTypes.Miscellanious, MiscellaniousTypes.Decorative, buildSprite, space, name, description,
-                health, weight, cost, areConnectorsMandatory, connectors, exclusionVectors, 0, 0, 0)
+        public HallwayModuleBlueprint(string buildSprite, string[,,] componentSprites, Vector3Int[] space, string name, string description, int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, ExclusionVector[] exclusionVectors)
+            : base(ModuleTypes.Miscellanious, MiscellaniousTypes.Decorative, buildSprite, componentSprites, space, name, description, health, weight, cost, connectors, areConnectorsMandatory, exclusionVectors, 0, 0, 0)
         {
             
         }
@@ -28,8 +26,7 @@ namespace Assets.Ships.Modules.Miscellanious
             ExclusionVectors.CopyTo(exclusionVectors, 0);
             Space.CopyTo(space, 0);
 
-            return new HallwayModuleBlueprint(BuildSprite, space, Name, Description, Health, Weight, Cost,
-                AreConnectorsMandatory, connectors, exclusionVectors);
+            return new HallwayModuleBlueprint(BuildSprite, ComponentSprites, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory, connectors, exclusionVectors);
         }
     }
 }

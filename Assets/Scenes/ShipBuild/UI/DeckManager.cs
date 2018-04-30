@@ -110,7 +110,6 @@ namespace Assets.Scenes.ShipBuild
                     {
                         if (z > deck + 1 || z < deck - 1) continue;
 
-                        var module = BuildManager.Grid[x, y, z];
                         Color color;
 
                         if (z == deck)
@@ -120,9 +119,8 @@ namespace Assets.Scenes.ShipBuild
                         else
                             color = UnattachedDeckModuleColor;
 
-                        var go = module.GameObject;
-                        var sr = go.GetComponent<SpriteRenderer>();
-                            sr.color = color;
+                        BuildManager.Cells[x, y, z].GetComponent<SpriteRenderer>().color = color;
+                        BuildManager.Grid[x, y, z].GameObject.GetComponent<SpriteRenderer>().color = color;
                     }
 
         }

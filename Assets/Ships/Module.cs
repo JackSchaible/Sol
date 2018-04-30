@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Assets.Common.Utils;
 using Assets.Ships.Crew;
 using Assets.Ships.Modules;
 using Assets.Utils;
@@ -11,7 +10,6 @@ namespace Assets.Ships
     {
         public ModuleBlueprint ModuleBlueprint { get; set; }
 
-        public GameObject GameObject;
         public int CurrentHealth;
         public int CurrentPower;
         public List<CrewMember> Crew;
@@ -34,12 +32,6 @@ namespace Assets.Ships
         public static Module Create(ModuleBlueprint blueprint)
         {
             var module = new Module(blueprint.Copy());
-            module.GameObject = new GameObject();
-            module.GameObject.AddComponent<SpriteRenderer>();
-            module.GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.BuildSprite);
-            module.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
-            module.GameObject.AddComponent<BoxCollider>();
-
             var components = new List<ModuleComponent>();
 
             foreach (var space in module.ModuleBlueprint.Space)
@@ -55,19 +47,18 @@ namespace Assets.Ships
                     if (vector.Position == space)
                         exclusionVectors.Add(vector);
 
-                components.Add(new ModuleComponent(space, connectors.ToArray(), exclusionVectors.ToArray()));
+                var go = new GameObject();
+                go.AddComponent<SpriteRenderer>();
+                go.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentSprites[space.x, space.y, space.z]);
+                go.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
+                go.AddComponent<BoxCollider>();
+
+                components.Add(new ModuleComponent(go, space, connectors.ToArray(), exclusionVectors.ToArray()));
             }
 
             module.Components = components.ToArray();
 
             return module;
-        }
-
-        public void Initialize()
-        {
-            GameObject.AddComponent<SpriteRenderer>();
-            GameObject.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(ModuleBlueprint.BuildSprite);
-            GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
         }
 
         public void CalculateEfficiency()

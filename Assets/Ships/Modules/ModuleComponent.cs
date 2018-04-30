@@ -1,18 +1,21 @@
-﻿using Assets.Ships.Modules;
+﻿using Assets.Utils;
 using UnityEngine;
 
-public class ModuleComponent : MonoBehaviour
+namespace Assets.Ships.Modules
 {
-    public GameObject GameObject { get; set; }
-    public Vector3Int LocalPosition { get; set; }
-    public Connector[] Connectors { get; set; }
-    public Connector[] IncomingConnectors { get; set; }
-    public ExclusionVector[] ExclusionVectors { get; set; }
-
-    public ModuleComponent(Vector3Int localPosition, Connector[] connectors, ExclusionVector[] exclusionVectors)
+    public class ModuleComponent
     {
-        LocalPosition = localPosition;
-        Connectors = connectors;
-        ExclusionVectors = exclusionVectors;
+        public GameObject GameObject { get; set; }
+        public Vector3Int LocalPosition { get; set; }
+        public Connector[] Connectors { get; set; }
+        public ExclusionVector[] ExclusionVectors { get; set; }
+
+        public ModuleComponent(GameObject gameObject, Vector3Int localPosition, Connector[] connectors, ExclusionVector[] exclusionVectors)
+        {
+            GameObject = gameObject;
+            LocalPosition = localPosition;
+            Connectors = connectors;
+            ExclusionVectors = exclusionVectors;
+        }
     }
 }

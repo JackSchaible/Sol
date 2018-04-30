@@ -1,5 +1,4 @@
-﻿using Assets.Common.Utils;
-using Assets.Ships.Modules;
+﻿using Assets.Ships.Modules;
 using UnityEngine;
 
 namespace Assets.Ships
@@ -9,6 +8,7 @@ namespace Assets.Ships
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
         public string BuildSprite { get; set; }
+        public string[,,] ComponentSprites { get; set; }
         public Vector3Int[] Space { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -29,21 +29,23 @@ namespace Assets.Ships
         }
 
         protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
-            Vector3Int[] space, string name, string description, int health, float weight, Cost cost,
-            bool areConnectorsMandatory, Connector[] connectors, ExclusionVector[] exclusionVectors,
-            int crewRequirement, float powerConumption, int commandRequirement)
+            string[,,] componentSprites, Vector3Int[] space, string name, string description,
+            int health, float weight, Cost cost, Connector[] connectors, bool areConnectorsMandatory,
+            ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption,
+            int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;
             BuildSprite = buildSprite;
+            ComponentSprites = componentSprites;
             Space = space;
             Name = name;
             Description = description;
             Health = health;
             Weight = weight;
             Cost = cost;
-            AreConnectorsMandatory = areConnectorsMandatory;
             Connectors = connectors;
+            AreConnectorsMandatory = areConnectorsMandatory;
             ExclusionVectors = exclusionVectors;
             CrewRequirement = crewRequirement;
             PowerConumption = powerConumption;

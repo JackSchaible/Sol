@@ -4,8 +4,10 @@ using System.Linq;
 using Assets.Common.Utils;
 using Assets.Data;
 using Assets.Scenes.ShipBuild;
+using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Ships.Modules;
+using Assets.Ships.Modules.Command;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,15 +23,11 @@ public class ShipBuildManager : MonoBehaviour
     public int PersonnelUsed;
 
     public GameObject ComponentPrefab;
+    public GameObject[,,] Cells { get; set; }
     public ModuleComponent[,,] Grid { get; set; }
+    public List<Module> Modules { get; private set; }
 
-    public List<Module> Modules
-    {
-        get;
-        private set;
-    }
     public bool HasCommandModule { get; private set; }
-    public Module FirstModule { get; private set; }
 
     private readonly Dictionary<string, Vector3Int> _shipSizes = new Dictionary<string, Vector3Int>
     {
@@ -38,12 +36,6 @@ public class ShipBuildManager : MonoBehaviour
         {ShipTypes.Cruiser, new Vector3Int(40, 40, 20)},
         {ShipTypes.CapitalShip, new Vector3Int(80, 80, 40)},
     };
-
-    void Awake()
-    {
-        Modules = new List<Module>();
-        HasCommandModule = false;
-    }
 
     void Start()
     {
@@ -58,7 +50,7 @@ public class ShipBuildManager : MonoBehaviour
     {
         var size = _shipSizes[shipType];
 
-        Grid = new ModuleComponent[size.x, size.y, size.z];
+        Cells = new GameObject[size.x, size.y, size.z];
 
         for (var z = 0; z < size.z; z++)
         {
@@ -68,76 +60,79 @@ public class ShipBuildManager : MonoBehaviour
             for (var x = 0; x < size.x; x++)
                 for (var y = 0; y < size.y; y++)
                 {
-                    Grid[x, y, z] = new ModuleComponent(Vector3Int.zero, new Connector[0], new ExclusionVector[0]);
-                    Grid[x, y, z].GameObject = Instantiate(ComponentPrefab);
-                    Grid[x, y, z].GameObject.transform.position = new Vector3Int(x, y, z);
-                    Grid[x, y, z].GameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                    Cells[x, y, z] = Instantiate(ComponentPrefab);
+                    Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
+                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = Color.red;
+
+                    var com = Cells[x, y, z].GetComponent<GridCell>();
+                    com.Position = new Vector3Int(x, y, z);
+                    com.Connectors = new Connector[0];
+                    com.ExclusionVectors = new ExclusionVector[0];
                 }
         }
 
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(Module module)
+    public void AddModule(GameObject selectedComponent, Module module)
     {
-        if (Modules.Count == 0)
+        //TODO: Add to modules list
+
+        PowerUsed += module.ModuleBlueprint.PowerConumption;
+        ControlUsed += module.ModuleBlueprint.CommandRequirement;
+        PersonnelUsed += module.ModuleBlueprint.CrewRequirement;
+
+        var commandBlueprint = module.ModuleBlueprint as CommandModuleBlueprint;
+        if (commandBlueprint != null)
         {
-            module.Position = new Vector3Int(0, 0, 1);
-            FirstModule = module;
-        }
-        else
-        {
-            //TODO: Redo, maybe?
-            //module.Position = IntVector.GetRelativeVector(FirstModule.GameObject.transform.position, module.GameObject.transform.position)
-            //    .SetZ(DeckManager.CurrentDeck);
-        }
-
-        //var slotsToRemove =
-        //    _availableSlots.Where(x => module.ModuleBlueprint.Space.Any(y => (y + module.Position).Equals(x.Position))).ToList();
-
-        //foreach (var remove in slotsToRemove)
-        //    _availableSlots.Remove(remove);
-
-        Modules.Add(module);
-
-        PowerUsed = Modules.Sum(x => x.ModuleBlueprint.PowerConumption);
-        ControlUsed = Modules.Sum(x => x.ModuleBlueprint.CommandRequirement);
-        PersonnelUsed = Modules.Sum(x => x.ModuleBlueprint.CrewRequirement);
-
-        ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprint)
-            .Sum(x => ((CommandModuleBlueprint)x.ModuleBlueprint).CommandSupplied);
-
-        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprint)
-            .Sum(x => ((CockpitModuleBlueprint)x.ModuleBlueprint).PersonnelHoused);
-
-        if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprint)
+            ControlAvailable += commandBlueprint.CommandSupplied;
             HasCommandModule = true;
+        }
+
+        var cockpitBlueprint = module.ModuleBlueprint as CockpitModuleBlueprint;
+        if (cockpitBlueprint != null)
+            PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
+
+        Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
+
+        foreach (var com in module.Components)
+        {
+            var gridObj = Cells[pos.x + com.LocalPosition.x, pos.y + com.LocalPosition.x, pos.y + com.LocalPosition.z];
+
+            var gridCom = gridObj.GetComponent<ModuleComponent>();
+            gridCom.Connectors = com.Connectors;
+            //TODO: Modify surrounding components to have receiving connectors
+            gridCom.ExclusionVectors = com.ExclusionVectors;
+            //gridCom.Position = pos + com.LocalPosition;
+
+            //TODO: remove cell, add component
+        }
 
         //Disable decks if module has an x/y plane or space exclusion vector
-        if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
-        {
-            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
-            {
-                foreach (var vector in vectors.Direction)
-                {
-                    //Disable whatever it is
-                    switch (vector)
-                    {
-                        case ExclusionVectorDirections.Plane:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            break;
+        //if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
+        //{
+        //    foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
+        //    {
+        //        foreach (var vector in vectors.Direction)
+        //        {
+        //            //Disable whatever it is
+        //            switch (vector)
+        //            {
+        //                case ExclusionVectorDirections.Plane:
+        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
+        //                    break;
 
-                        case ExclusionVectorDirections.PlaneAndForward:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            break;
+        //                case ExclusionVectorDirections.PlaneAndForward:
+        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
+        //                    break;
 
-                        case ExclusionVectorDirections.PlaneAndBackward:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                            break;
-                    }
-                }
-            }
-        }
+        //                case ExclusionVectorDirections.PlaneAndBackward:
+        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
+        //                    break;
+        //            }
+        //        }
+        //    }
+        //}
 
         //AddConnectedSlots(module);
     }
@@ -171,7 +166,7 @@ public class ShipBuildManager : MonoBehaviour
         var spaceValid = true;
         var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
 
-        if (FirstModule == null) return true;
+        if (Modules.Count == 0) return true;
 
         //foreach (var slot in _availableSlots)
         //    foreach (var modCon in newModule.ModuleBlueprint.Connectors)

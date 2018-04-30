@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
+using Assets.Ships.Modules.Command;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using UnityEngine;
@@ -27,8 +28,10 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         private Menu _menu;
 
         //Constants
-        private Color _fade = new Color(1, 1, 1, 0.3f);
-        private Color _normal = new Color(1, 1, 1, 1);
+        private readonly Color _fade = new Color(1, 1, 1, 0.3f);
+        private readonly Color _normal = new Color(1, 1, 1, 1);
+
+        //State maintenance vars
         private List<GameObject> fadedObjs;
 
         #endregion

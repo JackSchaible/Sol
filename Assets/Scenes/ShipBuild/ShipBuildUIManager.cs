@@ -80,21 +80,17 @@ public class ShipBuildUIManager : MonoBehaviour
             }
         }
 
-
         UpdatePlace();
 
-        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
         {
-            var pos = Camera.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, -100f);
-            Ray r = new Ray(pos, Vector3.forward);
-            //RaycastHit rh;
-            //if (Physics.Raycast(r, out rh))
-            //{
-            //    var obj = ShipBuildManager.Modules.FirstOrDefault(x => x.GameObject == rh.transform.gameObject);
-
-            //    if (obj != null)
-            //        ShipBuildManager.DeleteModule(obj);
-            //}
+            if (_placeMode)
+            {
+                CancelPlaceMode();
+                Menu.PlaceCancelled();
+            }
+            else
+                Application.Quit();
         }
     }
 
@@ -187,19 +183,11 @@ public class ShipBuildUIManager : MonoBehaviour
         //        ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
 
         //Don't call the IsPlacementValid function unless you have to, it's expensive to run
-        if (Input.GetMouseButton(0) && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
+        //TODO: Maintain last call to IsPlacementValid's state
+        if (Input.GetMouseButton(0))// && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
             PlaceModule();
 
-        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
-        {
-            if (_placeMode)
-            {
-                CancelPlaceMode();
-                Menu.PlaceCancelled();
-            }
-            else
-                Application.Quit();
-        }
+        
     }
 
     /// <summary>
@@ -208,7 +196,7 @@ public class ShipBuildUIManager : MonoBehaviour
     /// </summary>
     private void PlaceModule()
     {
-        ShipBuildManager.AddModule(_newModule);
+        ShipBuildManager.AddModule(_previousModule, _newModule);
         Menu.ModulePlaced(_newModule.ModuleBlueprint);
         CancelPlaceMode();
     }
@@ -222,8 +210,10 @@ public class ShipBuildUIManager : MonoBehaviour
     public void Build(ModuleBlueprint blueprint)
     {
         _newModule = Module.Create(blueprint);
-        _newModule.GameObject.SetActive(false);
-        _newModule.GameObject.SetActive(true);
+
+        //TODO: Why did we need this?
+        //_newModule.GameObject.SetActive(false);
+        //_newModule.GameObject.SetActive(true);
 
         //if (_newModuleRotation != 0)
         //{
@@ -236,23 +226,20 @@ public class ShipBuildUIManager : MonoBehaviour
         //                ModuleVectorUtils.RotationDirection.CCW);
         //}
 
-        var sprite = _newModule.GameObject.GetComponent<SpriteRenderer>();
-        sprite.sortingLayerName = "UI BG";
-        sprite.sortingOrder = DeckManager.CurrentDeck;
-
-        if (ShipBuildManager.FirstModule == null)
+        foreach (var com in _newModule.Components)
         {
-            //Autoplace first modules at {0, 0}
-            _newModule.GameObject.transform.position = Vector3.zero;
-            PlaceModule();
-        }
-        else
+            var sprite = com.GameObject.GetComponent<SpriteRenderer>();
+            sprite.sortingLayerName = "UI BG";
+            sprite.sortingOrder = DeckManager.CurrentDeck;
             _placeMode = true;
+        }
     }
 
     private void CancelPlaceMode()
     {
-        Destroy(_newModule.GameObject);
+        foreach(var mod in _newModule.Components)
+            Destroy(mod.GameObject);
+
         _placeMode = false;
         _newModule = null;
     }

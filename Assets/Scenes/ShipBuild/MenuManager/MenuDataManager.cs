@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Data;
 using Assets.Ships;
+using Assets.Ships.Modules;
+using Assets.Ships.Modules.Command;
 using Assets.Ships.Modules.Miscellanious;
+using Assets.Ships.Modules.Weapons;
 using Assets.Utils.Extensions;
 
 namespace Assets.Scenes.ShipBuild.MenuManager

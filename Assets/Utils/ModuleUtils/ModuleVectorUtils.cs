@@ -24,39 +24,8 @@ namespace Assets.Utils.ModuleUtils
             for (var i = 0; i < positions.Length; i++)
             {
                 var pos = new Vector3Int(positions[i].Position.y, -positions[i].Position.x, positions[i].Position.z);
-                ConnectorDirections direction = ConnectorDirections.Forward;
-
-                switch (positions[i].Direction)
-                {
-                    case ConnectorDirections.Forward:
-                        direction = ConnectorDirections.Forward;
-                        break;
-
-                    case ConnectorDirections.Backward:
-                        direction = ConnectorDirections.Backward;
-                        break;
-
-                    case ConnectorDirections.Up:
-                        direction = rd == RotationDirection.CW ? ConnectorDirections.Right : ConnectorDirections.Left;
-                        break;
-
-                    case ConnectorDirections.Right:
-                        direction = rd == RotationDirection.CW ? ConnectorDirections.Down : ConnectorDirections.Up;
-                        break;
-
-                    case ConnectorDirections.Down:
-                        direction = rd == RotationDirection.CW ? ConnectorDirections.Left : ConnectorDirections.Right;
-                        break;
-
-                    case ConnectorDirections.Left:
-                        direction = rd == RotationDirection.CW ? ConnectorDirections.Up : ConnectorDirections.Down;
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                positions[i] = new Connector(direction, positions[i].MaterialsConveyed, pos);
+                //TODO: Rotate the vector3
+                positions[i] = new Connector(pos, positions[i].MaterialsConveyed, pos);
             }
 
             return positions;

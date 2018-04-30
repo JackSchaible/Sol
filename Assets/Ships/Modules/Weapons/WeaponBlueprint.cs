@@ -1,9 +1,6 @@
-﻿using Assets.Common.Utils;
-using Assets.Ships.Modules;
-using Assets.Ships.Modules.Weapons;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Ships
+namespace Assets.Ships.Modules.Weapons
 {
     public class WeaponBlueprint : ModuleBlueprint
     {
@@ -19,12 +16,8 @@ namespace Assets.Ships
 
         }
 
-        public WeaponBlueprint(string moduleType, string buildSprite, Vector3Int[] space, string name, 
-            string description, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, 
-            ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption, int commandRequirement,
-            int rateOfFire, ProjectileEnergies projectileEnergies, int ammoStorage, int damageRadius)
-            : base(ModuleTypes.Weapon, moduleType, buildSprite, space, name, description, 10, weight, cost,
-                  areConnectorsMandatory, connectors, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
+        public WeaponBlueprint(string moduleType, string buildSprite, string[,,] componentSprites, Vector3Int[] space, string name, string description, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption, int commandRequirement, int rateOfFire, ProjectileEnergies projectileEnergies, int ammoStorage, int damageRadius)
+            : base(ModuleTypes.Weapon, moduleType, buildSprite, componentSprites, space, name, description, 10, weight, cost, connectors, areConnectorsMandatory, exclusionVectors, crewRequirement, powerConumption, commandRequirement)
         {
             RateOfFire = rateOfFire;
             ProjectileEnergies = projectileEnergies;
@@ -42,9 +35,7 @@ namespace Assets.Ships
             ExclusionVectors.CopyTo(exclusionVectors, 0);
             Space.CopyTo(space, 0);
 
-            return new WeaponBlueprint(ModuleSubtype, BuildSprite, space, Name, Description, Weight,
-                Cost, AreConnectorsMandatory, connectors, exclusionVectors, CrewRequirement, PowerConumption,
-                CommandRequirement, RateOfFire, ProjectileEnergies, AmmoStorage, DamageRadius);
+            return new WeaponBlueprint(ModuleSubtype, BuildSprite, ComponentSprites, space, Name, Description, Weight, Cost, AreConnectorsMandatory, connectors, exclusionVectors, CrewRequirement, PowerConumption, CommandRequirement, RateOfFire, ProjectileEnergies, AmmoStorage, DamageRadius);
         }
     }
 }
