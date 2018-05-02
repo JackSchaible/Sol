@@ -49,9 +49,8 @@ namespace Assets.Ships
 
                 var go = new GameObject();
                 go.AddComponent<SpriteRenderer>();
-                go.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentSprites[space.x, space.y, space.z]);
+                go.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentSprites[space.x, space.y, space.z], true);
                 go.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
-                go.AddComponent<BoxCollider>();
 
                 components.Add(new ModuleComponent(go, space, connectors.ToArray(), exclusionVectors.ToArray()));
             }

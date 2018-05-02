@@ -51,7 +51,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new CommandModuleDetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Basic Cockpit") as CockpitModuleBlueprint
+                        FindByName("Basic Cockpit") as CockpitModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Control Centres/Small Ship/Advanced Cockpit - Build",
@@ -59,7 +59,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new CommandModuleDetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Advanced Cockpit") as CockpitModuleBlueprint
+                        FindByName("Advanced Cockpit") as CockpitModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Control Centres/Small Ship/Heavy Cockpit - Build",
@@ -67,7 +67,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new CommandModuleDetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Heavy Cockpit") as CockpitModuleBlueprint
+                        FindByName("Heavy Cockpit") as CockpitModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Control Centres/Small Ship/Advanced Heavy Cockpit - Build",
@@ -75,7 +75,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new CommandModuleDetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Advanced Heavy Cockpit") as CockpitModuleBlueprint
+                        FindByName("Advanced Heavy Cockpit") as CockpitModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Control Centres/Small Ship/Tactical Cockpit - Build",
@@ -83,7 +83,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new CommandModuleDetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Tactical Cockpit") as CockpitModuleBlueprint
+                        FindByName("Tactical Cockpit") as CockpitModuleBlueprint
                     )
                 )
             };
@@ -122,47 +122,47 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 new DetailsFieldThird("Kinetic Energy", "Common/Kinetic Energy Symbol", "", "Thermal Energy", "Common/Thermal Energy Symbol", "", "Chemical Potential Energy", "Common/Chemical Potential Energy Symbol", "")
             };
 
-            WeaponBlueprint lmgbp = _blueprints.First(x => x.Name == "Light Machine Gun") as WeaponBlueprint;
+            WeaponBlueprint lmgbp = FindByName("Light Machine Gun") as WeaponBlueprint;
             var lmg = new ToggleData("Ships/Weapons/Projectiles/LMG - Build",
                 "Light Machine Gun", false, new DetailsMenuData(getFields(), lmgbp));
             AssignProjectileFieldValues(lmg.ChildMenu as DetailsMenuData, lmgbp);
 
-            WeaponBlueprint hmgbp = _blueprints.First(x => x.Name == "Heavy Machine Gun") as WeaponBlueprint;
+            WeaponBlueprint hmgbp = FindByName("Heavy Machine Gun") as WeaponBlueprint;
             var hmg = new ToggleData("Ships/Weapons/Projectiles/HMG - Build",
                 "Heavy Machine Gun", false, new DetailsMenuData(getFields(), hmgbp));
             AssignProjectileFieldValues(hmg.ChildMenu as DetailsMenuData, hmgbp);
 
-            WeaponBlueprint chaingunBlueprint = _blueprints.First(x => x.Name == "Chain Gun") as WeaponBlueprint;
+            WeaponBlueprint chaingunBlueprint = FindByName("Chain Gun") as WeaponBlueprint;
             var chaingun = new ToggleData("Ships/Weapons/Projectiles/Chain Gun - Build",
                 "Chain Gun", false, new DetailsMenuData(getFields(), chaingunBlueprint));
             AssignProjectileFieldValues(chaingun.ChildMenu as DetailsMenuData, chaingunBlueprint);
 
-            WeaponBlueprint flakBlueprint = _blueprints.First(x => x.Name == "Flak Cannon") as WeaponBlueprint;
+            WeaponBlueprint flakBlueprint = FindByName("Flak Cannon") as WeaponBlueprint;
             var flak = new ToggleData("Ships/Weapons/Projectiles/AA Gun - Build",
                 "Flak Cannon", false, new DetailsMenuData(getFields(), flakBlueprint));
             AssignProjectileFieldValues(flak.ChildMenu as DetailsMenuData, flakBlueprint);
 
-            WeaponBlueprint heCannonBlueprint = _blueprints.First(x => x.Name == "HE Cannon") as WeaponBlueprint;
+            WeaponBlueprint heCannonBlueprint = FindByName("HE Cannon") as WeaponBlueprint;
             var heCannon = new ToggleData("Ships/Weapons/Projectiles/HE Cannon - Build",
                 "High-Explosive Cannon", false, new DetailsMenuData(getFields(), heCannonBlueprint));
             AssignProjectileFieldValues(heCannon.ChildMenu as DetailsMenuData, heCannonBlueprint);
 
-            WeaponBlueprint incendiaryCannonBlueprint = _blueprints.First(x => x.Name == "Incendiary Cannon") as WeaponBlueprint;
+            WeaponBlueprint incendiaryCannonBlueprint = FindByName("Incendiary Cannon") as WeaponBlueprint;
             var incendiary = new ToggleData("Ships/Weapons/Projectiles/Incendiary Cannon - Build",
                 "Incendiary Cannon", false, new DetailsMenuData(getFields(), incendiaryCannonBlueprint));
             AssignProjectileFieldValues(incendiary.ChildMenu as DetailsMenuData, incendiaryCannonBlueprint);
 
-            WeaponBlueprint amberGunBlueprint = _blueprints.First(x => x.Name == "Amber Quarantine Gun") as WeaponBlueprint;
+            WeaponBlueprint amberGunBlueprint = FindByName("Amber Quarantine Gun") as WeaponBlueprint;
             var amberGun = new ToggleData("Ships/Weapons/Projectiles/Amber Gun - Build",
                 "Amber Quarantine Gun", false, new DetailsMenuData(getFields(), amberGunBlueprint));
             AssignProjectileFieldValues(amberGun.ChildMenu as DetailsMenuData, amberGunBlueprint);
 
-            WeaponBlueprint tracerBlueprint = _blueprints.First(x => x.Name == "Tracer Gun") as WeaponBlueprint;
-            var tracer = new ToggleData("Ships/Weapons/Projectiles/Tracer Gun - Build",
+            WeaponBlueprint tracerBlueprint = FindByName("Tracer Gun") as WeaponBlueprint;
+            var tracer = new ToggleData("Ships/Weapons/Projectiles/Tracer Gun",
                 "Tracer Gun", false, new DetailsMenuData(getFields(), tracerBlueprint));
             AssignProjectileFieldValues(tracer.ChildMenu as DetailsMenuData, tracerBlueprint);
 
-            WeaponBlueprint duscBlueprint = _blueprints.First(x => x.Name == "Depleted-Uranium Slug Cannon") as WeaponBlueprint;
+            WeaponBlueprint duscBlueprint = FindByName("Depleted-Uranium Slug Cannon") as WeaponBlueprint;
             var dusc = new ToggleData("Ships/Weapons/Projectiles/Depleted-Uranium Slug Cannon - Build",
                 "Depleted-Uranium Slug Cannon", false, new DetailsMenuData(getFields(), duscBlueprint));
             AssignProjectileFieldValues(dusc.ChildMenu as DetailsMenuData, duscBlueprint);
@@ -216,36 +216,36 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             var decoratives = new List<ToggleData>
             {
-                new ToggleData("Ships/Miscellanious/Decorative/Panel - Build",
+                new ToggleData("Ships/Miscellanious/Decorative/Panel",
                     "Panel", false,
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Panel") as DecorativeModuleBlueprint
+                        FindByName("Panel") as DecorativeModuleBlueprint
                     )
                 ),
-                new ToggleData("Ships/Miscellanious/Decorative/Panel 2 - Build",
+                new ToggleData("Ships/Miscellanious/Decorative/Panel 2",
                     "Panel", false,
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Panel 2") as DecorativeModuleBlueprint
+                        FindByName("Panel 2") as DecorativeModuleBlueprint
                     )
                 ),
-                new ToggleData("Ships/Miscellanious/Decorative/Crossbeam Connector - Build",
+                new ToggleData("Ships/Miscellanious/Decorative/Crossbeam Connector",
                     "Crossbeam Connector", false,
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Crossbeam Connector") as DecorativeModuleBlueprint
+                        FindByName("Crossbeam Connector") as DecorativeModuleBlueprint
                     )
                 ),
-                new ToggleData("Ships/Miscellanious/Decorative/Weapon Mount - Build",
+                new ToggleData("Ships/Miscellanious/Decorative/Weapon Mount",
                     "Weapon Mount", false,
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "Weapon Mount") as DecorativeModuleBlueprint
+                        FindByName("Weapon Mount") as DecorativeModuleBlueprint
                     )
                 ),
             };
@@ -259,28 +259,12 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             var hallways = new List<ToggleData>
             {
-                new ToggleData("Ships/Miscellanious/Hallways/EW Hallway - Build",
-                    "Hallway", false,
-                    new DetailsMenuData
-                    (
-                        new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "EW Hallway") as HallwayModuleBlueprint
-                    )
-                ),
                 new ToggleData("Ships/Miscellanious/Hallways/NS Hallway - Build",
                     "Hallway", false,
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "NS Hallway") as HallwayModuleBlueprint
-                    )
-                ),
-                new ToggleData("Ships/Miscellanious/Hallways/NE-SW Hallway - Build",
-                    "Hallway", false,
-                    new DetailsMenuData
-                    (
-                        new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "NE-SW Hallway") as HallwayModuleBlueprint
+                        FindByName("NS Hallway") as HallwayModuleBlueprint
                     )
                 ),
                 new ToggleData("Ships/Miscellanious/Hallways/NW-SE Hallway - Build",
@@ -288,7 +272,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     new DetailsMenuData
                     (
                         new List<DetailsField>(),
-                        _blueprints.First(x => x.Name == "NW-SE Hallway") as HallwayModuleBlueprint
+                        FindByName("NW-SE Hallway") as HallwayModuleBlueprint
                     )
                 ),
             };
@@ -300,5 +284,16 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         }
 
         #endregion
+
+        private ModuleBlueprint FindByName(string name)
+        {
+            ModuleBlueprint item = null;
+
+            foreach(var i in _blueprints)
+                if (i.Name == name)
+                    item = i;
+
+            return item;
+        }
     }
 }

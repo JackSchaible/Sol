@@ -62,7 +62,8 @@ public class ShipBuildManager : MonoBehaviour
                 {
                     Cells[x, y, z] = Instantiate(ComponentPrefab);
                     Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
-                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = Color.red;
+                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = Color.green;
+                    Cells[x, y, z].name = "Grid Cell";
 
                     var com = Cells[x, y, z].GetComponent<GridCell>();
                     com.Position = new Vector3Int(x, y, z);
@@ -104,6 +105,7 @@ public class ShipBuildManager : MonoBehaviour
             //TODO: Modify surrounding components to have receiving connectors
             gridCom.ExclusionVectors = com.ExclusionVectors;
             //gridCom.Position = pos + com.LocalPosition;
+            gridCom.GameObject.AddComponent<BoxCollider>();
 
             //TODO: remove cell, add component
         }

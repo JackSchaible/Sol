@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Assets.Common.Utils;
-using Assets.Data;
+﻿using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
@@ -30,8 +28,10 @@ public class ShipBuildUIManager : MonoBehaviour
     //Internal state-tracking variables
     private bool _placeMode;
     private Module _newModule;
+    private Color _previousColor;
     private GameObject _previousModule;
     private float _newModuleRotation;
+    private bool _popupActive;
 
     #endregion
 
@@ -41,9 +41,22 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
         Modal.ShowModal();
+    }
 
+    void Awake()
+    {
         //TODO: Only run this if ship is new
-        NewShipInitialization();
+        var isnew = true;
+
+        if (isnew)
+            NewShipInitialization();
+        else
+            Initialize();
+    }
+
+    void Initialize()
+    {
+        
     }
 
     void Update()
@@ -67,19 +80,24 @@ public class ShipBuildUIManager : MonoBehaviour
         if (_newModuleRotation <= -360)
             _newModuleRotation += 360;
 
-        var rh = new RaycastHit();
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rh) && rh.transform.tag == "GridCell")
+        RaycastHit hit = new RaycastHit();
+
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && hit.transform.tag == "Grid Cell")
         {
-            if (_previousModule != rh.transform.gameObject)
+            if (_previousModule != hit.transform.gameObject)
             {
                 if (_previousModule != null)
-                    _previousModule.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+                    _previousModule.GetComponent<SpriteRenderer>().color = _previousColor;
 
-                _previousModule = rh.transform.gameObject;
-                _previousModule.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 1);
+                _previousModule = hit.transform.gameObject;
+                var sr = _previousModule.GetComponent<SpriteRenderer>();
+                _previousColor = sr.color;
+                sr.color = new Color(0.5f, 0.5f, 1);
             }
         }
 
+        if (Input.GetMouseButton(0) && _placeMode && _previousModule != null)
+            PlaceModule();
         UpdatePlace();
 
         if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
@@ -133,8 +151,12 @@ public class ShipBuildUIManager : MonoBehaviour
         //            1);
         //}
 
-        //_newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
-        //_newModule.Position.SetZ(DeckManager.CurrentDeck);
+        for (var i = 0; i < _newModule.Components.Length; i++)
+        {
+            _newModule.Components[i].GameObject.transform.position = 
+                Camera.ScreenToWorldPoint(Input.mousePosition) + 
+                (_newModule.Components[i].LocalPosition * 50) + new Vector3(0, 0, 10);
+        }
 
         //Module pos has changed, recalculate the placement viability
 
@@ -181,13 +203,6 @@ public class ShipBuildUIManager : MonoBehaviour
         //if (ShipBuildManager.FirstModule != null)
         //    _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
         //        ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
-
-        //Don't call the IsPlacementValid function unless you have to, it's expensive to run
-        //TODO: Maintain last call to IsPlacementValid's state
-        if (Input.GetMouseButton(0))// && _newModule.GameObject.GetComponent<SpriteRenderer>().color == new Color(1, 1, 1))
-            PlaceModule();
-
-        
     }
 
     /// <summary>
@@ -252,6 +267,7 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         ShipSizeSelect.SetActive(false);
         ShipBuildManager.InitializeGrid(shipType);
+        _popupActive = false;
     }
 
     #endregion
