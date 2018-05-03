@@ -331,6 +331,7 @@
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />
     <Compile Include="Assets\Utils\Extensions\ObjectExtensions.cs" />
     <Compile Include="Assets\Utils\Extensions\StringExtensions.cs" />
+    <Compile Include="Assets\Utils\Extensions\Vector3IntExtensions.cs" />
     <Compile Include="Assets\Utils\GraphicsUtils.cs" />
     <Compile Include="Assets\Utils\MathHelper.cs" />
     <Compile Include="Assets\Utils\ModuleUtils\ModuleVectorUtils.cs" />

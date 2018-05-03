@@ -81,9 +81,10 @@ public class ShipBuildUIManager : MonoBehaviour
             _newModuleRotation += 360;
 
         RaycastHit hit = new RaycastHit();
-
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && hit.transform.tag == "Grid Cell")
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),
+            out hit) && hit.transform.tag == "GridCell")
         {
+            DebugText.text = hit.transform.name;
             if (_previousModule != hit.transform.gameObject)
             {
                 if (_previousModule != null)
@@ -96,8 +97,9 @@ public class ShipBuildUIManager : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(0) && _placeMode && _previousModule != null)
+        if (Input.GetMouseButtonDown(0) && _placeMode && _previousModule != null)
             PlaceModule();
+
         UpdatePlace();
 
         if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
@@ -136,21 +138,6 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         if (!_placeMode) return;
 
-        //if (_newModule.ModuleBlueprint.Space.Length > 1)
-        //{
-        //    if (_newModule.ModuleBlueprint.Space.Any(a => a.X != 0))
-        //        _newModule.GameObject.transform.position = new Vector3(
-        //            _newModule.GameObject.transform.position.x + 25,
-        //            _newModule.GameObject.transform.position.y,
-        //            1);
-
-        //    if (_newModule.ModuleBlueprint.Space.Any(a => a.Y != 0))
-        //        _newModule.GameObject.transform.position = new Vector3(
-        //            _newModule.GameObject.transform.position.x,
-        //            _newModule.GameObject.transform.position.y + 25,
-        //            1);
-        //}
-
         for (var i = 0; i < _newModule.Components.Length; i++)
         {
             _newModule.Components[i].GameObject.transform.position = 
@@ -158,51 +145,20 @@ public class ShipBuildUIManager : MonoBehaviour
                 (_newModule.Components[i].LocalPosition * 50) + new Vector3(0, 0, 10);
         }
 
-        //Module pos has changed, recalculate the placement viability
-
-        //if (ShipBuildManager.FirstModule != null && _newModule.Position != _previousPos)
-        //    ShipBuildManager.IsPlacementValid(_newModule);
-
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
         {
             
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            //_newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position,
-            //    new Vector3(0, 0, 1), -90);
-
-            //_newModule.ModuleBlueprint.Connectors =
-            //    ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
-            //        ModuleVectorUtils.RotationDirection.CW);
-
-            //_newModule.ModuleBlueprint.ExclusionVectors =
-            //    ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
-
-            //_newModule.ModuleBlueprint.Space =
-            //    ModuleVectorUtils.RotateSpace(_newModule.ModuleBlueprint.Space,
-            //        ModuleVectorUtils.RotationDirection.CW);
-
-            _newModuleRotation -= 90;
+            
         }
         else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
         {
         }
         else if (Input.GetKeyDown(KeyCode.T))
         {
-            //_newModule.GameObject.transform.localScale = new Vector3(
-            //    _newModule.GameObject.transform.localScale.x * -1,
-            //    _newModule.GameObject.transform.localScale.y,
-            //    _newModule.GameObject.transform.localScale.z);
-            //_newModule.ModuleBlueprint.ExclusionVectors =
-            //    ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
-            //_newModule.ModuleBlueprint.Connectors =
-            //    ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
         }
-
-        //if (ShipBuildManager.FirstModule != null)
-        //    _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-        //        ShipBuildManager.FirstModule.GameObject.transform.position).SetZ(DeckManager.CurrentDeck);
     }
 
     /// <summary>
@@ -257,17 +213,6 @@ public class ShipBuildUIManager : MonoBehaviour
 
         _placeMode = false;
         _newModule = null;
-    }
-
-    #endregion
-
-    #region Event Handlers
-
-    public void OnShipTypeSelected(string shipType)
-    {
-        ShipSizeSelect.SetActive(false);
-        ShipBuildManager.InitializeGrid(shipType);
-        _popupActive = false;
     }
 
     #endregion

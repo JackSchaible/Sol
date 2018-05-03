@@ -8,6 +8,7 @@ using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Command;
+using Assets.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +30,9 @@ public class ShipBuildManager : MonoBehaviour
 
     public bool HasCommandModule { get; private set; }
 
+    public Color InvalidCellColor = new Color(155, 35, 35);
+    public Color OpenCellColor = new Color(55, 170, 55);
+
     private readonly Dictionary<string, Vector3Int> _shipSizes = new Dictionary<string, Vector3Int>
     {
         {ShipTypes.StrikeCraft, new Vector3Int(10, 10, 3)},
@@ -36,34 +40,35 @@ public class ShipBuildManager : MonoBehaviour
         {ShipTypes.Cruiser, new Vector3Int(40, 40, 20)},
         {ShipTypes.CapitalShip, new Vector3Int(80, 80, 40)},
     };
+    private Vector3Int _gridSize;
 
     void Start()
     {
-
+        InitializeGrid();
     }
 
     void Update()
     {
     }
 
-    public void InitializeGrid(string shipType)
+    public void InitializeGrid()
     {
-        var size = _shipSizes[shipType];
+        _gridSize = new Vector3Int(10, 10, 1);
 
-        Cells = new GameObject[size.x, size.y, size.z];
+        Cells = new GameObject[_gridSize.x, _gridSize.y, _gridSize.z];
 
-        for (var z = 0; z < size.z; z++)
+        for (var z = 0; z < _gridSize.z; z++)
         {
             if (z > 0)
                 DeckManager.AddLowerDeck();
 
-            for (var x = 0; x < size.x; x++)
-                for (var y = 0; y < size.y; y++)
+            for (var x = 0; x < _gridSize.x; x++)
+                for (var y = 0; y < _gridSize.y; y++)
                 {
                     Cells[x, y, z] = Instantiate(ComponentPrefab);
                     Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
-                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = Color.green;
-                    Cells[x, y, z].name = "Grid Cell";
+                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = OpenCellColor;
+                    Cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
 
                     var com = Cells[x, y, z].GetComponent<GridCell>();
                     com.Position = new Vector3Int(x, y, z);
@@ -95,19 +100,26 @@ public class ShipBuildManager : MonoBehaviour
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-
-        foreach (var com in module.Components)
+        var newModule = Module.Create(module.ModuleBlueprint.Copy());
+        //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
+        foreach (var com in newModule.Components)
         {
-            var gridObj = Cells[pos.x + com.LocalPosition.x, pos.y + com.LocalPosition.x, pos.y + com.LocalPosition.z];
+            var aPos = pos + com.LocalPosition;
+            var cell = Cells[aPos.x, aPos.y, aPos.z];
 
-            var gridCom = gridObj.GetComponent<ModuleComponent>();
-            gridCom.Connectors = com.Connectors;
-            //TODO: Modify surrounding components to have receiving connectors
-            gridCom.ExclusionVectors = com.ExclusionVectors;
-            //gridCom.Position = pos + com.LocalPosition;
-            gridCom.GameObject.AddComponent<BoxCollider>();
+            cell.GetComponent<SpriteRenderer>().color = InvalidCellColor;
+            com.GameObject.transform.position = cell.gameObject.transform.position;
 
-            //TODO: remove cell, add component
+            //Modify surrounding components to have receiving connectors
+            foreach (var con in com.Connectors)
+            {
+                var conPos = aPos + con.Direction;
+                if (!_gridSize.Contains(conPos))
+                    continue;
+
+                var gridCell = Cells[conPos.x, conPos.y, conPos.z].GetComponent<GridCell>();
+                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction.Times(-1), con.MaterialsConveyed), 1)).ToArray();
+            }
         }
 
         //Disable decks if module has an x/y plane or space exclusion vector

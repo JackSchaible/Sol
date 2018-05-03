@@ -24,7 +24,7 @@ namespace Assets.Scenes.ShipBuild
         private Color AdjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
         private Color UnattachedDeckModuleColor = new Color(1, 1, 1, 0);
 
-        void Start()
+        void Awake()
         {
             var gameObjects = GameObject.FindGameObjectsWithTag("Deck Button");
 
