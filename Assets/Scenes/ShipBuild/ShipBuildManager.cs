@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Common.Utils;
-using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
@@ -10,7 +8,6 @@ using Assets.Ships.Modules;
 using Assets.Ships.Modules.Command;
 using Assets.Utils.Extensions;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
@@ -114,11 +111,12 @@ public class ShipBuildManager : MonoBehaviour
             foreach (var con in com.Connectors)
             {
                 var conPos = aPos + con.Direction;
+
                 if (!_gridSize.Contains(conPos))
-                    continue;
+                    Resize(con.Direction * 10);
 
                 var gridCell = Cells[conPos.x, conPos.y, conPos.z].GetComponent<GridCell>();
-                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction.Times(-1), con.MaterialsConveyed), 1)).ToArray();
+                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
             }
         }
 
@@ -150,23 +148,6 @@ public class ShipBuildManager : MonoBehaviour
 
         //AddConnectedSlots(module);
     }
-    //private void AddConnectedSlots(Module module)
-    //{
-    //    foreach (var connector in module.ModuleBlueprint.Connectors)
-    //    {
-    //        //var pos = module.Position + connector.Position;
-    //        var newPos = pos.Adjust(connector.Direction);
-
-    //        if (!IsPositionOutsideOfExclusionSpaces(newPos))
-    //            continue;
-
-    //        if (DoesModuleOverlap(newPos))
-    //            continue;
-
-    //        ConnectorDirections newD = Connector.GetOpposite(connector.Direction);
-    //        //_availableSlots.Add(new Connector(newD, connector.MaterialsConveyed, newPos));
-    //    }
-    //}
 
     public void DeleteModule(Module module)
     {
@@ -206,6 +187,28 @@ public class ShipBuildManager : MonoBehaviour
     }
 
     #endregion
+
+    private void Resize(Vector3Int add)
+    {
+        Cells = Resize(add, Cells);
+        Grid = Resize(add, Grid);
+    }
+
+    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
+    {
+        var xSize = arr.GetLength(0);
+        var ySize = arr.GetLength(1);
+        var zSize = arr.GetLength(2);
+
+        var newArr = new T[xSize + newSpace.x, ySize + newSpace.y, zSize + newSpace.z];
+
+        for (int x = 0; x < xSize; x++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
+                    newArr[x, y, z] = arr[x, y, z];
+
+        return newArr;
+    }
 
     private static class ShipTypes
     {

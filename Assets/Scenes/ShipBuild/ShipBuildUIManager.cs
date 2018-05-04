@@ -2,6 +2,7 @@
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Ships;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -138,7 +139,7 @@ public class ShipBuildUIManager : MonoBehaviour
     {
         if (!_placeMode) return;
 
-        for (var i = 0; i < _newModule.Components.Length; i++)
+        for (int i = 0; i < _newModule.Components.Length; i++)
         {
             _newModule.Components[i].GameObject.transform.position = 
                 Camera.ScreenToWorldPoint(Input.mousePosition) + 
@@ -151,7 +152,13 @@ public class ShipBuildUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            
+            foreach (var com in _newModule.Components)
+            {
+                com.Connectors =
+                    ModuleVectorUtils.RotateConnectorPositions(com.Connectors, ModuleVectorUtils.RotationDirection.CW);
+
+
+            }
         }
         else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
         {
@@ -181,10 +188,6 @@ public class ShipBuildUIManager : MonoBehaviour
     public void Build(ModuleBlueprint blueprint)
     {
         _newModule = Module.Create(blueprint);
-
-        //TODO: Why did we need this?
-        //_newModule.GameObject.SetActive(false);
-        //_newModule.GameObject.SetActive(true);
 
         //if (_newModuleRotation != 0)
         //{

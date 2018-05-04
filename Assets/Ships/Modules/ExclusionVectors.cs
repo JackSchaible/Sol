@@ -2,7 +2,7 @@
 
 namespace Assets.Ships.Modules
 {
-    public class ExclusionVector
+    public struct ExclusionVector
     {
         public ExclusionVectorDirections[] Direction { get; set; }
         public Vector3Int Position { get; set; }
