@@ -92,24 +92,33 @@ public class ShipBuildManager : MonoBehaviour
         {
             var aPos = pos + com.LocalPosition;
             var cell = Cells[aPos.x, aPos.y, aPos.z];
-
             cell.GetComponent<SpriteRenderer>().color = InvalidCellColor;
             com.GameObject.transform.position = cell.gameObject.transform.position;
+            Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
 
             //Modify surrounding components to have receiving connectors
             foreach (var con in com.Connectors)
             {
                 var conPos = aPos + con.Direction;
 
+                var shiftDirection = Vector3Int.zero;
+
+                if (con.Direction.x < 0)
+                    shiftDirection = Vector3Int.right * 10;
+                else if (con.Direction.y < 0)
+                    shiftDirection = Vector3Int.up * 10;
+                else if (con.Direction.z < 0)
+                    shiftDirection = new Vector3Int(0, 0, 1);
+
                 if (!_gridSize.Contains(conPos))
-                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)));
+                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)), shiftDirection);
 
                 if (con.Direction.z > 0)
                     DeckManager.AddUpperDeck();
                 else if (con.Direction.z < 0)
                     DeckManager.AddLowerDeck();
 
-                var gridCell = Cells[conPos.x, conPos.y, conPos.z].GetComponent<GridCell>();
+                var gridCell = Cells[conPos.x + shiftDirection.x, conPos.y + shiftDirection.y, conPos.z + shiftDirection.z].GetComponent<GridCell>();
                 gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
             }
         }
@@ -182,13 +191,14 @@ public class ShipBuildManager : MonoBehaviour
 
     #endregion
 
-    private void Resize(Vector3Int add)
+    private void Resize(Vector3Int add, Vector3Int shift)
     {
-        Cells = Resize(add, Cells, true);
-        Grid = Resize(add, Grid);
+        var newCells = Resize(add, Cells);
+        Cells = ReinitCells(newCells, Cells);
+        var newGrid = Resize(add, Grid);
+        Grid = ReinitComponents(newGrid, Grid, shift);
     }
-
-    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr, bool initCell = false)
+    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
     {
         var xSize = arr.GetLength(0);
         var ySize = arr.GetLength(1);
@@ -196,15 +206,35 @@ public class ShipBuildManager : MonoBehaviour
 
         var newArr = new T[xSize + newSpace.x, ySize + newSpace.y, zSize + newSpace.z];
 
+        return newArr;
+    }
+    private GameObject[,,] ReinitCells(GameObject[,,] newArr, GameObject[,,] oldArr)
+    {
+        var xSize = oldArr.GetLength(0);
+        var ySize = oldArr.GetLength(1);
+        var zSize = oldArr.GetLength(2);
+
         for (int x = 0; x < xSize; x++)
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
                 {
-                    newArr[x, y, z] = arr[x, y, z];
-
-                    if (initCell)
-                        InitializeCell(x, y, z);
+                    newArr[x, y, z] = oldArr[x, y, z];
+                    InitializeCell(x, y, z);
                 }
+
+        return newArr;
+    }
+    private ModuleComponent[,,] ReinitComponents(ModuleComponent[,,] newArr, ModuleComponent[,,] oldArr, Vector3Int shift)
+    {
+        var xSize = oldArr.GetLength(0);
+        var ySize = oldArr.GetLength(1);
+        var zSize = oldArr.GetLength(2);
+
+        for (int x = 0; x < xSize; x++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
+                    if (oldArr[x, y, z].GameObject != null)
+                        newArr[x + shift.x, y + shift.y, z + shift.z] = oldArr[x, y, z];
 
         return newArr;
     }
