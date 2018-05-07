@@ -2,7 +2,7 @@
 
 namespace Assets.Ships.Modules
 {
-    public class ModuleComponent
+    public struct ModuleComponent
     {
         public GameObject GameObject { get; set; }
         public Vector3Int LocalPosition { get; set; }

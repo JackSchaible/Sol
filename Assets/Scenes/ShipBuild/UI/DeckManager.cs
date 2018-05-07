@@ -120,7 +120,9 @@ namespace Assets.Scenes.ShipBuild
                             color = UnattachedDeckModuleColor;
 
                         BuildManager.Cells[x, y, z].GetComponent<SpriteRenderer>().color = color;
-                        BuildManager.Grid[x, y, z].GameObject.GetComponent<SpriteRenderer>().color = color;
+                        var go = BuildManager.Grid[x, y, z].GameObject;
+                        if (go != null)
+                            go.GetComponent<SpriteRenderer>().color = color;
                     }
 
         }

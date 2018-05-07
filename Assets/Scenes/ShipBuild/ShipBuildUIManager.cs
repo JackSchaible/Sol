@@ -143,23 +143,13 @@ public class ShipBuildUIManager : MonoBehaviour
         {
             _newModule.Components[i].GameObject.transform.position = 
                 Camera.ScreenToWorldPoint(Input.mousePosition) + 
-                (_newModule.Components[i].LocalPosition * 50) + new Vector3(0, 0, 10);
+                (_newModule.Components[i].LocalPosition) + new Vector3(0, 0, 10);
         }
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
-        {
-            
-        }
+            _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CCW);
         else if (Input.GetKeyDown(KeyCode.R))
-        {
-            foreach (var com in _newModule.Components)
-            {
-                com.Connectors =
-                    ModuleVectorUtils.RotateConnectorPositions(com.Connectors, ModuleVectorUtils.RotationDirection.CW);
-
-
-            }
-        }
+            _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CW);
         else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
         {
         }

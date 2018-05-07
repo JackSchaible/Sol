@@ -27,8 +27,8 @@ public class ShipBuildManager : MonoBehaviour
 
     public bool HasCommandModule { get; private set; }
 
-    public Color InvalidCellColor = new Color(155, 35, 35);
-    public Color OpenCellColor = new Color(55, 170, 55);
+    public Color InvalidCellColor = new Color(0.6f, 0.14f, 0.14f);
+    public Color OpenCellColor = new Color(0.22f, 0.66f, 0.22f);
 
     private readonly Dictionary<string, Vector3Int> _shipSizes = new Dictionary<string, Vector3Int>
     {
@@ -53,7 +53,7 @@ public class ShipBuildManager : MonoBehaviour
         _gridSize = new Vector3Int(10, 10, 1);
 
         Cells = new GameObject[_gridSize.x, _gridSize.y, _gridSize.z];
-
+        Grid = new ModuleComponent[_gridSize.x, _gridSize.y, _gridSize.z];
         for (var z = 0; z < _gridSize.z; z++)
         {
             if (z > 0)
@@ -61,17 +61,7 @@ public class ShipBuildManager : MonoBehaviour
 
             for (var x = 0; x < _gridSize.x; x++)
                 for (var y = 0; y < _gridSize.y; y++)
-                {
-                    Cells[x, y, z] = Instantiate(ComponentPrefab);
-                    Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
-                    Cells[x, y, z].GetComponent<SpriteRenderer>().color = OpenCellColor;
-                    Cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
-
-                    var com = Cells[x, y, z].GetComponent<GridCell>();
-                    com.Position = new Vector3Int(x, y, z);
-                    com.Connectors = new Connector[0];
-                    com.ExclusionVectors = new ExclusionVector[0];
-                }
+                    InitializeCell(x, y, z);
         }
 
         DeckManager.SelectDeck(0);
@@ -79,8 +69,6 @@ public class ShipBuildManager : MonoBehaviour
 
     public void AddModule(GameObject selectedComponent, Module module)
     {
-        //TODO: Add to modules list
-
         PowerUsed += module.ModuleBlueprint.PowerConumption;
         ControlUsed += module.ModuleBlueprint.CommandRequirement;
         PersonnelUsed += module.ModuleBlueprint.CrewRequirement;
@@ -98,6 +86,7 @@ public class ShipBuildManager : MonoBehaviour
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
         var newModule = Module.Create(module.ModuleBlueprint.Copy());
+        
         //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
         foreach (var com in newModule.Components)
         {
@@ -113,40 +102,45 @@ public class ShipBuildManager : MonoBehaviour
                 var conPos = aPos + con.Direction;
 
                 if (!_gridSize.Contains(conPos))
-                    Resize(con.Direction * 10);
+                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)));
+
+                if (con.Direction.z > 0)
+                    DeckManager.AddUpperDeck();
+                else if (con.Direction.z < 0)
+                    DeckManager.AddLowerDeck();
 
                 var gridCell = Cells[conPos.x, conPos.y, conPos.z].GetComponent<GridCell>();
                 gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
             }
         }
 
-        //Disable decks if module has an x/y plane or space exclusion vector
-        //if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
-        //{
-        //    foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
-        //    {
-        //        foreach (var vector in vectors.Direction)
-        //        {
-        //            //Disable whatever it is
-        //            switch (vector)
-        //            {
-        //                case ExclusionVectorDirections.Plane:
-        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
-        //                    break;
+        //Disable decks if module has an x / y plane or space exclusion vector
+        if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
+        {
+            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
+            {
+                foreach (var vector in vectors.Direction)
+                {
+                    //Disable whatever it is
+                    switch (vector)
+                    {
+                        case ExclusionVectorDirections.Plane:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            break;
 
-        //                case ExclusionVectorDirections.PlaneAndForward:
-        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
-        //                    break;
+                        case ExclusionVectorDirections.PlaneAndForward:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            break;
 
-        //                case ExclusionVectorDirections.PlaneAndBackward:
-        //                    DeckManager.DisableDeck(DeckManager.CurrentDeck);
-        //                    break;
-        //            }
-        //        }
-        //    }
-        //}
+                        case ExclusionVectorDirections.PlaneAndBackward:
+                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
+                            break;
+                    }
+                }
+            }
+        }
 
-        //AddConnectedSlots(module);
+        Modules.Add(newModule);
     }
 
     public void DeleteModule(Module module)
@@ -190,11 +184,11 @@ public class ShipBuildManager : MonoBehaviour
 
     private void Resize(Vector3Int add)
     {
-        Cells = Resize(add, Cells);
+        Cells = Resize(add, Cells, true);
         Grid = Resize(add, Grid);
     }
 
-    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
+    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr, bool initCell = false)
     {
         var xSize = arr.GetLength(0);
         var ySize = arr.GetLength(1);
@@ -205,9 +199,27 @@ public class ShipBuildManager : MonoBehaviour
         for (int x = 0; x < xSize; x++)
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
+                {
                     newArr[x, y, z] = arr[x, y, z];
 
+                    if (initCell)
+                        InitializeCell(x, y, z);
+                }
+
         return newArr;
+    }
+
+    private void InitializeCell(int x, int y, int z)
+    {
+        Cells[x, y, z] = Instantiate(ComponentPrefab);
+        Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
+        Cells[x, y, z].GetComponent<SpriteRenderer>().color = OpenCellColor;
+        Cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
+
+        var com = Cells[x, y, z].GetComponent<GridCell>();
+        com.Position = new Vector3Int(x, y, z);
+        com.Connectors = new Connector[0];
+        com.ExclusionVectors = new ExclusionVector[0];
     }
 
     private static class ShipTypes

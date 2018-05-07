@@ -1,5 +1,4 @@
-﻿using Assets.Common.Utils;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Ships.Modules.Miscellanious
 {
