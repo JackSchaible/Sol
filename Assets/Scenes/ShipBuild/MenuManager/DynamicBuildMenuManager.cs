@@ -15,7 +15,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         #region Props & fields
         
         //Other GameObject managers
-        public ShipBuildUIManager UIManager;
+        public ShipBuildUiManager UIManager;
 
         //Prefabs needed to display menus
         public GameObject LayoutGroup;
@@ -28,7 +28,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         private Menu _menu;
 
         //Constants
-        private readonly Color _fade = new Color(1, 1, 1, 0.3f);
+        private readonly Color _fade = new Color(1, 1, 1, 0);
         private readonly Color _normal = new Color(1, 1, 1, 1);
 
         //State maintenance vars
@@ -284,7 +284,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
                 var text = obj.GetComponent<Text>();
                 if (text != null)
-                    text.color = c;
+                    text.color = new Color(text.color.r, text.color.g, text.color.b, c.a);
 
                 var toggle = obj.GetComponent<Toggle>();
                 if (toggle != null)
@@ -297,6 +297,10 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 var button = obj.GetComponent<Button>();
                 if (button != null)
                     button.interactable = c == _normal;
+
+                var highlighter = obj.GetComponent<ToggleHighlighter>();
+                if (highlighter != null)
+                    highlighter.A = c.a;
             }
         }
         private List<GameObject> GetChildrenMenuToPlaceMode(GameObject m)
@@ -331,6 +335,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             foreach (var mt in m.MenuToggles)
             {
                 gos.Add(mt.GameObject);
+                gos.Add(mt.GameObject.GetComponentInChildren<Text>().gameObject);
+                gos.Add(mt.GameObject.GetComponentInChildren<Image>().gameObject);
                 gos.AddRange(GetMenuToPlaceMode(mt.Menu));
             }
 

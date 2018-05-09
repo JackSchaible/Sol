@@ -299,13 +299,14 @@
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuToggle.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUiManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewTw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\GridCell.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\InfoPanel.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />

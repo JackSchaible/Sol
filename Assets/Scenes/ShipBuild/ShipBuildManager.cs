@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Data;
 using Assets.Scenes.ShipBuild;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
@@ -27,24 +28,15 @@ public class ShipBuildManager : MonoBehaviour
 
     public bool HasCommandModule { get; private set; }
 
-    public Color InvalidCellColor = new Color(0.6f, 0.14f, 0.14f);
-    public Color OpenCellColor = new Color(0.22f, 0.66f, 0.22f);
-
-    private readonly Dictionary<string, Vector3Int> _shipSizes = new Dictionary<string, Vector3Int>
-    {
-        {ShipTypes.StrikeCraft, new Vector3Int(10, 10, 3)},
-        {ShipTypes.Frigate, new Vector3Int(25, 25, 10)},
-        {ShipTypes.Cruiser, new Vector3Int(40, 40, 20)},
-        {ShipTypes.CapitalShip, new Vector3Int(80, 80, 40)},
-    };
     private Vector3Int _gridSize;
 
-    void Start()
+    private void Awake()
     {
+        Modules = new List<Module>();
         InitializeGrid();
     }
 
-    void Update()
+    private void Update()
     {
     }
 
@@ -61,7 +53,7 @@ public class ShipBuildManager : MonoBehaviour
 
             for (var x = 0; x < _gridSize.x; x++)
                 for (var y = 0; y < _gridSize.y; y++)
-                    InitializeCell(x, y, z);
+                    InitializeCell(x, y, z, Cells);
         }
 
         DeckManager.SelectDeck(0);
@@ -86,13 +78,21 @@ public class ShipBuildManager : MonoBehaviour
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
         var newModule = Module.Create(module.ModuleBlueprint.Copy());
-        
+
+        if (Modules.Count == 0)
+            foreach(var cell in Cells)
+                cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+
+        Modules.Add(newModule);
+
         //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
+        //TODO: if we've already resized the grid, we need to adjust
+        //the remaining connector's positions maybe?
         foreach (var com in newModule.Components)
         {
             var aPos = pos + com.LocalPosition;
             var cell = Cells[aPos.x, aPos.y, aPos.z];
-            cell.GetComponent<SpriteRenderer>().color = InvalidCellColor;
+            cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
             com.GameObject.transform.position = cell.gameObject.transform.position;
             Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
 
@@ -100,26 +100,37 @@ public class ShipBuildManager : MonoBehaviour
             foreach (var con in com.Connectors)
             {
                 var conPos = aPos + con.Direction;
-
                 var shiftDirection = Vector3Int.zero;
 
-                if (con.Direction.x < 0)
+                if (conPos.x < 0)
                     shiftDirection = Vector3Int.right * 10;
-                else if (con.Direction.y < 0)
+                else if (conPos.y < 0)
                     shiftDirection = Vector3Int.up * 10;
-                else if (con.Direction.z < 0)
+                else if (conPos.z < 0)
                     shiftDirection = new Vector3Int(0, 0, 1);
 
+                aPos += shiftDirection;
+
                 if (!_gridSize.Contains(conPos))
-                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)), shiftDirection);
+                {
+                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)),
+                        shiftDirection);
 
-                if (con.Direction.z > 0)
-                    DeckManager.AddUpperDeck();
-                else if (con.Direction.z < 0)
-                    DeckManager.AddLowerDeck();
+                    if (con.Direction.z != 0)
+                    {
+                        if (con.Direction.z > 0)
+                            DeckManager.AddUpperDeck();
+                        else if (con.Direction.z < 0)
+                            DeckManager.AddLowerDeck();
 
-                var gridCell = Cells[conPos.x + shiftDirection.x, conPos.y + shiftDirection.y, conPos.z + shiftDirection.z].GetComponent<GridCell>();
+                        DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
+                    }
+                }
+
+                var cCell = Cells[conPos.x + shiftDirection.x, conPos.y + shiftDirection.y, conPos.z + shiftDirection.z];
+                var gridCell = cCell.GetComponent<GridCell>();
                 gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
+                cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
             }
         }
 
@@ -134,22 +145,17 @@ public class ShipBuildManager : MonoBehaviour
                     switch (vector)
                     {
                         case ExclusionVectorDirections.Plane:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
                             break;
 
                         case ExclusionVectorDirections.PlaneAndForward:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
                             break;
 
                         case ExclusionVectorDirections.PlaneAndBackward:
-                            DeckManager.DisableDeck(DeckManager.CurrentDeck);
                             break;
                     }
                 }
             }
         }
-
-        Modules.Add(newModule);
     }
 
     public void DeleteModule(Module module)
@@ -189,6 +195,12 @@ public class ShipBuildManager : MonoBehaviour
         return conCount <= 0 && spaceValid;
     }
 
+    public Connector[] GetConnectors(GameObject selectedCell)
+    {
+        var cell = selectedCell.GetComponent<GridCell>();
+        return cell.Connectors;
+    }
+
     #endregion
 
     private void Resize(Vector3Int add, Vector3Int shift)
@@ -197,6 +209,7 @@ public class ShipBuildManager : MonoBehaviour
         Cells = ReinitCells(newCells, Cells);
         var newGrid = Resize(add, Grid);
         Grid = ReinitComponents(newGrid, Grid, shift);
+        _gridSize = new Vector3Int(Cells.GetLength(0), Cells.GetLength(1), Cells.GetLength(2));
     }
     private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
     {
@@ -210,17 +223,21 @@ public class ShipBuildManager : MonoBehaviour
     }
     private GameObject[,,] ReinitCells(GameObject[,,] newArr, GameObject[,,] oldArr)
     {
-        var xSize = oldArr.GetLength(0);
-        var ySize = oldArr.GetLength(1);
-        var zSize = oldArr.GetLength(2);
+        var oldXSize = oldArr.GetLength(0);
+        var oldYSize = oldArr.GetLength(1);
+        var oldZSize = oldArr.GetLength(2);
+
+        var xSize = newArr.GetLength(0);
+        var ySize = newArr.GetLength(1);
+        var zSize = newArr.GetLength(2);
 
         for (int x = 0; x < xSize; x++)
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
-                {
-                    newArr[x, y, z] = oldArr[x, y, z];
-                    InitializeCell(x, y, z);
-                }
+                    if (x < oldXSize && y < oldYSize && z < oldZSize)
+                        newArr[x, y, z] = oldArr[x, y, z];
+                    else
+                        InitializeCell(x, y, z, newArr);
 
         return newArr;
     }
@@ -238,25 +255,16 @@ public class ShipBuildManager : MonoBehaviour
 
         return newArr;
     }
-
-    private void InitializeCell(int x, int y, int z)
+    private void InitializeCell(int x, int y, int z, GameObject[,,] cells)
     {
-        Cells[x, y, z] = Instantiate(ComponentPrefab);
-        Cells[x, y, z].transform.position = new Vector3Int(x, y, z);
-        Cells[x, y, z].GetComponent<SpriteRenderer>().color = OpenCellColor;
-        Cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
+        cells[x, y, z] = Instantiate(ComponentPrefab);
+        cells[x, y, z].transform.position = new Vector3Int(x, y, z);
+        cells[x, y, z].GetComponent<SpriteRenderer>().color = (Modules.Count == 0 ? new Color(0.22f, 0.66f, 0.22f) : new Color(0.6f, 0.14f, 0.14f));
+        cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
 
-        var com = Cells[x, y, z].GetComponent<GridCell>();
+        var com = cells[x, y, z].GetComponent<GridCell>();
         com.Position = new Vector3Int(x, y, z);
         com.Connectors = new Connector[0];
         com.ExclusionVectors = new ExclusionVector[0];
-    }
-
-    private static class ShipTypes
-    {
-        public static string StrikeCraft = "StrikeCraft";
-        public static string Frigate = "Frigate";
-        public static string Cruiser = "Cruiser";
-        public static string CapitalShip = "CapitalShip";
     }
 }

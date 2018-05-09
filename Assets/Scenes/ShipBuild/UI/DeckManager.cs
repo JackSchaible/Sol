@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Utils.Extensions;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,7 +34,7 @@ namespace Assets.Scenes.ShipBuild
             foreach (var go in gameObjects)
                 _deckButtons.Add(int.Parse(go.GetComponentInChildren<Text>().text), go);
 
-            CurrentDeck = 1;
+            CurrentDeck = 0;
 
             foreach (var deckKvp in _deckButtons)
                 deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == CurrentDeck ? activeColor : inactiveColor;
@@ -52,18 +53,6 @@ namespace Assets.Scenes.ShipBuild
                 if (_deckButtons.ContainsKey(CurrentDeck + 1))
                     SelectDeck(CurrentDeck + 1);
             }
-        }
-
-        public void DisableDeck(int deckNumber, bool autoAddNewDeck = false)
-        {
-            var deck = _deckButtons[deckNumber];
-            if (deck == null) return;
-
-            deck.GetComponent<Button>().interactable = false;
-            if (autoAddNewDeck && !_deckButtons.ContainsKey(deckNumber - 1))
-                AddLowerDeck();
-
-            SelectDeck(deckNumber - 1);
         }
 
         public void AddUpperDeck()
@@ -90,13 +79,16 @@ namespace Assets.Scenes.ShipBuild
             var key = bottomDeck.Key + 1;
 
             go.GetComponentInChildren<Text>().text = key.ToString();
-            go.name = key + " Deck Button";
+            go.name = "Deck" + key + "Button";
 
             _deckButtons.Add(bottomDeck.Key + 1, go);
         }
 
         public void SelectDeck(int deck)
         {
+            if (!_deckButtons.ContainsKey(deck))
+                throw new Exception("Deck " + deck + " does not exist.");
+
             foreach (var deckKvp in _deckButtons)
                 deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == deck ? activeColor : inactiveColor;
 
@@ -104,9 +96,13 @@ namespace Assets.Scenes.ShipBuild
 
             if (BuildManager.Grid == null) return;
 
-            for (var z = 0; z < BuildManager.Grid.GetLength(2); z++)
-                for (var x = 0; x < BuildManager.Grid.GetLength(0); x++)
-                    for (var y = 0; y < BuildManager.Grid.GetLength(1); y++)
+            var xSize = BuildManager.Cells.GetLength(0);
+            var ySize = BuildManager.Cells.GetLength(1);
+            var zSize = BuildManager.Cells.GetLength(2);
+
+            for (var z = 0; z < zSize; z++)
+                for (var x = 0; x < xSize; x++)
+                    for (var y = 0; y < ySize; y++)
                     {
                         if (z > deck + 1 || z < deck - 1) continue;
 
@@ -119,12 +115,15 @@ namespace Assets.Scenes.ShipBuild
                         else
                             color = UnattachedDeckModuleColor;
 
-                        BuildManager.Cells[x, y, z].GetComponent<SpriteRenderer>().color = color;
                         var go = BuildManager.Grid[x, y, z].GameObject;
                         if (go != null)
                             go.GetComponent<SpriteRenderer>().color = color;
-                    }
 
+                        if (z != deck)
+                            BuildManager.Cells[x, y, z].SetActive(false);
+                        else
+                            BuildManager.Cells[x, y, z].SetActive(true);
+                    }
         }
 
         void OnDeckSelected(GameObject button)
