@@ -1427,6 +1427,7 @@ MonoBehaviour:
   DebugText: {fileID: 1464905599}
   Modal: {fileID: 2086298812}
   InfoPanel: {fileID: 872542137}
+  ModuleInfoPanel: {fileID: 409381155}
 --- !u!4 &842667963
 Transform:
   m_ObjectHideFlags: 0
@@ -1907,7 +1908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ac551249e8255240ad3baf6a3776907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIManager: {fileID: 0}
+  UIManager: {fileID: 842667962}
   LayoutGroup: {fileID: 1914894917}
   MenuPrefab: {fileID: 1479383176811218, guid: 42533a0a096c5404bb703b299c02878d, type: 2}
   TogglePrefab: {fileID: 1355162620734430, guid: d6aab001dc6fa6e4ab6d4585e3230e41,
@@ -2605,7 +2606,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 527844483}
   m_HandleRect: {fileID: 527844482}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
