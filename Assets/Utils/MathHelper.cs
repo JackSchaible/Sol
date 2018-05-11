@@ -64,5 +64,19 @@ namespace Assets.Utils
             return angle;
         }
         #endregion
+
+        #region Wrap
+        public static T Wrap<T>(T value, T min, T max)
+            where T : IComparable
+        {
+            if (value.CompareTo(min) < 0)
+                return max;
+
+            if (value.CompareTo(max) > 0)
+                return min;
+
+            return value;
+        }
+        #endregion
     }
 }

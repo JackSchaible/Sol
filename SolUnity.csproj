@@ -300,6 +300,7 @@
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuToggle.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUiManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\CurrentModuleInfoPanel.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />

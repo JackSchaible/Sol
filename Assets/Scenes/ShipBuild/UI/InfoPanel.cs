@@ -12,20 +12,22 @@ namespace Assets.Scenes.ShipBuild.UI
     {
         public GameObject ContentArea;
         public Text Text;
+        public GameObject ConnectorViewPrefab;
+        public GameObject ConnectorIconPrefab;
 
-        private List<GameObject> _gameObjects;
+        protected List<GameObject> GameObjects;
 
         private void Start()
         {
-            _gameObjects = new List<GameObject>();
+            GameObjects = new List<GameObject>();
         }
 
-        public void ShowConnectors(Connector[] connectors)
+        public virtual void ShowConnectors(Connector[] connectors)
         {
-            foreach (var obj in _gameObjects)
+            foreach (var obj in GameObjects)
                 Destroy(obj);
 
-            _gameObjects = new List<GameObject>();
+            GameObjects = new List<GameObject>();
 
             Connector[] conns;
             if (connectors == null || connectors.Length == 0)
@@ -41,29 +43,23 @@ namespace Assets.Scenes.ShipBuild.UI
             else
                 conns = connectors;
 
-            for (var i = 0; i < conns.Length; i++)
+            foreach (Connector con in conns)
             {
-                int yOffset = 55 * i;
+                var view = Instantiate(ConnectorViewPrefab, ContentArea.transform);
+                view.transform.SetAsFirstSibling();
+                var layoutGroupTransform = view.GetComponentInChildren<HorizontalLayoutGroup>().transform;
+                var dir = Instantiate(ConnectorIconPrefab, layoutGroupTransform);
+                dir.GetComponent<Image>().sprite = GraphicsUtils.GetSpriteFromPath(GetSpriteFromDirections(con.Direction));
 
-                var dir = new GameObject("Direction " + conns[i].Direction + " Icon", typeof(Image));
-                dir.GetComponent<Image>().sprite = GraphicsUtils.GetSpriteFromPath(GetSpriteFromDirections(conns[i].Direction));
-                dir.transform.SetParent(ContentArea.transform, false);
-                dir.transform.position = new Vector3(0, yOffset, 0);
+                GameObjects.Add(view);
 
-                _gameObjects.Add(dir);
+                if (con.MaterialsConveyed == null) continue;
 
-                if (conns[i].MaterialsConveyed != null)
-                    for (int j = 0; j < conns[i].MaterialsConveyed.Length; j++)
-                    {
-                        int xOffset = 55 + (j * 50);
-
-                        var mat = new GameObject(conns[i].MaterialsConveyed[j] + " Icon", typeof(Image));
-                        mat.GetComponent<Image>().sprite = GraphicsUtils.GetSpriteFromPath(GetSpriteFromMaterial(conns[i].MaterialsConveyed[j]));
-                        mat.transform.SetParent(ContentArea.transform, false);
-                        mat.transform.position = new Vector3(xOffset, yOffset, 0);
-
-                        _gameObjects.Add(mat);
-                    }
+                foreach (Materials mat in con.MaterialsConveyed)
+                {
+                    var go = Instantiate(ConnectorIconPrefab, layoutGroupTransform);
+                    go.GetComponent<Image>().sprite = GraphicsUtils.GetSpriteFromPath(GetSpriteFromMaterial(mat));
+                }
             }
         }
 

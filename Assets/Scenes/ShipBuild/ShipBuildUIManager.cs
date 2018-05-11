@@ -2,6 +2,8 @@
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
+using Assets.Ships.Modules;
+using Assets.Utils;
 using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,10 +29,12 @@ namespace Assets.Scenes.ShipBuild
         public Text DebugText;
         public Modal Modal;
         public InfoPanel InfoPanel;
+        public CurrentModuleInfoPanel ModuleInfoPanel;
 
         //Internal state-tracking variables
         private bool _placeMode;
         private Module _newModule;
+        private int _currentModuleComponent;
         private Color _previousColor;
         private GameObject _previousModule;
         private float _newModuleRotation;
@@ -61,6 +65,7 @@ namespace Assets.Scenes.ShipBuild
             var pos = ShipBuildManager.Cells[x, y, 0].gameObject.transform.position;
 
             Camera.transform.position = new Vector3(pos.x, pos.y, Camera.transform.position.z);
+            ModuleInfoPanel.gameObject.SetActive(false);
         }
 
         void Update()
@@ -143,12 +148,10 @@ namespace Assets.Scenes.ShipBuild
         {
             if (!_placeMode) return;
 
-            for (int i = 0; i < _newModule.Components.Length; i++)
-            {
-                _newModule.Components[i].GameObject.transform.position = 
+            foreach (ModuleComponent com in _newModule.Components)
+                com.GameObject.transform.position = 
                     Camera.ScreenToWorldPoint(Input.mousePosition) + 
-                    (_newModule.Components[i].LocalPosition) + new Vector3(0, 0, 10);
-            }
+                    com.LocalPosition + new Vector3(0, 0, 10);
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
                 _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CCW);
@@ -160,6 +163,19 @@ namespace Assets.Scenes.ShipBuild
             else if (Input.GetKeyDown(KeyCode.T))
             {
             }
+
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
+            {
+                var newModuleComponent = Input.GetKeyDown(KeyCode.Q) ? 
+                    MathHelper.Wrap(_currentModuleComponent - 1, 0, _newModule.Components.Length - 1) :
+                    MathHelper.Wrap(_currentModuleComponent + 1, 0, _newModule.Components.Length - 1);
+
+                _newModule.Components[_currentModuleComponent].GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                _newModule.Components[newModuleComponent].GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f);
+                ModuleInfoPanel.Show(_newModule.Components[newModuleComponent].LocalPosition);
+
+                _currentModuleComponent = newModuleComponent;
+            }
         }
 
         /// <summary>
@@ -168,6 +184,9 @@ namespace Assets.Scenes.ShipBuild
         /// </summary>
         private void PlaceModule()
         {
+            foreach (var com in _newModule.Components)
+                com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+
             ShipBuildManager.AddModule(_previousModule, _newModule);
             Menu.ModulePlaced(_newModule.ModuleBlueprint);
             CancelPlaceMode();
@@ -194,13 +213,21 @@ namespace Assets.Scenes.ShipBuild
             //                ModuleVectorUtils.RotationDirection.CCW);
             //}
 
-            foreach (var com in _newModule.Components)
+            for (var i = 0; i < _newModule.Components.Length; i++)
             {
+                var com = _newModule.Components[i];
                 var sprite = com.GameObject.GetComponent<SpriteRenderer>();
                 sprite.sortingLayerName = "UI BG";
                 sprite.sortingOrder = DeckManager.CurrentDeck;
+
+                if (i != 0)
+                    sprite.color = new Color(1, 1, 1, 0.5f);
+
                 _placeMode = true;
             }
+
+            _currentModuleComponent = 0;
+            ModuleInfoPanel.Initialize(blueprint.Name, blueprint.Connectors);
         }
 
         private void CancelPlaceMode()
@@ -210,6 +237,8 @@ namespace Assets.Scenes.ShipBuild
 
             _placeMode = false;
             _newModule = null;
+
+            ModuleInfoPanel.Disable();
         }
 
         #endregion

@@ -68,7 +68,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             foreach (var toggle in _menu.MenuToggles)
             {
-
                 if (!toggle.GameObject.GetComponent<Toggle>().isOn)
                     SetTreeActive(toggle.Menu, false);
                 else

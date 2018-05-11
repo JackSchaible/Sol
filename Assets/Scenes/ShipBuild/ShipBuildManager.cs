@@ -86,21 +86,20 @@ public class ShipBuildManager : MonoBehaviour
         Modules.Add(newModule);
 
         //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
-        //TODO: if we've already resized the grid, we need to adjust
-        //the remaining connector's positions maybe?
+        var shiftDirection = Vector3Int.zero;
         foreach (var com in newModule.Components)
         {
             var aPos = pos + com.LocalPosition;
             var cell = Cells[aPos.x, aPos.y, aPos.z];
             cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+            com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
             com.GameObject.transform.position = cell.gameObject.transform.position;
             Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
 
             //Modify surrounding components to have receiving connectors
             foreach (var con in com.Connectors)
             {
-                var conPos = aPos + con.Direction;
-                var shiftDirection = Vector3Int.zero;
+                var conPos = aPos + con.Direction + shiftDirection;
 
                 if (conPos.x < 0)
                     shiftDirection = Vector3Int.right * 10;
