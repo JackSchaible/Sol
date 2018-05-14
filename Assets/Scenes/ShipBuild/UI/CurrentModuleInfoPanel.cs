@@ -9,13 +9,11 @@ namespace Assets.Scenes.ShipBuild.UI
     public class CurrentModuleInfoPanel : InfoPanel
     {
         public Text TitleText;
-        private Dictionary<Vector3Int, Connector[]> _connectors;
+        private Dictionary<Vector3Int, Connector[]> _connectors = new Dictionary<Vector3Int, Connector[]>();
         private int _index;
 
         private void Start()
         {
-            _connectors = new Dictionary<Vector3Int, Connector[]>();
-            GameObjects = new List<GameObject>();
         }
 
         public void Initialize(string moduleName, Connector[] connectors)
@@ -23,9 +21,15 @@ namespace Assets.Scenes.ShipBuild.UI
             TitleText.text = moduleName + " Info";
             _index = 0;
 
-            var groups = connectors.GroupBy(x => x.Position);
-            foreach (var connGroup in groups)
-                _connectors.Add(connGroup.Key, connGroup.ToArray());
+            foreach (var connector in connectors)
+                if (_connectors.ContainsKey(connector.Position))
+                {
+                    var newConns = _connectors[connector.Position].ToList();
+                    newConns.Add(connector);
+                    _connectors[connector.Position] = newConns.ToArray();
+                }
+                else
+                    _connectors.Add(connector.Position, new[] {connector});
 
             ShowConnectors(_connectors.Values.First(), false);
             gameObject.SetActive(true);

@@ -15,11 +15,10 @@ namespace Assets.Scenes.ShipBuild.UI
         public GameObject ConnectorViewPrefab;
         public GameObject ConnectorIconPrefab;
 
-        protected List<GameObject> GameObjects;
+        protected List<GameObject> GameObjects = new List<GameObject>();
 
         private void Start()
         {
-            GameObjects = new List<GameObject>();
         }
 
         public virtual void ShowConnectors(Connector[] connectors, bool noConnectorsIsAll)

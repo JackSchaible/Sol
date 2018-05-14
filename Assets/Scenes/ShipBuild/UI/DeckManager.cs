@@ -44,7 +44,7 @@ namespace Assets.Scenes.ShipBuild
             if (Input.GetKeyDown(KeyCode.Z) && CurrentDeck - 1 >= 0)
                 SelectDeck(CurrentDeck - 1);
 
-            if (Input.GetKeyDown(KeyCode.Q) && CurrentDeck + 1 <= _deckButtons.Count)
+            if (Input.GetKeyDown(KeyCode.A) && CurrentDeck + 1 <= _deckButtons.Count)
                 SelectDeck(CurrentDeck + 1);
         }
 
