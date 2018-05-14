@@ -71,6 +71,21 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         }
     }
 
+    internal class DetailsFieldThird : DetailsField
+    {
+        public string Name3 { get; set; }
+        public string Icon3 { get; set; }
+        public string Value3 { get; set; }
+
+        public DetailsFieldThird(string name1, string icon1, string value1, string name2, string icon2, string value2, string name3, string icon3, string value3)
+            : base(name1, icon1, value1, name2, icon2, value2)
+        {
+            Name3 = name3;
+            Icon3 = icon3;
+            Value3 = value3;
+        }
+    }
+
     internal class DetailsFieldQw : DetailsField
     {
         public string Name3 { get; set; }

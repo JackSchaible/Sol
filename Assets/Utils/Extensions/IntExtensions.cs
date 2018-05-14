@@ -2,7 +2,7 @@
 
 namespace Assets.Utils.Extensions
 {
-    public static class IntExtensions
+    public static class NumberExtensions
     {
         public static string ToRomanNumeral(this int number)
         {
@@ -32,6 +32,12 @@ namespace Assets.Utils.Extensions
             if (isNegative)
                 number *= -1;
 
+            if (baseUnit == "kg")
+            {
+                number *= 1000;
+                baseUnit = "g";
+            }
+
             if (number >= 10E23)
                 result = Math.Round(number / 10E23, 2) + "Y" + baseUnit;
             else if (number >= 10E20)
@@ -43,7 +49,46 @@ namespace Assets.Utils.Extensions
             else if (number >= 10E11)
                 result = Math.Round(number / 10E11, 2) + "T" + baseUnit;
             else if (number >= 10E8)
-                result = Math.Round(number / 10E2, 2) + "G" + baseUnit;
+                result = Math.Round(number / 10E8, 2) + "G" + baseUnit;
+            else if (number >= 10E5)
+                result = Math.Round(number / 10E5, 2) + "M" + baseUnit;
+            else if (number >= 10E2)
+                result = Math.Round(number / 10E2, 2) + "k" + baseUnit;
+            else
+                result = number + baseUnit;
+
+            if (isNegative)
+                result = "-" + result;
+
+            return result;
+        }
+
+        public static string ToSiUnit(this float number, string baseUnit)
+        {
+            string result = "";
+            bool isNegative = number < 0;
+
+            if (isNegative)
+                number *= -1;
+
+            if (baseUnit == "kg")
+            {
+                number *= 1000;
+                baseUnit = "g";
+            }
+
+            if (number >= 10E23)
+                result = Math.Round(number / 10E23, 2) + "Y" + baseUnit;
+            else if (number >= 10E20)
+                result = Math.Round(number / 10E20, 2) + "Z" + baseUnit;
+            else if (number >= 10E17)
+                result = Math.Round(number / 10E17, 2) + "E" + baseUnit;
+            else if (number >= 10E14)
+                result = Math.Round(number / 10E14, 2) + "P" + baseUnit;
+            else if (number >= 10E11)
+                result = Math.Round(number / 10E11, 2) + "T" + baseUnit;
+            else if (number >= 10E8)
+                result = Math.Round(number / 10E8, 2) + "G" + baseUnit;
             else if (number >= 10E5)
                 result = Math.Round(number / 10E5, 2) + "M" + baseUnit;
             else if (number >= 10E2)

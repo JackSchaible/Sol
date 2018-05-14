@@ -65,41 +65,18 @@ namespace Assets.Utils
         }
         #endregion
 
-        #region AjustSI
-
-        public static string AdjustSi(float number, string baseUnit)
+        #region Wrap
+        public static T Wrap<T>(T value, T min, T max)
+            where T : IComparable
         {
-            string result = "";
-            bool isNegative = number < 0;
+            if (value.CompareTo(min) < 0)
+                return max;
 
-            if (isNegative)
-                number *= -1;
+            if (value.CompareTo(max) > 0)
+                return min;
 
-            if (number >= 10E23)
-                result = Math.Round(number / 10E23) + "Y" + baseUnit;
-            else if (number >= 10E20)
-                result = Math.Round(number / 10E20) + "Z" + baseUnit;
-            else if (number >= 10E17)
-                result = Math.Round(number / 10E17) + "E" + baseUnit;
-            else if (number >= 10E14)
-                result = Math.Round(number / 10E14) + "P" + baseUnit;
-            else if (number >= 10E11)
-                result = Math.Round(number / 10E11) + "T" + baseUnit;
-            else if (number >= 10E8)
-                result = Math.Round(number / 10E8) + "G" + baseUnit;
-            else if (number >= 10E5)
-                result = Math.Round(number / 10E5) + "M" + baseUnit;
-            else if (number >= 10E2)
-                result = Math.Round(number / 10E2) + "k" + baseUnit;
-            else
-                result = number + baseUnit;
-
-            if (isNegative)
-                result = "-" + result;
-
-            return result;
+            return value;
         }
-
         #endregion
     }
 }

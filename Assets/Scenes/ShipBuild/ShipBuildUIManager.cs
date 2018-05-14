@@ -1,206 +1,246 @@
-﻿using Assets.Common.Utils;
-using Assets.Data;
-using Assets.Scenes.ShipBuild;
+﻿using Assets.Data;
 using Assets.Scenes.ShipBuild.MenuManager;
+using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
+using Assets.Ships.Modules;
+using Assets.Utils;
 using Assets.Utils.ModuleUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShipBuildUIManager : MonoBehaviour
+namespace Assets.Scenes.ShipBuild
 {
-    #region Props & fields
-    //Other GameObject Manager
-    public DynamicBuildMenuManager Menu;
-    public ShipBuildManager ShipBuildManager;
-    public DeckManager DeckManager;
-
-    //Reference to the scene's main camera (used for the transformation matrix)
-    public Camera Camera;
-
-    //UI Elements needing to be updates
-    public Text ModulesText;
-    public Text PowerText;
-    public Text PeopleText;
-    public Modal Modal;
-
-    //Internal state-tracking variables
-    private bool _placeMode;
-    private Module _newModule;
-    private IntVector _previousPos;
-    #endregion
-
-    #region Main methods
-
-    void Start()
+    public class ShipBuildUiManager : MonoBehaviour
     {
-        Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
-        Modal.ShowModal();
+        #region Props & fields
 
-        //TODO: Only run this if ship is new
-        NewShipInitialization();
-    }
+        //Other GameObject Manager
+        public DynamicBuildMenuManager Menu;
+        public ShipBuildManager ShipBuildManager;
+        public DeckManager DeckManager;
 
-    void Update()
-    {
-        ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
-        PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
-        PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
+        //Reference to the scene's main camera (used for the transformation matrix)
+        public Camera Camera;
 
-        ModulesText.color = ShipBuildManager.ControlUsed > ShipBuildManager.ControlAvailable ?
-            new Color(1, 0, 0) : new Color(1, 1, 1);
+        //UI Elements needing to be updated
+        public Text ModulesText;
+        public Text PowerText;
+        public Text PeopleText;
+        public Text DebugText;
+        public Modal Modal;
+        public InfoPanel InfoPanel;
+        public CurrentModuleInfoPanel ModuleInfoPanel;
 
-        PowerText.color = ShipBuildManager.PowerUsed > ShipBuildManager.PowerAvailable ?
-            new Color(1, 0, 0) : new Color(1, 1, 1);
+        //Internal state-tracking variables
+        private bool _placeMode;
+        private Module _newModule;
+        private int _currentModuleComponent;
+        private Color _previousColor;
+        private GameObject _previousModule;
+        private float _newModuleRotation;
+        private bool _popupActive;
 
-        PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
-            new Color(1, 0, 0) : new Color(1, 1, 1);
+        #endregion
 
-        UpdatePlace();
-    }
+        #region Main methods
 
-    #endregion
-
-    #region Helper methods
-
-    /// <summary>
-    /// Preform any initialization needed when this scene is loaded to make a new ship 
-    /// (i.e., one that doesn't already exist)
-    /// </summary>
-    private void NewShipInitialization()
-    {
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-    }
-
-    #endregion
-
-    #region Place Mode
-
-    /// <summary>
-    /// Handles moving the new module sprite around the screen, locking it to the 50*50 pixel grid,
-    /// and handling the controls (Escape, R/LCTRL+R, T/LCTRL+T, LMB Click)
-    /// </summary>
-    private void UpdatePlace()
-    {
-        if (!_placeMode) return;
-
-        //Constrain to n-px increments
-        const int n = 50;
-        _newModule.GameObject.transform.position = Camera.ScreenToWorldPoint(Input.mousePosition);
-        _newModule.GameObject.transform.position = new Vector3(
-            Mathf.Floor(_newModule.GameObject.transform.position.x / n) * n,
-            Mathf.Floor(_newModule.GameObject.transform.position.y / n) * n,
-            1);
-
-        _newModule.Position = IntVector.GetRelativeVector(_newModule.GameObject.transform.position);
-
-        //Module pos has changed, recalculate the placement viability
-        if (ShipBuildManager.FirstModule != null && !_newModule.Position.Equals(_previousPos))
-            IsPlacementValid();
-
-        if (Input.GetKeyUp(KeyCode.Escape))
+        void Start()
         {
-            Destroy(_newModule.GameObject);
-            _placeMode = false;
+            Modal.Initialize(Modals.BuildMenu.CommandModulesModalData);
+            Modal.ShowModal();
+
+            //TODO: Only run this if ship is new
+            var isnew = true;
+
+            if (isnew)
+                NewShipInitialization();
+
+            Initialize();
         }
 
-        #region Rotate/Flip Controls
+        void Initialize()
+        {
+            int x = ShipBuildManager.Cells.GetLength(0) / 2;
+            int y = ShipBuildManager.Cells.GetLength(1) / 2;
+            var pos = ShipBuildManager.Cells[x, y, 0].gameObject.transform.position;
 
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
-        {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), 90);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CW);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CW);
+            Camera.transform.position = new Vector3(pos.x, pos.y, Camera.transform.position.z);
+            ModuleInfoPanel.gameObject.SetActive(false);
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+
+        void Update()
         {
-            _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1), -90);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.RotateExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.RotationDirection.CCW);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.RotationDirection.CCW);
-        } else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
-        {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x,
-                _newModule.GameObject.transform.localScale.y * -1,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Horizontal);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Horizontal);
-        } else if (Input.GetKeyDown(KeyCode.T))
-        {
-            _newModule.GameObject.transform.localScale = new Vector3(
-                _newModule.GameObject.transform.localScale.x * -1,
-                _newModule.GameObject.transform.localScale.y,
-                _newModule.GameObject.transform.localScale.z);
-            _newModule.ModuleBlueprint.ExclusionVectors =
-                ModuleVectorUtils.FlipExclusionVectors(_newModule.ModuleBlueprint.ExclusionVectors, ModuleVectorUtils.FlipDirection.Vertical);
-            _newModule.ModuleBlueprint.Connectors =
-                ModuleVectorUtils.FlipConnectorPositions(_newModule.ModuleBlueprint.Connectors, ModuleVectorUtils.FlipDirection.Vertical);
+            ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
+            PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
+            PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
+
+            ModulesText.color = ShipBuildManager.ControlUsed > ShipBuildManager.ControlAvailable ?
+                new Color(1, 0, 0) : new Color(1, 1, 1);
+
+            PowerText.color = ShipBuildManager.PowerUsed > ShipBuildManager.PowerAvailable ?
+                new Color(1, 0, 0) : new Color(1, 1, 1);
+
+            PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
+                new Color(1, 0, 0) : new Color(1, 1, 1);
+
+            if (_newModuleRotation >= 360)
+                _newModuleRotation -= 360;
+
+            if (_newModuleRotation <= -360)
+                _newModuleRotation += 360;
+
+            RaycastHit hit = new RaycastHit();
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),
+                    out hit) && hit.transform.tag == "GridCell")
+            {
+                DebugText.text = hit.transform.name;
+                if (_previousModule != hit.transform.gameObject)
+                {
+                    if (_previousModule != null)
+                        _previousModule.GetComponent<SpriteRenderer>().color = _previousColor;
+
+                    _previousModule = hit.transform.gameObject;
+                    var sr = _previousModule.GetComponent<SpriteRenderer>();
+                    _previousColor = sr.color;
+                    sr.color = new Color(0.5f, 0.5f, 1);
+                    InfoPanel.ShowConnectors(ShipBuildManager.GetConnectors(_previousModule), ShipBuildManager.Modules.Count == 0);
+                }
+            }
+
+            if (Input.GetMouseButtonDown(0) && _placeMode && _previousModule != null)
+                PlaceModule();
+
+            UpdatePlace();
+
+            if (Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButton(1))
+            {
+                if (_placeMode)
+                {
+                    CancelPlaceMode();
+                    Menu.PlaceCancelled();
+                }
+                else
+                    Application.Quit();
+            }
         }
 
         #endregion
 
-        if (Input.GetMouseButtonDown(0) && IsPlacementValid())
-            PlaceModule();
+        #region Helper methods
 
-        if (ShipBuildManager.FirstModule != null)
-            _previousPos = IntVector.GetRelativeVector(_newModule.GameObject.transform.position,
-                ShipBuildManager.FirstModule.GameObject.transform.position);
-    }
-
-    /// <summary>
-    /// Updates the color of the module and disables placement if the ShipBuildManager says the
-    /// placement isn't valid
-    /// </summary>
-    /// <returns></returns>
-    private bool IsPlacementValid()
-    {
-        bool valid = ShipBuildManager.IsPlacementValid(_newModule);
-
-        _newModule.GameObject.GetComponent<SpriteRenderer>().color =
-            valid ? new Color(1, 1, 1) : new Color(1, 0, 0);
-
-        return valid;
-    }
-
-    /// <summary>
-    /// Handles the moving of the build sprite to the UI BG layer, and notifies the 
-    /// ShipBuildManager to add a new module to the ship
-    /// </summary>
-    private void PlaceModule()
-    {
-        _newModule.GameObject.GetComponent<SpriteRenderer>().sortingLayerName = "UI BG";
-        ShipBuildManager.AddModule(_newModule);
-        _placeMode = false;
-        Menu.ModulePlaced(_newModule.ModuleBlueprint);
-    }
-
-    /// <summary>
-    /// An external event called by the DynamicBuildMenuManager when the build button of
-    /// a module details description is clicked. Enabled the place mode, and creates a 
-    /// new sprite of whatever module was clicked on.
-    /// </summary>
-    /// <param name="blueprint">The blueprint to build</param>
-    public void Build(ModuleBlueprint blueprint)
-    {
-        _newModule = Module.Create(blueprint);
-
-        if (ShipBuildManager.FirstModule == null)
+        /// <summary>
+        /// Preform any initialization needed when this scene is loaded to make a new ship 
+        /// (i.e., one that doesn't already exist)
+        /// </summary>
+        private void NewShipInitialization()
         {
-            //Autoplace first modules at {0, 0}
-            _newModule.GameObject.transform.position = Vector3.zero;
-            PlaceModule();
-            _placeMode = false;
         }
-        else
-            _placeMode = true;
-    }
 
-    #endregion
+        #endregion
+
+        #region Place Mode
+
+        /// <summary>
+        /// Handles moving the new module sprite around the screen, locking it to the 50*50 pixel grid,
+        /// and handling the controls (Escape, R/LCTRL+R, T/LCTRL+T, LMB Click)
+        /// </summary>
+        private void UpdatePlace()
+        {
+            if (!_placeMode) return;
+
+            foreach (ModuleComponent com in _newModule.Components)
+                com.GameObject.transform.position = 
+                    Camera.ScreenToWorldPoint(Input.mousePosition) + 
+                    com.LocalPosition + new Vector3(0, 0, 10);
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+                _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CCW);
+            else if (Input.GetKeyDown(KeyCode.R))
+                _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CW);
+            else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+            {
+            }
+            else if (Input.GetKeyDown(KeyCode.T))
+            {
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
+            {
+                var newModuleComponent = Input.GetKeyDown(KeyCode.Q) ? 
+                    MathHelper.Wrap(_currentModuleComponent - 1, 0, _newModule.Components.Length - 1) :
+                    MathHelper.Wrap(_currentModuleComponent + 1, 0, _newModule.Components.Length - 1);
+
+                _newModule.Components[_currentModuleComponent].GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                _newModule.Components[newModuleComponent].GameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f);
+                ModuleInfoPanel.Show(_newModule.Components[newModuleComponent].LocalPosition);
+
+                _currentModuleComponent = newModuleComponent;
+            }
+        }
+
+        /// <summary>
+        /// Handles the moving of the build sprite to the UI BG layer, and notifies the 
+        /// ShipBuildManager to add a new module to the ship
+        /// </summary>
+        private void PlaceModule()
+        {
+            foreach (var com in _newModule.Components)
+                com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+
+            ShipBuildManager.AddModule(_previousModule, _newModule);
+            Menu.ModulePlaced(_newModule.ModuleBlueprint);
+            CancelPlaceMode();
+        }
+
+        /// <summary>
+        /// An external event called by the DynamicBuildMenuManager when the build button of
+        /// a module details description is clicked. Enabled the place mode, and creates a 
+        /// new sprite of whatever module was clicked on.
+        /// </summary>
+        /// <param name="blueprint">The blueprint to build</param>
+        public void Build(ModuleBlueprint blueprint)
+        {
+            _newModule = Module.Create(blueprint);
+
+            //if (_newModuleRotation != 0)
+            //{
+            //    _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1),
+            //        _newModuleRotation);
+
+            //    for(int rotations = (int)Math.Abs(_newModuleRotation) / 90; rotations > 0; rotations--)
+            //        _newModule.ModuleBlueprint.Connectors =
+            //            ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
+            //                ModuleVectorUtils.RotationDirection.CCW);
+            //}
+
+            for (var i = 0; i < _newModule.Components.Length; i++)
+            {
+                var com = _newModule.Components[i];
+                var sprite = com.GameObject.GetComponent<SpriteRenderer>();
+                sprite.sortingLayerName = "UI BG";
+                sprite.sortingOrder = DeckManager.CurrentDeck;
+
+                if (i != 0)
+                    sprite.color = new Color(1, 1, 1, 0.5f);
+
+                _placeMode = true;
+            }
+
+            _currentModuleComponent = 0;
+            ModuleInfoPanel.Initialize(blueprint.Name, blueprint.Connectors);
+        }
+
+        private void CancelPlaceMode()
+        {
+            foreach(var mod in _newModule.Components)
+                Destroy(mod.GameObject);
+
+            _placeMode = false;
+            _newModule = null;
+
+            ModuleInfoPanel.Disable();
+        }
+
+        #endregion
+    }
 }

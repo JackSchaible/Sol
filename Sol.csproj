@@ -310,8 +310,8 @@
     <Compile Include="Assets\Common\CameraManager.cs" />
     <Compile Include="Assets\Common\Modal.cs" />
     <Compile Include="Assets\Common\UI\ToggleHighlighter.cs" />
-    <Compile Include="Assets\Common\Utils\IntVector.cs" />
     <Compile Include="Assets\Data\IDataManager.cs" />
+    <Compile Include="Assets\Data\Materials.cs" />
     <Compile Include="Assets\Data\Modals.cs" />
     <Compile Include="Assets\Data\XmlDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\DynamicBuildMenuManager.cs" />
@@ -319,12 +319,16 @@
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuData.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuDataManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\MenuManager\MenuToggle.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUiManager.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\CurrentModuleInfoPanel.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DeckManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\ShipBuildManager.cs" />
-    <Compile Include="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailView.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewTw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" />
     <Compile Include="Assets\Scenes\ShipBuild\UI\DetailViewHw.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\GridCell.cs" />
+    <Compile Include="Assets\Scenes\ShipBuild\UI\InfoPanel.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\Player.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\PlayerShip.cs" />
     <Compile Include="Assets\Scenes\SpaceFight\SpaceFight.cs" />
@@ -333,18 +337,23 @@
     <Compile Include="Assets\Ships\Module.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CockpitModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\Command\CommandModuleBlueprint.cs" />
-    <Compile Include="Assets\Ships\Modules\ConnectorPositions.cs" />
+    <Compile Include="Assets\Ships\Modules\ModuleComponent.cs" />
+    <Compile Include="Assets\Ships\Modules\Connector.cs" />
+    <Compile Include="Assets\Ships\Modules\Cost.cs" />
     <Compile Include="Assets\Ships\Modules\ExclusionVectors.cs" />
     <Compile Include="Assets\Ships\Modules\Miscellanious\DecorativeModuleBlueprint.cs" />
+    <Compile Include="Assets\Ships\Modules\Miscellanious\HallwayModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprint.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleBlueprintsManager.cs" />
     <Compile Include="Assets\Ships\Modules\ModuleTypes.cs" />
+    <Compile Include="Assets\Ships\Modules\Weapons\ProjectileEnergies.cs" />
     <Compile Include="Assets\Ships\Modules\Weapons\WeaponBlueprint.cs" />
-    <Compile Include="Assets\Ships\Modules\Weapons\WeaponDamage.cs" />
     <Compile Include="Assets\Ships\Ship.cs" />
     <Compile Include="Assets\Ships\ShipStats.cs" />
     <Compile Include="Assets\Utils\Extensions\IntExtensions.cs" />
     <Compile Include="Assets\Utils\Extensions\StringExtensions.cs" />
+    <Compile Include="Assets\Utils\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Assets\Utils\Extensions\Vector3IntExtensions.cs" />
     <Compile Include="Assets\Utils\GraphicsUtils.cs" />
     <Compile Include="Assets\Utils\MathHelper.cs" />
     <Compile Include="Assets\Utils\ModuleUtils\ModuleVectorUtils.cs" />
@@ -352,6 +361,7 @@
     <Compile Include="Assets\Utils\Rectangle.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\Scenes\ShipBuild\UI\InfoPanel\" />
     <Folder Include="Assets\Ships\Weapons\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

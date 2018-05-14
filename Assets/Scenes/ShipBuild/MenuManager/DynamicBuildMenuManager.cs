@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
+using Assets.Ships.Modules.Command;
 using Assets.Utils;
 using Assets.Utils.Extensions;
 using UnityEngine;
@@ -13,7 +15,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         #region Props & fields
         
         //Other GameObject managers
-        public ShipBuildUIManager UIManager;
+        public ShipBuildUiManager UIManager;
 
         //Prefabs needed to display menus
         public GameObject LayoutGroup;
@@ -24,6 +26,13 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         //The information to create the menus from, and the menu that was created
         private MenuData _menuDatas;
         private Menu _menu;
+
+        //Constants
+        private readonly Color _fade = new Color(1, 1, 1, 0);
+        private readonly Color _normal = new Color(1, 1, 1, 1);
+
+        //State maintenance vars
+        private List<GameObject> fadedObjs;
 
         #endregion
 
@@ -59,7 +68,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             foreach (var toggle in _menu.MenuToggles)
             {
-
                 if (!toggle.GameObject.GetComponent<Toggle>().isOn)
                     SetTreeActive(toggle.Menu, false);
                 else
@@ -143,11 +151,15 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             var dv = dm.GameObject.GetComponent<DetailView>();
             dv.Name.text = td.Text;
-            dv.BuildButton.onClick.AddListener(() => UIManager.Build(data.Blueprint));
+            dv.BuildButton.onClick.AddListener(() => OnBuild(data.Blueprint));
             dv.ModuleImage.preserveAspect = true;
             dv.ModuleImage.sprite = GraphicsUtils.GetSpriteFromPath(td.Image, true);
             dv.Description.text = data.Blueprint.Description;
-            dv.Cost.text = data.Blueprint.Cost.ToString();
+            dv.Gasses.text = data.Blueprint.Cost.Gasses.ToSiUnit("g");
+            dv.LightMetals.text = data.Blueprint.Cost.LightMetals.ToSiUnit("g");
+            dv.OrganicMinerals.text = data.Blueprint.Cost.OrganicMinerals.ToSiUnit("g");
+            dv.HeavyMetals.text = data.Blueprint.Cost.HeavyMetals.ToSiUnit("g");
+            dv.FissileMaterials.text = data.Blueprint.Cost.FissileMaterials.ToSiUnit("g");
             dv.Health.text = data.Blueprint.Health.ToString();
             dv.Weight.text = data.Blueprint.Weight.ToSiUnit("g");
             dv.Power.text = data.Blueprint.PowerConumption.ToSiUnit("W");
@@ -171,8 +183,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
             {
                 var detailObj = dm.GameObject.GetComponent<DetailView>();
                 var qw = d as DetailsFieldQw;
+                var tw = d as DetailsFieldThird;
 
-                if (qw == null)
+                if (qw == null && tw == null)
                 {
                     var obj = Instantiate(detailObj.DetailsPrefabHalfWidth, detailObj.DetailsArea.transform);
                     var hfInfo = obj.GetComponent<DetailViewHw>();
@@ -185,6 +198,24 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                     hfInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(d.Icon2);
                     hfInfo.Text2.name = d.Name2;
                     hfInfo.Text2.text = d.Value2;
+                }
+                else if (qw == null)
+                {
+                    var obj = Instantiate(detailObj.DetailsPrefabThirdWidth, detailObj.DetailsArea.transform);
+                    var twInfo = obj.GetComponent<DetailViewTw>();
+
+                    twInfo.Icon1.preserveAspect = true;
+                    twInfo.Icon1.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon1);
+                    twInfo.Text1.name = tw.Name1;
+                    twInfo.Text1.text = tw.Value1;
+                    twInfo.Icon2.preserveAspect = true;
+                    twInfo.Icon2.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon2);
+                    twInfo.Text2.name = tw.Name2;
+                    twInfo.Text2.text = tw.Value2;
+                    twInfo.Icon3.preserveAspect = true;
+                    twInfo.Icon3.sprite = GraphicsUtils.GetSpriteFromPath(tw.Icon3);
+                    twInfo.Text3.name = tw.Name3;
+                    twInfo.Text3.text = tw.Value3;
                 }
                 else
                 {
@@ -239,19 +270,109 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 ToggleSubmenu(subtoggle);
             }
         }
+        private void SetMenuToPlaceMode(Color c, Menu menu)
+        {
+            if (c == _fade)
+                fadedObjs = GetMenuToPlaceMode(menu);
+
+            foreach (var obj in fadedObjs)
+            {
+                var img = obj.GetComponent<Image>();
+                if (img != null)
+                    img.color = c;
+
+                var text = obj.GetComponent<Text>();
+                if (text != null)
+                    text.color = new Color(text.color.r, text.color.g, text.color.b, c.a);
+
+                var toggle = obj.GetComponent<Toggle>();
+                if (toggle != null)
+                    toggle.interactable = c == _normal;
+
+                var scroll = obj.GetComponent<ScrollRect>();
+                if (scroll != null)
+                    scroll.scrollSensitivity = c == _fade ? 0 : 10;
+
+                var button = obj.GetComponent<Button>();
+                if (button != null)
+                    button.interactable = c == _normal;
+
+                var highlighter = obj.GetComponent<ToggleHighlighter>();
+                if (highlighter != null)
+                    highlighter.A = c.a;
+            }
+        }
+        private List<GameObject> GetChildrenMenuToPlaceMode(GameObject m)
+        {
+            var dv = m.GetComponent<DetailView>();
+
+            var images = m.GetComponentsInChildren<Image>().ToList();
+            var texts = m.GetComponentsInChildren<Text>().ToList();
+            var scrolls = dv.GetComponentsInChildren<ScrollRect>().ToList();
+
+            images.AddRange(dv.GetComponentsInChildren<Image>().ToList());
+            texts.AddRange(dv.GetComponentsInChildren<Text>().ToList());
+
+            var r = images.Select(x => x.gameObject).ToList();
+            r.AddRange(texts.Select(x => x.gameObject));
+            r.AddRange(scrolls.Select(x => x.gameObject));
+            r.Add(dv.BuildButton.gameObject);
+            return r;
+        }
+        private List<GameObject> GetMenuToPlaceMode(Menu m)
+        {
+            var gos = new List<GameObject>();
+
+            if (m.MenuToggles == null)
+            {
+                gos.AddRange(GetChildrenMenuToPlaceMode(m.GameObject));
+                return gos;
+            }
+
+            gos.Add(m.GameObject);
+
+            foreach (var mt in m.MenuToggles)
+            {
+                gos.Add(mt.GameObject);
+                gos.Add(mt.GameObject.GetComponentInChildren<Text>().gameObject);
+                gos.Add(mt.GameObject.GetComponentInChildren<Image>().gameObject);
+                gos.AddRange(GetMenuToPlaceMode(mt.Menu));
+            }
+
+            return gos;
+        }
 
         #endregion
 
-        #region Rules
+        #region Events
+
+        private void OnBuild(ModuleBlueprint blueprint)
+        {
+            SetMenuToPlaceMode(_fade, _menu);
+            UIManager.Build(blueprint);
+        }
 
         public void ModulePlaced(ModuleBlueprint blueprint)
         {
+            SetMenuToPlaceMode(_normal, _menu);
             //Process rules
             if (blueprint is CockpitModuleBlueprint)
                 ProcessCockpitRules();
             else if (blueprint is CommandModuleBlueprint)
                 ProcessCommandModuleRules();
+
+            if (Input.GetKey(KeyCode.LeftShift))
+                OnBuild(blueprint);
         }
+
+        public void PlaceCancelled()
+        {
+            SetMenuToPlaceMode(_normal, _menu);
+        }
+
+        #endregion
+
+        #region Rules
 
         private void ProcessCommandModuleRules()
         {
@@ -284,7 +405,6 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 t.isOn = i == 0;
             }
         }
-
         private void DisabledAllButCommand()
         {
             //3.n) First module on a new ship must be a command module

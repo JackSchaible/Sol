@@ -1,331 +1,271 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Assets.Common.Utils;
+using Assets.Data;
 using Assets.Scenes.ShipBuild;
+using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Ships.Modules;
+using Assets.Ships.Modules.Command;
+using Assets.Utils.Extensions;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ShipBuildManager : MonoBehaviour
 {
-    public DeckManager DeckManager; 
+    public DeckManager DeckManager;
 
-    public int PowerAvailable;
-    public int PowerUsed;
+    public float PowerAvailable;
+    public float PowerUsed;
     public int ControlAvailable;
     public int ControlUsed;
     public int PersonnelAvailable;
     public int PersonnelUsed;
 
-    public List<Module> Modules
-    {
-        get;
-        private set;
-    }
+    public GameObject ComponentPrefab;
+    public GameObject[,,] Cells { get; set; }
+    public ModuleComponent[,,] Grid { get; set; }
+    public List<Module> Modules { get; private set; }
+
     public bool HasCommandModule { get; private set; }
-    public Module FirstModule { get; private set; }
 
-    private List<Toggle> _firstLevelToggles;
+    private Vector3Int _gridSize;
 
-    void Start()
+    private void Awake()
     {
         Modules = new List<Module>();
-        HasCommandModule = false;
-
-        _firstLevelToggles = new List<Toggle>();
-        var gos = GameObject.FindGameObjectsWithTag("First-Level Menu Button");
-        foreach (var go in gos)
-        {
-            var toggle = go.transform.gameObject.GetComponentInChildren<Toggle>();
-            if (go.name != "Control Centers Toggle")
-                toggle.interactable = false;
-
-            _firstLevelToggles.Add(toggle);
-        }
+        InitializeGrid();
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
     }
 
-    public void AddModule(Module module)
+    public void InitializeGrid()
     {
-        if (Modules.Count == 0)
-        {
-            module.Position = new IntVector(0, 0, 0);
-            FirstModule = module;
+        _gridSize = new Vector3Int(10, 10, 1);
 
-            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-            DeckManager.EnableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
+        Cells = new GameObject[_gridSize.x, _gridSize.y, _gridSize.z];
+        Grid = new ModuleComponent[_gridSize.x, _gridSize.y, _gridSize.z];
+        for (var z = 0; z < _gridSize.z; z++)
+        {
+            if (z > 0)
+                DeckManager.AddLowerDeck();
+
+            for (var x = 0; x < _gridSize.x; x++)
+                for (var y = 0; y < _gridSize.y; y++)
+                    InitializeCell(x, y, z, Cells);
         }
-        else
+
+        DeckManager.SelectDeck(0);
+    }
+
+    public void AddModule(GameObject selectedComponent, Module module)
+    {
+        PowerUsed += module.ModuleBlueprint.PowerConumption;
+        ControlUsed += module.ModuleBlueprint.CommandRequirement;
+        PersonnelUsed += module.ModuleBlueprint.CrewRequirement;
+
+        var commandBlueprint = module.ModuleBlueprint as CommandModuleBlueprint;
+        if (commandBlueprint != null)
         {
-            module.Position = IntVector.GetRelativeVector(module.GameObject.transform.position,
-                FirstModule.GameObject.transform.position);
-        }
-
-        Modules.Add(module);
-
-        PowerUsed = Modules.Sum(x => x.ModuleBlueprint.PowerConumption);
-        ControlUsed = Modules.Sum(x => x.ModuleBlueprint.CommandRequirement);
-        PersonnelUsed = Modules.Sum(x => x.ModuleBlueprint.CrewRequirement);
-
-        ControlAvailable = Modules.Where(x => x.ModuleBlueprint is CommandModuleBlueprint)
-            .Sum(x => ((CommandModuleBlueprint)x.ModuleBlueprint).CommandSupplied);
-
-        PersonnelAvailable = Modules.Where(x => x.ModuleBlueprint is CockpitModuleBlueprint)
-            .Sum(x => ((CockpitModuleBlueprint)x.ModuleBlueprint).PersonnelHoused);
-
-        if (!HasCommandModule && module.ModuleBlueprint is CommandModuleBlueprint)
-        {
+            ControlAvailable += commandBlueprint.CommandSupplied;
             HasCommandModule = true;
+        }
 
-            foreach (var go in _firstLevelToggles)
+        var cockpitBlueprint = module.ModuleBlueprint as CockpitModuleBlueprint;
+        if (cockpitBlueprint != null)
+            PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
+
+        Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
+        var newModule = Module.Create(module.ModuleBlueprint.Copy());
+
+        if (Modules.Count == 0)
+            foreach(var cell in Cells)
+                cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+
+        Modules.Add(newModule);
+
+        //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
+        var shiftDirection = Vector3Int.zero;
+        foreach (var com in newModule.Components)
+        {
+            var aPos = pos + com.LocalPosition;
+            var cell = Cells[aPos.x, aPos.y, aPos.z];
+            cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+            com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            com.GameObject.transform.position = cell.gameObject.transform.position;
+            Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
+
+            //Modify surrounding components to have receiving connectors
+            foreach (var con in com.Connectors)
             {
-                go.interactable = true;
+                var conPos = aPos + con.Direction + shiftDirection;
 
-                if (module.ModuleBlueprint is CockpitModuleBlueprint && go.name == "Control Centers Toggle")
-                    go.interactable = false;
+                if (conPos.x < 0)
+                    shiftDirection += Vector3Int.right * 10;
+                else if (conPos.y < 0)
+                    shiftDirection += Vector3Int.up * 10;
+                else if (conPos.z < 0)
+                    shiftDirection += new Vector3Int(0, 0, 1);
+
+                aPos += shiftDirection;
+
+                if (!_gridSize.Contains(conPos))
+                {
+                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)),
+                        shiftDirection);
+
+                    if (con.Direction.z != 0)
+                    {
+                        if (con.Direction.z > 0)
+                            DeckManager.AddUpperDeck();
+                        else if (con.Direction.z < 0)
+                            DeckManager.AddLowerDeck();
+
+                        DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
+                    }
+
+                    conPos += shiftDirection;
+                }
+
+                var cCell = Cells[conPos.x, conPos.y, conPos.z];
+                var gridCell = cCell.GetComponent<GridCell>();
+                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
+                cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
             }
         }
 
-        //Disable decks if module has an x/y plane or space exclusion vector
+        //Disable decks if module has an x / y plane or space exclusion vector
         if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
         {
-            foreach (var vector in module.ModuleBlueprint.ExclusionVectors)
+            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
             {
-                //Disable whatever it is
-                switch (vector)
+                foreach (var vector in vectors.Direction)
                 {
-                    case ExclusionVectors.Plane:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        break;
+                    //Disable whatever it is
+                    switch (vector)
+                    {
+                        case ExclusionVectorDirections.Plane:
+                            break;
 
-                    case ExclusionVectors.PlaneAndAbove:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Upper);
-                        DeckManager.AddLowerDeck();
-                        break;
+                        case ExclusionVectorDirections.PlaneAndForward:
+                            break;
 
-                    case ExclusionVectors.PlaneAndBelow:
-                        DeckManager.DisableDeck(DeckManager.CurrentDeck);
-                        DeckManager.DisableNewDeckButtons(DeckManager.NewDeckButtons.Lower);
-                        DeckManager.AddUpperDeck();
-                        break;
-
-                    default:
-                        break;
+                        case ExclusionVectorDirections.PlaneAndBackward:
+                            break;
+                    }
                 }
             }
         }
+    }
 
+    public void DeleteModule(Module module)
+    {
+        //TODO:Enforce connector rules before deleting
     }
 
     #region Rules
 
     public bool IsPlacementValid(Module newModule)
     {
-        if (!Modules.Any()) return true;
+        var spaceValid = true;
+        var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
 
-        var valid = true;
-        var pos = newModule.Position;
+        if (Modules.Count == 0) return true;
 
-        if (valid)
-            valid = DoesModuleOverlap(newModule);
+        //foreach (var slot in _availableSlots)
+        //    foreach (var modCon in newModule.ModuleBlueprint.Connectors)
+        //        if (modCon.Equals(newModule.Position, slot))
+        //            conCount--;
 
-        if (valid)
-            valid = DoesModuleExistInExclusionSpace(pos);
+        //foreach (var space in newModule.ModuleBlueprint.Space)
+        //{
+        //    var spacePos = newModule.Position + space;
 
-        if (valid)
-            valid = DoesModuleConnect(newModule, pos);
+        //    if (IsPositionOutsideOfExclusionSpaces(spacePos))
+        //    {
+        //        foreach (var module in Modules)
+        //        foreach (var mSpace in module.ModuleBlueprint.Space)
+        //            if ((module.Position + mSpace).Equals(spacePos))
+        //                spaceValid = false;
+        //    }
+        //    else
+        //        spaceValid = false;
+        //}
 
-        return valid;
+        return conCount <= 0 && spaceValid;
     }
 
-    #region 1. Exclusion Vectors and Connectors
-    
-    //1.a. Modules may not be placed in the space defined by the exclusion vector of other modules
-    private bool DoesModuleExistInExclusionSpace(IntVector pos)
+    public Connector[] GetConnectors(GameObject selectedCell)
     {
-        bool valid = true;
-
-        foreach (var module in Modules)
-        {
-            //Exclusion Vector Stuff
-            foreach (var ev in module.ModuleBlueprint.ExclusionVectors)
-            {
-                switch (ev)
-                {
-                    case ExclusionVectors.ForwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z < pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.BackwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z > pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.UpwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y < pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.DownwardLine:
-                        if (module.Position.X == pos.X &&
-                            module.Position.Y > pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.RightLine:
-                        if (module.Position.X < pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.LeftLine:
-                        if (module.Position.X > pos.X &&
-                            module.Position.Y == pos.Y &&
-                            module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.Plane:
-                        if (module.Position.Z == pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndAbove:
-                        if (module.Position.Y <= pos.Y)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndBelow:
-                        if (module.Position.Y >= pos.Y)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndForward:
-                        if (module.Position.Z <= pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndBackward:
-                        if (module.Position.Z >= pos.Z)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndRight:
-                        if (module.Position.X <= pos.X)
-                            valid = false;
-                        break;
-                    case ExclusionVectors.PlaneAndLeft:
-                        if (module.Position.X >= pos.X)
-                            valid = false;
-                        break;
-                }
-            }
-        }
-
-        return valid;
-    }
-    //1.b. A new module must connect to a previously-placed module where the connector of the new module matches the location of any existing module
-    private bool DoesModuleConnect(Module newModule, IntVector pos)
-    {
-        bool valid = true;
-
-        foreach (var connector in newModule.ModuleBlueprint.Connectors)
-        {
-            switch (connector.Direction)
-            {
-                case ConnectorPositions.Up:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X &&
-                            conPos.Y == pos.Y - 1 &&
-                            conPos.Z == pos.Z;
-                    }))
-                        valid = false;
-                    break;
-                case ConnectorPositions.Right:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X + 1 &&
-                            conPos.Y == pos.Y &&
-                            conPos.Z == pos.Z;
-                    }))
-                        valid = false;
-                    break;
-                case ConnectorPositions.Down:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X &&
-                            conPos.Y == pos.Y + 1 &&
-                            conPos.Z == pos.Z;
-                    }))
-                        valid = false;
-                    break;
-                case ConnectorPositions.Left:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X - 1 &&
-                            conPos.Y == pos.Y &&
-                            conPos.Z == pos.Z;
-                    }))
-                        valid = false;
-                    break;
-                case ConnectorPositions.Forward:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X &&
-                            conPos.Y == pos.Y &&
-                            conPos.Z == pos.Z + 1;
-                    }))
-                        valid = false;
-                    break;
-                case ConnectorPositions.Backward:
-                    if (!Modules.Any(x =>
-                    {
-                        var conPos = x.Position + connector.Position.SetZ(DeckManager.CurrentDeck);
-
-                        return
-                            conPos.X == pos.X &&
-                            conPos.Y == pos.Y &&
-                            conPos.Z == pos.Z - 1;
-                    }))
-                        valid = false;
-                    break;
-            }
-        }
-
-        return valid;
-    }
-    //A module may not exist in the same space as another module
-    private bool DoesModuleOverlap(Module newModule)
-    {
-        //TODO: Replace with raycast
-        return !Modules.Any(
-            x => x.GameObject.transform.position.x == newModule.GameObject.transform.position.x &&
-                 x.GameObject.transform.position.y == newModule.GameObject.transform.position.y &&
-                 x.Position.Z == DeckManager.CurrentDeck);
+        var cell = selectedCell.GetComponent<GridCell>();
+        return cell.Connectors;
     }
 
     #endregion
 
-    #endregion
+    private void Resize(Vector3Int add, Vector3Int shift)
+    {
+        var newCells = Resize(add, Cells);
+        Cells = ReinitCells(newCells, Cells);
+        var newGrid = Resize(add, Grid);
+        Grid = ReinitComponents(newGrid, Grid, shift);
+        _gridSize = new Vector3Int(Cells.GetLength(0), Cells.GetLength(1), Cells.GetLength(2));
+    }
+    private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
+    {
+        var xSize = arr.GetLength(0);
+        var ySize = arr.GetLength(1);
+        var zSize = arr.GetLength(2);
+
+        var newArr = new T[xSize + newSpace.x, ySize + newSpace.y, zSize + newSpace.z];
+
+        return newArr;
+    }
+    private GameObject[,,] ReinitCells(GameObject[,,] newArr, GameObject[,,] oldArr)
+    {
+        var oldXSize = oldArr.GetLength(0);
+        var oldYSize = oldArr.GetLength(1);
+        var oldZSize = oldArr.GetLength(2);
+
+        var xSize = newArr.GetLength(0);
+        var ySize = newArr.GetLength(1);
+        var zSize = newArr.GetLength(2);
+
+        for (int x = 0; x < xSize; x++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
+                    if (x < oldXSize && y < oldYSize && z < oldZSize)
+                        newArr[x, y, z] = oldArr[x, y, z];
+                    else
+                        InitializeCell(x, y, z, newArr);
+
+        return newArr;
+    }
+    private ModuleComponent[,,] ReinitComponents(ModuleComponent[,,] newArr, ModuleComponent[,,] oldArr, Vector3Int shift)
+    {
+        var xSize = oldArr.GetLength(0);
+        var ySize = oldArr.GetLength(1);
+        var zSize = oldArr.GetLength(2);
+
+        for (int x = 0; x < xSize; x++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
+                    if (oldArr[x, y, z].GameObject != null)
+                        newArr[x + shift.x, y + shift.y, z + shift.z] = oldArr[x, y, z];
+
+        return newArr;
+    }
+    private void InitializeCell(int x, int y, int z, GameObject[,,] cells)
+    {
+        cells[x, y, z] = Instantiate(ComponentPrefab);
+        cells[x, y, z].transform.position = new Vector3Int(x, y, z);
+        cells[x, y, z].GetComponent<SpriteRenderer>().color = (Modules.Count == 0 ? new Color(0.22f, 0.66f, 0.22f) : new Color(0.6f, 0.14f, 0.14f));
+        cells[x, y, z].name = "Grid Cell (" + x + ", " + y + ", " + z + ")";
+
+        var com = cells[x, y, z].GetComponent<GridCell>();
+        com.Position = new Vector3Int(x, y, z);
+        com.Connectors = new Connector[0];
+        com.ExclusionVectors = new ExclusionVector[0];
+    }
 }
