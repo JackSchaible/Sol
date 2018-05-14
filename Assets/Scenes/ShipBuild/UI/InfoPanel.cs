@@ -22,7 +22,7 @@ namespace Assets.Scenes.ShipBuild.UI
             GameObjects = new List<GameObject>();
         }
 
-        public virtual void ShowConnectors(Connector[] connectors)
+        public virtual void ShowConnectors(Connector[] connectors, bool noConnectorsIsAll)
         {
             foreach (var obj in GameObjects)
                 Destroy(obj);
@@ -30,7 +30,7 @@ namespace Assets.Scenes.ShipBuild.UI
             GameObjects = new List<GameObject>();
 
             Connector[] conns;
-            if (connectors == null || connectors.Length == 0)
+            if ((connectors == null || connectors.Length == 0) && noConnectorsIsAll)
                 conns = new[]
                 {
                     new Connector(Vector3Int.up, null), 

@@ -16,7 +16,7 @@ namespace Assets.Scenes.ShipBuild
 
         public int CurrentDeck { get; private set; }
 
-        private Dictionary<int, GameObject> _deckButtons;
+        private List<GameObject> _deckButtons;
 
         private Color activeColor = new Color(1, 1, 1, 0.8f);
         private Color inactiveColor = new Color(1, 1, 1, 0.5f);
@@ -28,69 +28,53 @@ namespace Assets.Scenes.ShipBuild
         void Awake()
         {
             var gameObjects = GameObject.FindGameObjectsWithTag("Deck Button");
+            _deckButtons = new List<GameObject>();
 
-            _deckButtons = new Dictionary<int, GameObject>();
-
-            foreach (var go in gameObjects)
-                _deckButtons.Add(int.Parse(go.GetComponentInChildren<Text>().text), go);
+            foreach (var go in gameObjects.OrderByDescending(x => int.Parse(x.GetComponentInChildren<Text>().text)))
+                _deckButtons.Add(go);
 
             CurrentDeck = 0;
 
-            foreach (var deckKvp in _deckButtons)
-                deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == CurrentDeck ? activeColor : inactiveColor;
+            for (var i = 0; i < _deckButtons.Count; i++)
+                _deckButtons[i].GetComponent<Image>().color = i == CurrentDeck ? activeColor : inactiveColor;
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                if (_deckButtons.ContainsKey(CurrentDeck - 1))
-                    SelectDeck(CurrentDeck - 1);
-            }
+            if (Input.GetKeyDown(KeyCode.Z) && CurrentDeck - 1 >= 0)
+                SelectDeck(CurrentDeck - 1);
 
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                if (_deckButtons.ContainsKey(CurrentDeck + 1))
-                    SelectDeck(CurrentDeck + 1);
-            }
+            if (Input.GetKeyDown(KeyCode.Q) && CurrentDeck + 1 <= _deckButtons.Count)
+                SelectDeck(CurrentDeck + 1);
         }
 
         public void AddUpperDeck()
         {
-            var topDeck = _deckButtons.OrderByDescending(x => x.Key).First();
             var go = Instantiate(DeckPrefab, Content.transform);
 
-            go.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(go); });
-            var key = topDeck.Key + 1;
-
-            go.GetComponentInChildren<Text>().text = key.ToString();
-            go.name = "Deck " + key + " Button";
+            InitializeDeckButton(go, _deckButtons.Count);
             go.transform.SetAsFirstSibling();
 
-            _deckButtons.Add(topDeck.Key + 1, go);
+            _deckButtons.Add(go);
         }
 
         public void AddLowerDeck()
         {
-            var bottomDeck = _deckButtons.OrderBy(x => x.Key).Last();
             var go = Instantiate(DeckPrefab, Content.transform);
+            go.transform.SetAsLastSibling();
+            _deckButtons.Insert(0, go);
 
-            go.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(go); });
-            var key = bottomDeck.Key + 1;
-
-            go.GetComponentInChildren<Text>().text = key.ToString();
-            go.name = "Deck" + key + "Button";
-
-            _deckButtons.Add(bottomDeck.Key + 1, go);
+            for (int i = 0; i < _deckButtons.Count; i++)
+                InitializeDeckButton(_deckButtons[i], i);
         }
 
         public void SelectDeck(int deck)
         {
-            if (!_deckButtons.ContainsKey(deck))
+            if (deck < 0 || deck > _deckButtons.Count - 1)
                 throw new Exception("Deck " + deck + " does not exist.");
 
-            foreach (var deckKvp in _deckButtons)
-                deckKvp.Value.GetComponent<Image>().color = deckKvp.Key == deck ? activeColor : inactiveColor;
+            for (var i = 0; i < _deckButtons.Count; i++)
+                _deckButtons[i].GetComponent<Image>().color = i == deck ? activeColor : inactiveColor;
 
             CurrentDeck = deck;
 
@@ -126,9 +110,16 @@ namespace Assets.Scenes.ShipBuild
                     }
         }
 
-        void OnDeckSelected(GameObject button)
+        private void OnDeckSelected(GameObject button)
         {
             SelectDeck(button.name.ParseUntil());
+        }
+
+        private void InitializeDeckButton(GameObject deckButton, int deckNumber)
+        {
+            deckButton.GetComponentInChildren<Text>().text = deckNumber.ToString();
+            deckButton.name = "Deck " + (deckNumber + 1) + " Button";
+            deckButton.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(deckButton); });
         }
     }
 }

@@ -103,7 +103,7 @@ namespace Assets.Scenes.ShipBuild
                     var sr = _previousModule.GetComponent<SpriteRenderer>();
                     _previousColor = sr.color;
                     sr.color = new Color(0.5f, 0.5f, 1);
-                    InfoPanel.ShowConnectors(ShipBuildManager.GetConnectors(_previousModule));
+                    InfoPanel.ShowConnectors(ShipBuildManager.GetConnectors(_previousModule), ShipBuildManager.Modules.Count == 0);
                 }
             }
 

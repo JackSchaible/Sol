@@ -27,13 +27,13 @@ namespace Assets.Scenes.ShipBuild.UI
             foreach (var connGroup in groups)
                 _connectors.Add(connGroup.Key, connGroup.ToArray());
 
-            ShowConnectors(_connectors.Values.First());
+            ShowConnectors(_connectors.Values.First(), false);
             gameObject.SetActive(true);
         }
 
         public void Show(Vector3Int connectorGroup)
         {
-            ShowConnectors(_connectors[connectorGroup]);
+            ShowConnectors(_connectors[connectorGroup], false);
         }
 
         public void Disable()

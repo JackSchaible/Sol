@@ -102,11 +102,11 @@ public class ShipBuildManager : MonoBehaviour
                 var conPos = aPos + con.Direction + shiftDirection;
 
                 if (conPos.x < 0)
-                    shiftDirection = Vector3Int.right * 10;
+                    shiftDirection += Vector3Int.right * 10;
                 else if (conPos.y < 0)
-                    shiftDirection = Vector3Int.up * 10;
+                    shiftDirection += Vector3Int.up * 10;
                 else if (conPos.z < 0)
-                    shiftDirection = new Vector3Int(0, 0, 1);
+                    shiftDirection += new Vector3Int(0, 0, 1);
 
                 aPos += shiftDirection;
 
@@ -124,9 +124,11 @@ public class ShipBuildManager : MonoBehaviour
 
                         DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
                     }
+
+                    conPos += shiftDirection;
                 }
 
-                var cCell = Cells[conPos.x + shiftDirection.x, conPos.y + shiftDirection.y, conPos.z + shiftDirection.z];
+                var cCell = Cells[conPos.x, conPos.y, conPos.z];
                 var gridCell = cCell.GetComponent<GridCell>();
                 gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
                 cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
