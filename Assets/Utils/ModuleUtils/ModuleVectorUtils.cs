@@ -1,4 +1,5 @@
-﻿using Assets.Ships;
+﻿using System.Collections.Generic;
+using Assets.Ships;
 using Assets.Ships.Modules;
 using UnityEngine;
 
@@ -24,10 +25,9 @@ namespace Assets.Utils.ModuleUtils
             {
                 var newLocalPosition = Rotate(mod.Components[i].LocalPosition, rd);
                 var newGameObject = mod.Components[i].GameObject;
-                newGameObject.transform.Rotate(Vector3.forward, -90f);
+                newGameObject.transform.Rotate(Vector3.forward, rd == RotationDirection.CW ? -90f : 90f);
                 var newConnectors = RotateConnectorPositions(mod.Components[i].Connectors, rd);
                 var newExclusionVectors = RotateExclusionVectorDirections(mod.Components[i].ExclusionVectors, rd);
-
                 var newCom = new ModuleComponent(newGameObject, newLocalPosition, newConnectors, newExclusionVectors);
 
                 mod.Components[i] = newCom;
@@ -36,6 +36,22 @@ namespace Assets.Utils.ModuleUtils
             mod.ModuleBlueprint.Space = RotateSpace(mod.ModuleBlueprint.Space, rd);
 
             return mod;
+        }
+        public static Vector3Int Rotate(Vector3Int a, RotationDirection rd)
+        {
+            return rd == RotationDirection.CW ?
+                new Vector3Int(a.y, -a.x, a.z) :
+                new Vector3Int(-a.y, a.x, a.z);
+        }
+        public static Vector3Int Rotate(Vector3Int a, int rotations)
+        {
+            for (int i = 0; i < Mathf.Abs(rotations); i++)
+                a = Rotate(a,
+                    rotations > 0
+                        ? RotationDirection.CCW
+                        : RotationDirection.CW);
+
+            return a;
         }
 
         private static Connector[] RotateConnectorPositions(Connector[] positions, RotationDirection rd)
@@ -145,6 +161,7 @@ namespace Assets.Utils.ModuleUtils
             return space;
         }
 
+        //TODO: Flip
         public static Connector[] FlipConnectorPositions(Connector[] positions, FlipDirection fd)
         {
             foreach (Connector cp in positions)
@@ -257,12 +274,5 @@ namespace Assets.Utils.ModuleUtils
 
         //    return space;
         //}
-
-        private static Vector3Int Rotate(Vector3Int a, RotationDirection rd)
-        {
-            return rd == RotationDirection.CW ?
-                new Vector3Int(a.y, -a.x, a.z) :
-                new Vector3Int(-a.y, a.x, a.z);
-        }
     }
 }

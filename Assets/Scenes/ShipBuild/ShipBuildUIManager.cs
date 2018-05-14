@@ -37,7 +37,7 @@ namespace Assets.Scenes.ShipBuild
         private int _currentModuleComponent;
         private Color _previousColor;
         private GameObject _previousModule;
-        private float _newModuleRotation;
+        private int _newModuleRotations;
         private bool _popupActive;
 
         #endregion
@@ -83,11 +83,8 @@ namespace Assets.Scenes.ShipBuild
             PeopleText.color = ShipBuildManager.PersonnelUsed > ShipBuildManager.PersonnelAvailable ?
                 new Color(1, 0, 0) : new Color(1, 1, 1);
 
-            if (_newModuleRotation >= 360)
-                _newModuleRotation -= 360;
-
-            if (_newModuleRotation <= -360)
-                _newModuleRotation += 360;
+            if (_newModuleRotations == 4 || _newModuleRotations == -4)
+                _newModuleRotations = 0;
 
             RaycastHit hit = new RaycastHit();
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),
@@ -154,9 +151,15 @@ namespace Assets.Scenes.ShipBuild
                     com.LocalPosition + new Vector3(0, 0, 10);
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+            {
                 _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CCW);
+                _newModuleRotations--;
+            }
             else if (Input.GetKeyDown(KeyCode.R))
+            {
                 _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CW);
+                _newModuleRotations++;
+            }
             else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
             {
             }
@@ -187,7 +190,7 @@ namespace Assets.Scenes.ShipBuild
             foreach (var com in _newModule.Components)
                 com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
 
-            ShipBuildManager.AddModule(_previousModule, _newModule);
+            ShipBuildManager.AddModule(_previousModule, _newModule, _newModuleRotations);
             Menu.ModulePlaced(_newModule.ModuleBlueprint);
             CancelPlaceMode();
         }
@@ -200,14 +203,14 @@ namespace Assets.Scenes.ShipBuild
         /// <param name="blueprint">The blueprint to build</param>
         public void Build(ModuleBlueprint blueprint)
         {
-            _newModule = Module.Create(blueprint);
+            _newModule = Module.Create(blueprint, _newModuleRotations);
 
-            //if (_newModuleRotation != 0)
+            //if (_newModuleRotations != 0)
             //{
             //    _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1),
-            //        _newModuleRotation);
+            //        _newModuleRotations);
 
-            //    for(int rotations = (int)Math.Abs(_newModuleRotation) / 90; rotations > 0; rotations--)
+            //    for(int rotations = (int)Math.Abs(_newModuleRotations) / 90; rotations > 0; rotations--)
             //        _newModule.ModuleBlueprint.Connectors =
             //            ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
             //                ModuleVectorUtils.RotationDirection.CCW);

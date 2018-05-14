@@ -2,6 +2,7 @@
 using Assets.Ships.Crew;
 using Assets.Ships.Modules;
 using Assets.Utils;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 
 namespace Assets.Ships
@@ -29,13 +30,14 @@ namespace Assets.Ships
             Crew = new List<CrewMember>();
         }
 
-        public static Module Create(ModuleBlueprint blueprint)
+        public static Module Create(ModuleBlueprint blueprint, int rotations)
         {
             var module = new Module(blueprint.Copy());
             var components = new List<ModuleComponent>();
 
-            foreach (var space in module.ModuleBlueprint.Space)
+            foreach (var s in module.ModuleBlueprint.Space)
             {
+                Vector3Int space = ModuleVectorUtils.Rotate(s, rotations);
                 List<Connector> connectors = new List<Connector>();
                 List<ExclusionVector> exclusionVectors = new List<ExclusionVector>();
                     

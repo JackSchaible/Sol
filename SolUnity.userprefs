@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="SolUnity.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Ships\Module.cs">
     <Files>
       <File FileName="Assets\Common\Modal.cs" Line="1" Column="1" />
       <File FileName="Assets\Scenes\ShipBuild\UI\DeckManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scenes\ShipBuild\MenuManager\DynamicBuildMenuManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scenes\ShipBuild\UI\DetailViewQw.cs" Line="1" Column="1" />
       <File FileName="Assets\Scenes\ShipBuild\ShipBuildUIManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Ships\Module.cs" Line="60" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -8,6 +8,7 @@ using Assets.Ships;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Command;
 using Assets.Utils.Extensions;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 
 public class ShipBuildManager : MonoBehaviour
@@ -59,7 +60,7 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, Module module)
+    public void AddModule(GameObject selectedComponent, Module module, int rotations)
     {
         PowerUsed += module.ModuleBlueprint.PowerConumption;
         ControlUsed += module.ModuleBlueprint.CommandRequirement;
@@ -77,7 +78,7 @@ public class ShipBuildManager : MonoBehaviour
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-        var newModule = Module.Create(module.ModuleBlueprint.Copy());
+        var newModule = Module.Create(module.ModuleBlueprint.Copy(), rotations);
 
         if (Modules.Count == 0)
             foreach(var cell in Cells)
@@ -85,11 +86,10 @@ public class ShipBuildManager : MonoBehaviour
 
         Modules.Add(newModule);
 
-        //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
         var shiftDirection = Vector3Int.zero;
         foreach (var com in newModule.Components)
         {
-            var aPos = pos + com.LocalPosition;
+            var aPos = pos + ModuleVectorUtils.Rotate(com.LocalPosition, rotations);
             var cell = Cells[aPos.x, aPos.y, aPos.z];
             cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
             com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
