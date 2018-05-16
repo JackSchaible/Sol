@@ -34,6 +34,7 @@ namespace Assets.Scenes.ShipBuild
         //Internal state-tracking variables
         private bool _placeMode;
         private Module _newModule;
+        private ModuleBlueprint _blueprint;
         private int _currentModuleComponent;
         private Color _previousColor;
         private GameObject _previousModule;
@@ -187,10 +188,13 @@ namespace Assets.Scenes.ShipBuild
         /// </summary>
         private void PlaceModule()
         {
+            if (_previousColor == new Color(0.6f, 0.14f, 0.14f))
+                return;
+
             foreach (var com in _newModule.Components)
                 com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
 
-            ShipBuildManager.AddModule(_previousModule, _newModule, _newModuleRotations);
+            ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations);
             Menu.ModulePlaced(_newModule.ModuleBlueprint);
             CancelPlaceMode();
         }
@@ -203,8 +207,10 @@ namespace Assets.Scenes.ShipBuild
         /// <param name="blueprint">The blueprint to build</param>
         public void Build(ModuleBlueprint blueprint)
         {
-            _newModule = Module.Create(blueprint, _newModuleRotations);
+            _blueprint = blueprint.Copy();
+            _newModule = Module.Create(blueprint);
 
+            //TODO: if previous module was rotated, rotate the newmodule
             //if (_newModuleRotations != 0)
             //{
             //    _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1),
@@ -240,6 +246,7 @@ namespace Assets.Scenes.ShipBuild
 
             _placeMode = false;
             _newModule = null;
+            _blueprint = null;
 
             ModuleInfoPanel.Disable();
         }

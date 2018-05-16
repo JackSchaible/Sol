@@ -30,14 +30,13 @@ namespace Assets.Ships
             Crew = new List<CrewMember>();
         }
 
-        public static Module Create(ModuleBlueprint blueprint, int rotations)
+        public static Module Create(ModuleBlueprint blueprint)
         {
             var module = new Module(blueprint.Copy());
             var components = new List<ModuleComponent>();
 
-            foreach (var s in module.ModuleBlueprint.Space)
+            foreach (var space in module.ModuleBlueprint.Space)
             {
-                Vector3Int space = ModuleVectorUtils.Rotate(s, rotations);
                 List<Connector> connectors = new List<Connector>();
                 List<ExclusionVector> exclusionVectors = new List<ExclusionVector>();
                     

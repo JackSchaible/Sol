@@ -60,46 +60,51 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, Module module, int rotations)
+    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations)
     {
-        PowerUsed += module.ModuleBlueprint.PowerConumption;
-        ControlUsed += module.ModuleBlueprint.CommandRequirement;
-        PersonnelUsed += module.ModuleBlueprint.CrewRequirement;
+        PowerUsed += blueprint.PowerConumption;
+        ControlUsed += blueprint.CommandRequirement;
+        PersonnelUsed += blueprint.CrewRequirement;
 
-        var commandBlueprint = module.ModuleBlueprint as CommandModuleBlueprint;
+        var commandBlueprint = blueprint as CommandModuleBlueprint;
         if (commandBlueprint != null)
         {
             ControlAvailable += commandBlueprint.CommandSupplied;
             HasCommandModule = true;
         }
 
-        var cockpitBlueprint = module.ModuleBlueprint as CockpitModuleBlueprint;
+        var cockpitBlueprint = blueprint as CockpitModuleBlueprint;
         if (cockpitBlueprint != null)
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-        var newModule = Module.Create(module.ModuleBlueprint.Copy(), rotations);
+        var newModule = Module.Create(blueprint);
+
+        for (int i = 0; i < rotations; i++)
+            newModule = ModuleVectorUtils.RotateModule(newModule,
+                rotations > 0 ? ModuleVectorUtils.RotationDirection.CW : ModuleVectorUtils.RotationDirection.CCW);
 
         if (Modules.Count == 0)
-            foreach(var cell in Cells)
+            foreach (var cell in Cells)
                 cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
 
-        Modules.Add(newModule);
 
-        var shiftDirection = Vector3Int.zero;
+        Modules.Add(newModule);
+        
         foreach (var com in newModule.Components)
         {
-            var aPos = pos + ModuleVectorUtils.Rotate(com.LocalPosition, rotations);
+            var aPos = pos + com.LocalPosition;
             var cell = Cells[aPos.x, aPos.y, aPos.z];
             cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
             com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
             com.GameObject.transform.position = cell.gameObject.transform.position;
-            Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
+            Grid[aPos.x, aPos.y, aPos.z] = com;
 
             //Modify surrounding components to have receiving connectors
             foreach (var con in com.Connectors)
             {
-                var conPos = aPos + con.Direction + shiftDirection;
+                var conPos = aPos + con.Direction;
+                var shiftDirection = Vector3Int.zero;
 
                 if (conPos.x < 0)
                     shiftDirection += Vector3Int.right * 10;
@@ -125,6 +130,7 @@ public class ShipBuildManager : MonoBehaviour
                         DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
                     }
 
+                    pos += shiftDirection;
                     conPos += shiftDirection;
                 }
 
@@ -136,9 +142,9 @@ public class ShipBuildManager : MonoBehaviour
         }
 
         //Disable decks if module has an x / y plane or space exclusion vector
-        if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
+        if (blueprint.ExclusionVectors.Length > 0)
         {
-            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
+            foreach (var vectors in blueprint.ExclusionVectors)
             {
                 foreach (var vector in vectors.Direction)
                 {
@@ -252,7 +258,11 @@ public class ShipBuildManager : MonoBehaviour
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
                     if (oldArr[x, y, z].GameObject != null)
+                    {
                         newArr[x + shift.x, y + shift.y, z + shift.z] = oldArr[x, y, z];
+                        newArr[x + shift.x, y + shift.y, z + shift.z].GameObject.transform.position =
+                            Cells[x + shift.x, y + shift.y, z + shift.z].transform.position;
+                    }
 
         return newArr;
     }

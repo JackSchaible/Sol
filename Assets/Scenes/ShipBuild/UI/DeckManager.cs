@@ -66,6 +66,8 @@ namespace Assets.Scenes.ShipBuild
 
             for (int i = 0; i < _deckButtons.Count; i++)
                 InitializeDeckButton(_deckButtons[i], i);
+
+            MoveCells();
         }
 
         public void SelectDeck(int deck)
@@ -114,12 +116,31 @@ namespace Assets.Scenes.ShipBuild
         {
             SelectDeck(button.name.ParseUntil());
         }
-
         private void InitializeDeckButton(GameObject deckButton, int deckNumber)
         {
             deckButton.GetComponentInChildren<Text>().text = deckNumber.ToString();
             deckButton.name = "Deck " + (deckNumber + 1) + " Button";
             deckButton.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(deckButton); });
+        }
+        private void MoveCells()
+        {
+            var cells = BuildManager.Cells;
+
+            for(int x = 0; x < cells.GetLength(0); x++)
+                for(int y = 0; y < cells.GetLength(1); y++)
+                    for (int z = 0; z < cells.GetLength(2); z++)
+                    {
+                        var pos = cells[x, y, z].transform.position;
+
+                        BuildManager.Cells[x, y, z].transform.position = 
+                            new Vector3(pos.x, pos.y, -z);
+
+                        var go = BuildManager.Grid[x, y, z].GameObject;
+
+                        if (go == null) continue;
+
+                        go.transform.position = new Vector3(pos.x, pos.y, -z);
+                    }
         }
     }
 }
