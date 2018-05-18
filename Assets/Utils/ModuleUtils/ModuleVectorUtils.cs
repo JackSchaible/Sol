@@ -70,13 +70,13 @@ namespace Assets.Utils.ModuleUtils
         {
             for (var i = 0; i < vectors.Length; i++)
             {
-                var newDirections = new ExclusionVectorDirections[vectors[i].Direction.Length];
+                var newDirections = new ExclusionVectorDirections[vectors[i].Directions.Length];
 
-                for (int j = 0; j < vectors[i].Direction.Length; j++)
+                for (int j = 0; j < vectors[i].Directions.Length; j++)
                 {
                     ExclusionVectorDirections newDirection = ExclusionVectorDirections.BackwardLine;
 
-                    switch (vectors[i].Direction[j])
+                    switch (vectors[i].Directions[j])
                     {
                         case ExclusionVectorDirections.ForwardLine:
                         case ExclusionVectorDirections.BackwardLine:
@@ -204,8 +204,8 @@ namespace Assets.Utils.ModuleUtils
         {
             for (var i = 0; i < vectors.Length; i++)
             {
-                for (var j = 0; j < vectors[i].Direction.Length; j++)
-                    switch (vectors[i].Direction[j])
+                for (var j = 0; j < vectors[i].Directions.Length; j++)
+                    switch (vectors[i].Directions[j])
                     {
                     //    case ExclusionVectors.ForwardLine:
                     //    case ExclusionVectors.BackwardLine:

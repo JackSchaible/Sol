@@ -104,6 +104,7 @@ public class ShipBuildManager : MonoBehaviour
             foreach (var con in com.Connectors)
             {
                 var conPos = aPos + con.Direction;
+
                 var shiftDirection = Vector3Int.zero;
 
                 if (conPos.x < 0)
@@ -134,6 +135,9 @@ public class ShipBuildManager : MonoBehaviour
                     conPos += shiftDirection;
                 }
 
+                if (!CanAddConnector(conPos))
+                    continue;
+
                 var cCell = Cells[conPos.x, conPos.y, conPos.z];
                 var gridCell = cCell.GetComponent<GridCell>();
                 gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
@@ -146,7 +150,7 @@ public class ShipBuildManager : MonoBehaviour
         {
             foreach (var vectors in blueprint.ExclusionVectors)
             {
-                foreach (var vector in vectors.Direction)
+                foreach (var vector in vectors.Directions)
                 {
                     //Disable whatever it is
                     switch (vector)
@@ -172,40 +176,110 @@ public class ShipBuildManager : MonoBehaviour
 
     #region Rules
 
-    public bool IsPlacementValid(Module newModule)
-    {
-        var spaceValid = true;
-        var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
-
-        if (Modules.Count == 0) return true;
-
-        //foreach (var slot in _availableSlots)
-        //    foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-        //        if (modCon.Equals(newModule.Position, slot))
-        //            conCount--;
-
-        //foreach (var space in newModule.ModuleBlueprint.Space)
-        //{
-        //    var spacePos = newModule.Position + space;
-
-        //    if (IsPositionOutsideOfExclusionSpaces(spacePos))
-        //    {
-        //        foreach (var module in Modules)
-        //        foreach (var mSpace in module.ModuleBlueprint.Space)
-        //            if ((module.Position + mSpace).Equals(spacePos))
-        //                spaceValid = false;
-        //    }
-        //    else
-        //        spaceValid = false;
-        //}
-
-        return conCount <= 0 && spaceValid;
-    }
-
     public Connector[] GetConnectors(GameObject selectedCell)
     {
         var cell = selectedCell.GetComponent<GridCell>();
         return cell.Connectors;
+    }
+
+    private bool CanAddConnector(Vector3Int position)
+    {
+        var canAddConnector = true;
+
+        //Can't add an open connector to a space populated by another object
+        if (Grid[position.x, position.y, position.z].GameObject != null)
+            canAddConnector = false;
+
+        //Can't add a module to an exlcusion vector-space
+        foreach (var module in Modules)
+        foreach (var component in module.Components)
+        foreach (var ev in component.ExclusionVectors)
+        foreach (var direction in ev.Directions)
+            switch (direction)
+            {
+                case ExclusionVectorDirections.ForwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z <= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.BackwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z >= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.UpwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y <= position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.DownwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y >= position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.RightLine:
+                    if (ev.Position.x <= position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.LeftLine:
+                    if (ev.Position.x >= position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.Plane:
+                    if (ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndAbove:
+                    if (ev.Position.z == position.z &&
+                        ev.Position.y >= position.y)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndBelow:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.y <= position.y)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndForward:
+                    if (ev.Position.z >= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndBackward:
+                    if (ev.Position.z <= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndRight:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.x <= position.x)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndLeft:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.x >= position.x)
+                        canAddConnector = false;
+                    break;
+        }
+
+        return canAddConnector;
     }
 
     #endregion
