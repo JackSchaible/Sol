@@ -4,18 +4,18 @@ namespace Assets.Ships.Modules
 {
     public struct ExclusionVector
     {
-        public ExclusionVectorDirections[] Direction { get; set; }
+        public ExclusionVectorDirections[] Directions { get; set; }
         public Vector3Int Position { get; set; }
 
-        public ExclusionVector(ExclusionVectorDirections[] direction)
+        public ExclusionVector(ExclusionVectorDirections[] directions)
         {
-            Direction = direction;
+            Directions = directions;
             Position = Vector3Int.zero;
         }
 
-        public ExclusionVector(ExclusionVectorDirections[] direction, Vector3Int position)
+        public ExclusionVector(ExclusionVectorDirections[] directions, Vector3Int position)
         {
-            Direction = direction;
+            Directions = directions;
             Position = position;
         }
     }

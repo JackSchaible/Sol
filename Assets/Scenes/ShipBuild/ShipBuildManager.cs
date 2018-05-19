@@ -8,6 +8,7 @@ using Assets.Ships;
 using Assets.Ships.Modules;
 using Assets.Ships.Modules.Command;
 using Assets.Utils.Extensions;
+using Assets.Utils.ModuleUtils;
 using UnityEngine;
 
 public class ShipBuildManager : MonoBehaviour
@@ -59,34 +60,37 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, Module module)
+    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations)
     {
-        PowerUsed += module.ModuleBlueprint.PowerConumption;
-        ControlUsed += module.ModuleBlueprint.CommandRequirement;
-        PersonnelUsed += module.ModuleBlueprint.CrewRequirement;
+        PowerUsed += blueprint.PowerConumption;
+        ControlUsed += blueprint.CommandRequirement;
+        PersonnelUsed += blueprint.CrewRequirement;
 
-        var commandBlueprint = module.ModuleBlueprint as CommandModuleBlueprint;
+        var commandBlueprint = blueprint as CommandModuleBlueprint;
         if (commandBlueprint != null)
         {
             ControlAvailable += commandBlueprint.CommandSupplied;
             HasCommandModule = true;
         }
 
-        var cockpitBlueprint = module.ModuleBlueprint as CockpitModuleBlueprint;
+        var cockpitBlueprint = blueprint as CockpitModuleBlueprint;
         if (cockpitBlueprint != null)
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-        var newModule = Module.Create(module.ModuleBlueprint.Copy());
+        var newModule = Module.Create(blueprint);
+
+        for (int i = 0; i < rotations; i++)
+            newModule = ModuleVectorUtils.RotateModule(newModule,
+                rotations > 0 ? ModuleVectorUtils.RotationDirection.CW : ModuleVectorUtils.RotationDirection.CCW);
 
         if (Modules.Count == 0)
-            foreach(var cell in Cells)
+            foreach (var cell in Cells)
                 cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
 
-        Modules.Add(newModule);
 
-        //TODO: adjust the newmodule's rotation/flip orientation? Maybe? Does copy copy that stuff for me?
-        var shiftDirection = Vector3Int.zero;
+        Modules.Add(newModule);
+        
         foreach (var com in newModule.Components)
         {
             var aPos = pos + com.LocalPosition;
@@ -94,12 +98,14 @@ public class ShipBuildManager : MonoBehaviour
             cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
             com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
             com.GameObject.transform.position = cell.gameObject.transform.position;
-            Grid[aPos.x + com.LocalPosition.x, aPos.y + com.LocalPosition.y, aPos.z + com.LocalPosition.z] = com;
+            Grid[aPos.x, aPos.y, aPos.z] = com;
 
             //Modify surrounding components to have receiving connectors
             foreach (var con in com.Connectors)
             {
-                var conPos = aPos + con.Direction + shiftDirection;
+                var conPos = aPos + con.Direction;
+
+                var shiftDirection = Vector3Int.zero;
 
                 if (conPos.x < 0)
                     shiftDirection += Vector3Int.right * 10;
@@ -125,8 +131,12 @@ public class ShipBuildManager : MonoBehaviour
                         DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
                     }
 
+                    pos += shiftDirection;
                     conPos += shiftDirection;
                 }
+
+                if (!CanAddConnector(conPos))
+                    continue;
 
                 var cCell = Cells[conPos.x, conPos.y, conPos.z];
                 var gridCell = cCell.GetComponent<GridCell>();
@@ -136,11 +146,11 @@ public class ShipBuildManager : MonoBehaviour
         }
 
         //Disable decks if module has an x / y plane or space exclusion vector
-        if (module.ModuleBlueprint.ExclusionVectors.Length > 0)
+        if (blueprint.ExclusionVectors.Length > 0)
         {
-            foreach (var vectors in module.ModuleBlueprint.ExclusionVectors)
+            foreach (var vectors in blueprint.ExclusionVectors)
             {
-                foreach (var vector in vectors.Direction)
+                foreach (var vector in vectors.Directions)
                 {
                     //Disable whatever it is
                     switch (vector)
@@ -166,40 +176,110 @@ public class ShipBuildManager : MonoBehaviour
 
     #region Rules
 
-    public bool IsPlacementValid(Module newModule)
-    {
-        var spaceValid = true;
-        var conCount = newModule.ModuleBlueprint.AreConnectorsMandatory ? newModule.ModuleBlueprint.Connectors.Length : 1;
-
-        if (Modules.Count == 0) return true;
-
-        //foreach (var slot in _availableSlots)
-        //    foreach (var modCon in newModule.ModuleBlueprint.Connectors)
-        //        if (modCon.Equals(newModule.Position, slot))
-        //            conCount--;
-
-        //foreach (var space in newModule.ModuleBlueprint.Space)
-        //{
-        //    var spacePos = newModule.Position + space;
-
-        //    if (IsPositionOutsideOfExclusionSpaces(spacePos))
-        //    {
-        //        foreach (var module in Modules)
-        //        foreach (var mSpace in module.ModuleBlueprint.Space)
-        //            if ((module.Position + mSpace).Equals(spacePos))
-        //                spaceValid = false;
-        //    }
-        //    else
-        //        spaceValid = false;
-        //}
-
-        return conCount <= 0 && spaceValid;
-    }
-
     public Connector[] GetConnectors(GameObject selectedCell)
     {
         var cell = selectedCell.GetComponent<GridCell>();
         return cell.Connectors;
+    }
+
+    private bool CanAddConnector(Vector3Int position)
+    {
+        var canAddConnector = true;
+
+        //Can't add an open connector to a space populated by another object
+        if (Grid[position.x, position.y, position.z].GameObject != null)
+            canAddConnector = false;
+
+        //Can't add a module to an exlcusion vector-space
+        foreach (var module in Modules)
+        foreach (var component in module.Components)
+        foreach (var ev in component.ExclusionVectors)
+        foreach (var direction in ev.Directions)
+            switch (direction)
+            {
+                case ExclusionVectorDirections.ForwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z <= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.BackwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z >= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.UpwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y <= position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.DownwardLine:
+                    if (ev.Position.x == position.x &&
+                        ev.Position.y >= position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.RightLine:
+                    if (ev.Position.x <= position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.LeftLine:
+                    if (ev.Position.x >= position.x &&
+                        ev.Position.y == position.y &&
+                        ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.Plane:
+                    if (ev.Position.z == position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndAbove:
+                    if (ev.Position.z == position.z &&
+                        ev.Position.y >= position.y)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndBelow:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.y <= position.y)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndForward:
+                    if (ev.Position.z >= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndBackward:
+                    if (ev.Position.z <= position.z)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndRight:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.x <= position.x)
+                        canAddConnector = false;
+                    break;
+
+                case ExclusionVectorDirections.PlaneAndLeft:
+                    if (ev.Position.z >= position.z &&
+                        ev.Position.x >= position.x)
+                        canAddConnector = false;
+                    break;
+        }
+
+        return canAddConnector;
     }
 
     #endregion
@@ -252,7 +332,11 @@ public class ShipBuildManager : MonoBehaviour
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
                     if (oldArr[x, y, z].GameObject != null)
+                    {
                         newArr[x + shift.x, y + shift.y, z + shift.z] = oldArr[x, y, z];
+                        newArr[x + shift.x, y + shift.y, z + shift.z].GameObject.transform.position =
+                            Cells[x + shift.x, y + shift.y, z + shift.z].transform.position;
+                    }
 
         return newArr;
     }

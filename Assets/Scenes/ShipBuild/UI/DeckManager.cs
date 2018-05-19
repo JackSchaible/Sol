@@ -44,7 +44,7 @@ namespace Assets.Scenes.ShipBuild
             if (Input.GetKeyDown(KeyCode.Z) && CurrentDeck - 1 >= 0)
                 SelectDeck(CurrentDeck - 1);
 
-            if (Input.GetKeyDown(KeyCode.A) && CurrentDeck + 1 <= _deckButtons.Count)
+            if (Input.GetKeyDown(KeyCode.A) && CurrentDeck + 1 < _deckButtons.Count)
                 SelectDeck(CurrentDeck + 1);
         }
 
@@ -64,8 +64,10 @@ namespace Assets.Scenes.ShipBuild
             go.transform.SetAsLastSibling();
             _deckButtons.Insert(0, go);
 
-            for (int i = 0; i < _deckButtons.Count; i++)
-                InitializeDeckButton(_deckButtons[i], i);
+            for (int i = 1; i <= _deckButtons.Count; i++)
+                InitializeDeckButton(_deckButtons[i - 1], i);
+
+            MoveCells();
         }
 
         public void SelectDeck(int deck)
@@ -112,14 +114,33 @@ namespace Assets.Scenes.ShipBuild
 
         private void OnDeckSelected(GameObject button)
         {
-            SelectDeck(button.name.ParseUntil());
+            SelectDeck(button.name.ParseUntil() - 1);
         }
-
         private void InitializeDeckButton(GameObject deckButton, int deckNumber)
         {
             deckButton.GetComponentInChildren<Text>().text = deckNumber.ToString();
-            deckButton.name = "Deck " + (deckNumber + 1) + " Button";
+            deckButton.name = deckNumber.ToString();
             deckButton.GetComponent<Button>().onClick.AddListener(() => { OnDeckSelected(deckButton); });
+        }
+        private void MoveCells()
+        {
+            var cells = BuildManager.Cells;
+
+            for(int x = 0; x < cells.GetLength(0); x++)
+                for(int y = 0; y < cells.GetLength(1); y++)
+                    for (int z = 0; z < cells.GetLength(2); z++)
+                    {
+                        var pos = cells[x, y, z].transform.position;
+
+                        BuildManager.Cells[x, y, z].transform.position = 
+                            new Vector3(pos.x, pos.y, -z);
+
+                        var go = BuildManager.Grid[x, y, z].GameObject;
+
+                        if (go == null) continue;
+
+                        go.transform.position = new Vector3(pos.x, pos.y, -z);
+                    }
         }
     }
 }
