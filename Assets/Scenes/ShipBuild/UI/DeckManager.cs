@@ -18,12 +18,11 @@ namespace Assets.Scenes.ShipBuild
 
         private List<GameObject> _deckButtons;
 
-        private Color activeColor = new Color(1, 1, 1, 0.8f);
-        private Color inactiveColor = new Color(1, 1, 1, 0.5f);
+        private readonly Color _activeColor = new Color(1, 1, 1, 0.8f);
+        private readonly Color _inactiveColor = new Color(1, 1, 1, 0.5f);
 
-        private Color SelectedDeckModuleColor = new Color(1, 1, 1, 1);
-        private Color AdjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
-        private Color UnattachedDeckModuleColor = new Color(1, 1, 1, 0);
+        private readonly Color _selectedDeckModuleColor = new Color(1, 1, 1, 1);
+        private readonly Color _adjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
 
         void Awake()
         {
@@ -36,7 +35,7 @@ namespace Assets.Scenes.ShipBuild
             CurrentDeck = 0;
 
             for (var i = 0; i < _deckButtons.Count; i++)
-                _deckButtons[i].GetComponent<Image>().color = i == CurrentDeck ? activeColor : inactiveColor;
+                _deckButtons[i].GetComponent<Image>().color = i == CurrentDeck ? _activeColor : _inactiveColor;
         }
 
         void Update()
@@ -76,7 +75,7 @@ namespace Assets.Scenes.ShipBuild
                 throw new Exception("Deck " + deck + " does not exist.");
 
             for (var i = 0; i < _deckButtons.Count; i++)
-                _deckButtons[i].GetComponent<Image>().color = i == deck ? activeColor : inactiveColor;
+                _deckButtons[i].GetComponent<Image>().color = i == deck ? _activeColor : _inactiveColor;
 
             CurrentDeck = deck;
 
@@ -92,18 +91,23 @@ namespace Assets.Scenes.ShipBuild
                     {
                         if (z > deck + 1 || z < deck - 1) continue;
 
-                        Color color;
-
-                        if (z == deck)
-                            color = SelectedDeckModuleColor;
-                        else if (z == deck - 1 || z == deck + 1)
-                            color = AdjacentDeckModuleColor;
-                        else
-                            color = UnattachedDeckModuleColor;
-
                         var go = BuildManager.Grid[x, y, z].GameObject;
+
                         if (go != null)
-                            go.GetComponent<SpriteRenderer>().color = color;
+                            if (z == deck || z == deck - 1 || z == deck + 1)
+                            {
+                                Color color;
+                                go.SetActive(true);
+
+                                if (z == deck)
+                                    color = _selectedDeckModuleColor;
+                                else
+                                    color = _adjacentDeckModuleColor;
+
+                                go.GetComponent<SpriteRenderer>().color = color;
+                            }
+                            else
+                                go.SetActive(false);
 
                         if (z != deck)
                             BuildManager.Cells[x, y, z].SetActive(false);
