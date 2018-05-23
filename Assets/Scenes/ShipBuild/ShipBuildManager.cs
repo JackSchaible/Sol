@@ -60,7 +60,7 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations)
+    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
     {
         PowerUsed += blueprint.PowerConumption;
         ControlUsed += blueprint.CommandRequirement;
@@ -78,16 +78,14 @@ public class ShipBuildManager : MonoBehaviour
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
         Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-        var newModule = Module.Create(blueprint);
 
-        for (int i = 0; i < rotations; i++)
-            newModule = ModuleVectorUtils.RotateModule(newModule,
-                rotations > 0 ? ModuleVectorUtils.RotationDirection.CW : ModuleVectorUtils.RotationDirection.CCW);
+        var newModule = Module.Create(blueprint);
+        newModule = ModuleVectorUtils.RotateModule(newModule, rotations);
+        newModule = ModuleVectorUtils.FlipModule(newModule, flips);
 
         if (Modules.Count == 0)
             foreach (var cell in Cells)
                 cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
-
 
         Modules.Add(newModule);
         

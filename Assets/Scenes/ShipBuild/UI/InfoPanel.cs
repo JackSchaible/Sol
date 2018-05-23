@@ -21,16 +21,16 @@ namespace Assets.Scenes.ShipBuild.UI
         {
         }
 
-        public virtual void ShowConnectors(Connector[] connectors, bool noConnectorsIsAll)
+        public virtual void ShowConnectors(List<Connector> connectors, bool noConnectorsIsAll)
         {
             foreach (var obj in GameObjects)
                 Destroy(obj);
 
             GameObjects = new List<GameObject>();
 
-            Connector[] conns;
-            if ((connectors == null || connectors.Length == 0) && noConnectorsIsAll)
-                conns = new[]
+            List<Connector> conns;
+            if ((connectors == null || connectors.Count == 0) && noConnectorsIsAll)
+                conns = new List<Connector>
                 {
                     new Connector(Vector3Int.up, null), 
                     new Connector(Vector3Int.right, null), 

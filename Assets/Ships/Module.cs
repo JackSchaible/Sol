@@ -2,7 +2,6 @@
 using Assets.Ships.Crew;
 using Assets.Ships.Modules;
 using Assets.Utils;
-using Assets.Utils.ModuleUtils;
 using UnityEngine;
 
 namespace Assets.Ships
