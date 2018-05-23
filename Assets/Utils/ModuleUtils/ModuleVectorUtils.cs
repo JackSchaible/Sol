@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Assets.Ships;
 using Assets.Ships.Modules;
 using UnityEngine;
@@ -26,6 +26,7 @@ namespace Assets.Utils.ModuleUtils
                 var newLocalPosition = Rotate(mod.Components[i].LocalPosition, rd);
                 var newGameObject = mod.Components[i].GameObject;
                 newGameObject.transform.Rotate(Vector3.forward, rd == RotationDirection.CW ? -90f : 90f);
+
                 var newConnectors = RotateConnectorPositions(mod.Components[i].Connectors, rd);
                 var newExclusionVectors = RotateExclusionVectorDirections(mod.Components[i].ExclusionVectors, rd);
                 var newCom = new ModuleComponent(newGameObject, newLocalPosition, newConnectors, newExclusionVectors);
@@ -34,6 +35,14 @@ namespace Assets.Utils.ModuleUtils
             }
 
             mod.ModuleBlueprint.Space = RotateSpace(mod.ModuleBlueprint.Space, rd);
+
+            return mod;
+        }
+        public static Module RotateModule(Module mod, int rotations)
+        {
+            for (int i = 0; i < rotations; i++)
+                mod = RotateModule(mod,
+                    rotations > 0 ? ModuleVectorUtils.RotationDirection.CW : ModuleVectorUtils.RotationDirection.CCW);
 
             return mod;
         }
@@ -52,6 +61,81 @@ namespace Assets.Utils.ModuleUtils
                         : RotationDirection.CW);
 
             return a;
+        }
+
+        public static Module FlipModule(Module mod, FlipDirection fd)
+        {
+            for (int i = 0; i < mod.Components.Length; i++)
+            {
+                var newLocalPosition = Flip(mod.Components[i].LocalPosition, fd);
+                var newGameObject = mod.Components[i].GameObject;
+                var spriteRenderer = newGameObject.GetComponent<SpriteRenderer>();
+                switch (fd)
+                {
+                    case FlipDirection.Horizontal:
+                        spriteRenderer.flipX = !spriteRenderer.flipX;
+                        break;
+
+                    case FlipDirection.Vertical:
+                        spriteRenderer.flipY = !spriteRenderer.flipY;
+                        break;
+                }
+                var newConnectors = FlipConnectorPositions(mod.Components[i].Connectors, fd);
+                var newExclusionVectors = FlipExclusionVectorDirections(mod.Components[i].ExclusionVectors, fd);
+                var newCom = new ModuleComponent(newGameObject, newLocalPosition, newConnectors, newExclusionVectors);
+
+                mod.Components[i] = newCom;
+            }
+
+            mod.ModuleBlueprint.Space = FlipSpace(mod.ModuleBlueprint.Space, fd);
+
+            return mod;
+
+        }
+        public static Module FlipModule(Module mod, int[] flips)
+        {
+            if (flips[0] == 1)
+                mod = FlipModule(mod, ModuleVectorUtils.FlipDirection.Horizontal);
+
+            if (flips[1] == 1)
+                mod = FlipModule(mod, ModuleVectorUtils.FlipDirection.Vertical);
+
+            return mod;
+        }
+        public static Vector3Int Flip(Vector3Int a, FlipDirection fd)
+        {
+            switch (fd)
+            {
+                case FlipDirection.Horizontal:
+                    a = new Vector3Int(-a.x, a.y, a.z);
+                    break;
+                case FlipDirection.Vertical:
+                    a = new Vector3Int(a.x, -a.y, a.z);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("fd", fd, null);
+            }
+
+            return a;
+        }
+
+        public static Connector[] RotateConnectorPositions(Connector[] connectors, int rotations)
+        {
+            for (int i = 0; i < rotations; i++)
+                connectors = RotateConnectorPositions(connectors,
+                    rotations > 0 ? RotationDirection.CW : RotationDirection.CCW);
+
+            return connectors;
+        }
+        public static Connector[] FlipConnectorPositions(Connector[] connectors, int[] flips)
+        {
+            if (flips[0] == 1)
+                connectors = FlipConnectorPositions(connectors, FlipDirection.Horizontal);
+
+            if (flips[1] == 1)
+                connectors = FlipConnectorPositions(connectors, FlipDirection.Vertical);
+
+            return connectors;
         }
 
         private static Connector[] RotateConnectorPositions(Connector[] positions, RotationDirection rd)
@@ -161,118 +245,81 @@ namespace Assets.Utils.ModuleUtils
             return space;
         }
 
-        //TODO: Flip
-        public static Connector[] FlipConnectorPositions(Connector[] positions, FlipDirection fd)
+        private static Connector[] FlipConnectorPositions(Connector[] positions, FlipDirection fd)
         {
-            foreach (Connector cp in positions)
+            for (int i = 0; i < positions.Length; i++)
             {
-                //switch (cp.Direction)
-                //{
-                //    case ConnectorDirections.Forward:
-                //    case ConnectorDirections.Backward:
-                //        break;
+                var pos = Flip(positions[i].Position, fd);
+                var dir = Flip(positions[i].Direction, fd);
 
-                //    case ConnectorDirections.Up:
-                //        if (fd == FlipDirection.Horizontal)
-                //            cp.Direction = ConnectorDirections.Down;
-                //        break;
-
-                //    case ConnectorDirections.Right:
-                //        if (fd == FlipDirection.Vertical)
-                //            cp.Direction = ConnectorDirections.Left;
-                //        break;
-
-                //    case ConnectorDirections.Down:
-                //        if (fd == FlipDirection.Horizontal)
-                //            cp.Direction = ConnectorDirections.Up;
-                //        break;
-
-                //    case ConnectorDirections.Left:
-                //        if (fd == FlipDirection.Vertical)
-                //            cp.Direction = ConnectorDirections.Right;
-                //        break;
-                    
-                //    default:
-                //        throw new ArgumentOutOfRangeException();
-                //}
+                positions[i] = new Connector(dir, positions[i].MaterialsConveyed, pos);
             }
 
             return positions;
         }
-
-        public static ExclusionVector[] FlipExclusionVectors(ExclusionVector[] vectors, FlipDirection fd)
+        private static ExclusionVector[] FlipExclusionVectorDirections(ExclusionVector[] vectors, FlipDirection fd)
         {
             for (var i = 0; i < vectors.Length; i++)
             {
-                for (var j = 0; j < vectors[i].Directions.Length; j++)
-                    switch (vectors[i].Directions[j])
+                var newDirections = new ExclusionVectorDirections[vectors[i].Directions.Length];
+
+                for (int j = 0; j < vectors[i].Directions.Length; j++)
+                {
+                    ExclusionVectorDirections newDirection = ExclusionVectorDirections.BackwardLine;
+
+                    if (fd == FlipDirection.Vertical)
                     {
-                    //    case ExclusionVectors.ForwardLine:
-                    //    case ExclusionVectors.BackwardLine:
-                    //    case ExclusionVectors.Plane:
-                    //    case ExclusionVectors.PlaneAndForward:
-                    //    case ExclusionVectors.PlaneAndBackward:
-                    //        break;
-
-                    //    case ExclusionVectors.UpwardLine:
-                    //        if (fd == FlipDirection.Horizontal)
-                    //            vectors[i] = ExclusionVectors.DownwardLine;
-                    //        break;
-
-                    //    case ExclusionVectors.DownwardLine:
-                    //        if (fd == FlipDirection.Horizontal)
-                    //            vectors[i] = ExclusionVectors.UpwardLine;
-                    //        break;
-
-                    //    case ExclusionVectors.RightLine:
-                    //        if (fd == FlipDirection.Vertical)
-                    //            vectors[i] = ExclusionVectors.LeftLine;
-                    //        break;
-
-                    //    case ExclusionVectors.LeftLine:
-                    //        if (fd == FlipDirection.Vertical)
-                    //            vectors[i] = ExclusionVectors.RightLine;
-                    //        break;
-
-                    //    case ExclusionVectors.PlaneAndAbove:
-                    //        if (fd == FlipDirection.Horizontal)
-                    //            vectors[i] = ExclusionVectors.PlaneAndBelow;
-                    //        break;
-
-                    //    case ExclusionVectors.PlaneAndBelow:
-                    //        if (fd == FlipDirection.Horizontal)
-                    //            vectors[i] = ExclusionVectors.PlaneAndAbove;
-                    //        break;
-
-
-                    //    case ExclusionVectors.PlaneAndRight:
-                    //        if (fd == FlipDirection.Vertical)
-                    //            vectors[i] = ExclusionVectors.PlaneAndLeft;
-                    //        break;
-
-                    //    case ExclusionVectors.PlaneAndLeft:
-                    //        if (fd == FlipDirection.Vertical)
-                    //            vectors[i] = ExclusionVectors.PlaneAndRight;
-                    //        break;
-
-                    //    default:
-                    //        throw new ArgumentOutOfRangeException();
+                        switch (vectors[i].Directions[j])
+                        {
+                            case ExclusionVectorDirections.UpwardLine:
+                                newDirection = ExclusionVectorDirections.DownwardLine;
+                                break;
+                            case ExclusionVectorDirections.DownwardLine:
+                                newDirection = ExclusionVectorDirections.UpwardLine;
+                                break;
+                            case ExclusionVectorDirections.PlaneAndAbove:
+                                newDirection = ExclusionVectorDirections.PlaneAndBelow;
+                                break;
+                            case ExclusionVectorDirections.PlaneAndBelow:
+                                newDirection = ExclusionVectorDirections.PlaneAndAbove;
+                                break;
+                        }
                     }
+                    else
+                    {
+                        switch (vectors[i].Directions[j])
+                        {
+                            case ExclusionVectorDirections.RightLine:
+                                newDirection = ExclusionVectorDirections.LeftLine;
+                                break;
+                            case ExclusionVectorDirections.LeftLine:
+                                newDirection = ExclusionVectorDirections.RightLine;
+                                break;
+                            case ExclusionVectorDirections.PlaneAndRight:
+                                newDirection = ExclusionVectorDirections.PlaneAndLeft;
+                                break;
+                            case ExclusionVectorDirections.PlaneAndLeft:
+                                newDirection = ExclusionVectorDirections.PlaneAndRight;
+                                break;
+                        }
+                    }
+
+                    newDirections[j] = newDirection;
+                }
+
+                var newPosition = Flip(vectors[i].Position, fd);
+
+                vectors[i] = new ExclusionVector(newDirections, newPosition);
             }
 
             return vectors;
         }
+        private static Vector3Int[] FlipSpace(Vector3Int[] space, FlipDirection fd)
+        {
+            for (int i = 0; i < space.Length; i++)
+                space[i] = Flip(space[i], fd);
 
-        //public static IntVector[] FlipSpace(IntVector[] space, FlipDirection fd)
-        //{
-        //    if (fd == FlipDirection.Horizontal)
-        //        for (int i = 0; i < space.Length; i++)
-        //            space[i] = new IntVector(-space[i].X, space[i].Y, space[i].Z);
-        //    else
-        //        for (int i = 0; i < space.Length; i++)
-        //            space[i] = new IntVector(space[i].X, -space[i].Y, space[i].Z);
-
-        //    return space;
-        //}
+            return space;
+        }
     }
 }

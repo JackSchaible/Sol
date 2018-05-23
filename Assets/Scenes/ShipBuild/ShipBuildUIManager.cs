@@ -1,4 +1,5 @@
-﻿using Assets.Data;
+﻿using System.Linq;
+using Assets.Data;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
@@ -39,6 +40,7 @@ namespace Assets.Scenes.ShipBuild
         private Color _previousColor;
         private GameObject _previousModule;
         private int _newModuleRotations;
+        private int[] _newModuleFlips = new int[2];
         private bool _popupActive;
 
         #endregion
@@ -71,6 +73,9 @@ namespace Assets.Scenes.ShipBuild
 
         void Update()
         {
+            if (_newModule != null && _newModule.Components != null && _newModule.Components.Length > 0)
+                Debug.Log(_newModule.ModuleBlueprint.Connectors[0]);
+
             ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
             PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
             PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
@@ -88,7 +93,7 @@ namespace Assets.Scenes.ShipBuild
                 _newModuleRotations = 0;
 
             RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),//new Vector3(Input.mousePosition.x, Input.mousePosition.y, -DeckManager.CurrentDeck)),
                     out hit) && hit.transform.tag == "GridCell")
             {
                 DebugText.text = hit.transform.name;
@@ -101,7 +106,7 @@ namespace Assets.Scenes.ShipBuild
                     var sr = _previousModule.GetComponent<SpriteRenderer>();
                     _previousColor = sr.color;
                     sr.color = new Color(0.5f, 0.5f, 1);
-                    InfoPanel.ShowConnectors(ShipBuildManager.GetConnectors(_previousModule), ShipBuildManager.Modules.Count == 0);
+                    InfoPanel.ShowConnectors(ShipBuildManager.GetConnectors(_previousModule).ToList(), ShipBuildManager.Modules.Count == 0);
                 }
             }
 
@@ -153,19 +158,28 @@ namespace Assets.Scenes.ShipBuild
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
             {
+                //Don't use module.blueprint.connectors, use the component's connectors!
                 _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CCW);
                 _newModuleRotations--;
+                ModuleInfoPanel.Initialize(_newModule.ModuleBlueprint.Name, _newModule.ModuleBlueprint.Connectors, _newModule.Components[_currentModuleComponent].LocalPosition, _newModuleRotations, _newModuleFlips);
             }
             else if (Input.GetKeyDown(KeyCode.R))
             {
                 _newModule = ModuleVectorUtils.RotateModule(_newModule, ModuleVectorUtils.RotationDirection.CW);
                 _newModuleRotations++;
+                ModuleInfoPanel.Initialize(_newModule.ModuleBlueprint.Name, _newModule.ModuleBlueprint.Connectors, _newModule.Components[_currentModuleComponent].LocalPosition, _newModuleRotations, _newModuleFlips);
             }
             else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
             {
+                _newModule = ModuleVectorUtils.FlipModule(_newModule, ModuleVectorUtils.FlipDirection.Horizontal);
+                _newModuleFlips[0] = MathHelper.Wrap(_newModuleFlips[0] + 1, 0, 1);
+                ModuleInfoPanel.Initialize(_newModule.ModuleBlueprint.Name, _newModule.ModuleBlueprint.Connectors, _newModule.Components[_currentModuleComponent].LocalPosition, _newModuleRotations, _newModuleFlips);
             }
             else if (Input.GetKeyDown(KeyCode.T))
             {
+                _newModule = ModuleVectorUtils.FlipModule(_newModule, ModuleVectorUtils.FlipDirection.Vertical);
+                _newModuleFlips[1] = MathHelper.Wrap(_newModuleFlips[1] + 1, 0, 1);
+                ModuleInfoPanel.Initialize(_newModule.ModuleBlueprint.Name, _newModule.ModuleBlueprint.Connectors, _newModule.Components[_currentModuleComponent].LocalPosition, _newModuleRotations, _newModuleFlips);
             }
 
             if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
@@ -194,7 +208,7 @@ namespace Assets.Scenes.ShipBuild
             foreach (var com in _newModule.Components)
                 com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
 
-            ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations);
+            ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations, _newModuleFlips);
             Menu.ModulePlaced(_newModule.ModuleBlueprint);
             CancelPlaceMode();
         }
@@ -209,18 +223,8 @@ namespace Assets.Scenes.ShipBuild
         {
             _blueprint = blueprint.Copy();
             _newModule = Module.Create(blueprint);
-
-            //TODO: if previous module was rotated, rotate the newmodule
-            //if (_newModuleRotations != 0)
-            //{
-            //    _newModule.GameObject.transform.RotateAround(_newModule.GameObject.transform.position, new Vector3(0, 0, 1),
-            //        _newModuleRotations);
-
-            //    for(int rotations = (int)Math.Abs(_newModuleRotations) / 90; rotations > 0; rotations--)
-            //        _newModule.ModuleBlueprint.Connectors =
-            //            ModuleVectorUtils.RotateConnectorPositions(_newModule.ModuleBlueprint.Connectors,
-            //                ModuleVectorUtils.RotationDirection.CCW);
-            //}
+            _newModule = ModuleVectorUtils.RotateModule(_newModule, _newModuleRotations);
+            _newModule = ModuleVectorUtils.FlipModule(_newModule, _newModuleFlips);
 
             for (var i = 0; i < _newModule.Components.Length; i++)
             {
@@ -236,7 +240,7 @@ namespace Assets.Scenes.ShipBuild
             }
 
             _currentModuleComponent = 0;
-            ModuleInfoPanel.Initialize(blueprint.Name, blueprint.Connectors);
+            ModuleInfoPanel.Initialize(_newModule.ModuleBlueprint.Name, _newModule.ModuleBlueprint.Connectors, _newModule.Components[_currentModuleComponent].LocalPosition, _newModuleRotations, _newModuleFlips);
         }
 
         private void CancelPlaceMode()
