@@ -18,12 +18,12 @@ namespace Assets.Scenes.ShipBuild
 
         private List<GameObject> _deckButtons;
 
-        private Color activeColor = new Color(1, 1, 1, 0.8f);
-        private Color inactiveColor = new Color(1, 1, 1, 0.5f);
+        private readonly Color _activeColor = new Color(1, 1, 1, 0.8f);
+        private readonly Color _inactiveColor = new Color(1, 1, 1, 0.5f);
 
-        private Color SelectedDeckModuleColor = new Color(1, 1, 1, 1);
-        private Color AdjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
-        private Color UnattachedDeckModuleColor = new Color(1, 1, 1, 0);
+        private readonly Color _selectedDeckModuleColor = new Color(1, 1, 1, 1);
+        private readonly Color _adjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
+        private readonly Color _unattachedDeckModuleColor = new Color(1, 1, 1, 0);
 
         void Awake()
         {
@@ -36,7 +36,7 @@ namespace Assets.Scenes.ShipBuild
             CurrentDeck = 0;
 
             for (var i = 0; i < _deckButtons.Count; i++)
-                _deckButtons[i].GetComponent<Image>().color = i == CurrentDeck ? activeColor : inactiveColor;
+                _deckButtons[i].GetComponent<Image>().color = i == CurrentDeck ? _activeColor : _inactiveColor;
         }
 
         void Update()
@@ -76,7 +76,7 @@ namespace Assets.Scenes.ShipBuild
                 throw new Exception("Deck " + deck + " does not exist.");
 
             for (var i = 0; i < _deckButtons.Count; i++)
-                _deckButtons[i].GetComponent<Image>().color = i == deck ? activeColor : inactiveColor;
+                _deckButtons[i].GetComponent<Image>().color = i == deck ? _activeColor : _inactiveColor;
 
             CurrentDeck = deck;
 
@@ -90,25 +90,32 @@ namespace Assets.Scenes.ShipBuild
                 for (var x = 0; x < xSize; x++)
                     for (var y = 0; y < ySize; y++)
                     {
-                        if (z > deck + 1 || z < deck - 1) continue;
+                        var go = BuildManager.Grid[x, y, z];
 
-                        Color color;
+                        if (go.GameObject != null)
+                        {
+                            Color color;
+                            var sr = go.GameObject.GetComponent<SpriteRenderer>();
 
-                        if (z == deck)
-                            color = SelectedDeckModuleColor;
-                        else if (z == deck - 1 || z == deck + 1)
-                            color = AdjacentDeckModuleColor;
-                        else
-                            color = UnattachedDeckModuleColor;
+                            if (z == deck)
+                            {
+                                color = _selectedDeckModuleColor;
+                                sr.sprite = go.BuildSprite;
+                            }
+                            else
+                            {
+                                sr.sprite = go.Sprite;
 
-                        var go = BuildManager.Grid[x, y, z].GameObject;
-                        if (go != null)
-                            go.GetComponent<SpriteRenderer>().color = color;
+                                if (z == deck - 1 || z == deck + 1)
+                                    color = _adjacentDeckModuleColor;
+                                else
+                                    color = _unattachedDeckModuleColor;
+                            }
 
-                        if (z != deck)
-                            BuildManager.Cells[x, y, z].SetActive(false);
-                        else
-                            BuildManager.Cells[x, y, z].SetActive(true);
+                            sr.color = color;
+                        }
+
+                        BuildManager.Cells[x, y, z].SetActive(z == deck);
                     }
         }
 
@@ -126,13 +133,13 @@ namespace Assets.Scenes.ShipBuild
         {
             var cells = BuildManager.Cells;
 
-            for(int x = 0; x < cells.GetLength(0); x++)
-                for(int y = 0; y < cells.GetLength(1); y++)
+            for (int x = 0; x < cells.GetLength(0); x++)
+                for (int y = 0; y < cells.GetLength(1); y++)
                     for (int z = 0; z < cells.GetLength(2); z++)
                     {
                         var pos = cells[x, y, z].transform.position;
 
-                        BuildManager.Cells[x, y, z].transform.position = 
+                        BuildManager.Cells[x, y, z].transform.position =
                             new Vector3(pos.x, pos.y, -z);
 
                         var go = BuildManager.Grid[x, y, z].GameObject;
