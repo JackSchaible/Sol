@@ -7,8 +7,8 @@ namespace Assets.Ships
     {
         public ModuleTypes ModuleType { get; set; }
         public string ModuleSubtype { get; set; }
-        public string BuildSprite { get; set; }
         public string[,,] ComponentSprites { get; set; }
+        public string[,,] ComponentBuildSprites { get; set; }
         public Vector3Int[] Space { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -28,16 +28,16 @@ namespace Assets.Ships
 
         }
 
-        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string buildSprite,
-            string[,,] componentSprites, Vector3Int[] space, string name, string description,
+        protected ModuleBlueprint(ModuleTypes moduleType, string moduleSubtype, string[,,] componentSprites,
+            string[,,] componentBuildSprites, Vector3Int[] space, string name, string description,
             int health, float weight, Cost cost, Connector[] connectors, bool areConnectorsMandatory,
             ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption,
             int commandRequirement)
         {
             ModuleType = moduleType;
             ModuleSubtype = moduleSubtype;
-            BuildSprite = buildSprite;
             ComponentSprites = componentSprites;
+            ComponentBuildSprites = componentBuildSprites;
             Space = space;
             Name = name;
             Description = description;

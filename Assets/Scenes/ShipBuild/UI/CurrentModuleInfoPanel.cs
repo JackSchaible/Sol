@@ -11,7 +11,6 @@ namespace Assets.Scenes.ShipBuild.UI
     {
         public Text TitleText;
         private Dictionary<Vector3Int, List<Connector>> _connectors = new Dictionary<Vector3Int, List<Connector>>();
-        private int _index;
 
         private void Start()
         {
@@ -20,7 +19,6 @@ namespace Assets.Scenes.ShipBuild.UI
         public void Initialize(string moduleName, Connector[] connectors, Vector3Int currentModule, int rotations, int[] flips)
         {
             TitleText.text = moduleName + " Info";
-            _index = 0;
 
             _connectors = new Dictionary<Vector3Int, List<Connector>>();
             var cons = new Connector[connectors.Length];

@@ -48,11 +48,13 @@ namespace Assets.Ships
                         exclusionVectors.Add(vector);
 
                 var go = new GameObject();
-                go.AddComponent<SpriteRenderer>();
-                go.GetComponent<SpriteRenderer>().sprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentSprites[space.x, space.y, space.z], true);
-                go.GetComponent<SpriteRenderer>().sortingLayerName = "UI FG";
+                var sr = go.AddComponent<SpriteRenderer>();
+                var buildSprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentBuildSprites[space.x, space.y, space.z], true);
+                var sprite = GraphicsUtils.GetSpriteFromPath(blueprint.ComponentSprites[space.x, space.y, space.z], true);
+                sr.sprite = buildSprite;
+                sr.sortingLayerName = "UI FG";
 
-                components.Add(new ModuleComponent(go, space, connectors.ToArray(), exclusionVectors.ToArray()));
+                components.Add(new ModuleComponent(go, buildSprite, sprite, space, connectors.ToArray(), exclusionVectors.ToArray()));
             }
 
             module.Components = components.ToArray();

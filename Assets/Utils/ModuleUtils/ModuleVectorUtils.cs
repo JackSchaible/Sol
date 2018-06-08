@@ -29,7 +29,7 @@ namespace Assets.Utils.ModuleUtils
 
                 var newConnectors = RotateConnectorPositions(mod.Components[i].Connectors, rd);
                 var newExclusionVectors = RotateExclusionVectorDirections(mod.Components[i].ExclusionVectors, rd);
-                var newCom = new ModuleComponent(newGameObject, newLocalPosition, newConnectors, newExclusionVectors);
+                var newCom = new ModuleComponent(newGameObject, mod.Components[i].BuildSprite, mod.Components[i].Sprite, newLocalPosition, newConnectors, newExclusionVectors);
 
                 mod.Components[i] = newCom;
             }
@@ -42,7 +42,7 @@ namespace Assets.Utils.ModuleUtils
         {
             for (int i = 0; i < rotations; i++)
                 mod = RotateModule(mod,
-                    rotations > 0 ? ModuleVectorUtils.RotationDirection.CW : ModuleVectorUtils.RotationDirection.CCW);
+                    rotations > 0 ? RotationDirection.CW : RotationDirection.CCW);
 
             return mod;
         }
@@ -82,7 +82,7 @@ namespace Assets.Utils.ModuleUtils
                 }
                 var newConnectors = FlipConnectorPositions(mod.Components[i].Connectors, fd);
                 var newExclusionVectors = FlipExclusionVectorDirections(mod.Components[i].ExclusionVectors, fd);
-                var newCom = new ModuleComponent(newGameObject, newLocalPosition, newConnectors, newExclusionVectors);
+                var newCom = new ModuleComponent(newGameObject, mod.Components[i].BuildSprite, mod.Components[i].Sprite, newLocalPosition, newConnectors, newExclusionVectors);
 
                 mod.Components[i] = newCom;
             }
@@ -95,10 +95,10 @@ namespace Assets.Utils.ModuleUtils
         public static Module FlipModule(Module mod, int[] flips)
         {
             if (flips[0] == 1)
-                mod = FlipModule(mod, ModuleVectorUtils.FlipDirection.Horizontal);
+                mod = FlipModule(mod, FlipDirection.Horizontal);
 
             if (flips[1] == 1)
-                mod = FlipModule(mod, ModuleVectorUtils.FlipDirection.Vertical);
+                mod = FlipModule(mod, FlipDirection.Vertical);
 
             return mod;
         }

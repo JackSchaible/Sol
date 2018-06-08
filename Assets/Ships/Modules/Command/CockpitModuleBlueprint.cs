@@ -11,8 +11,8 @@ namespace Assets.Ships.Modules.Command
             
         }
 
-        public CockpitModuleBlueprint(string moduleType, string buildSprite, string[,,] componentSprites, Vector3Int[] space, string name, string description, int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, int crewRequirement, float powerConumption, int personnelHoused, int commandSupplied)
-            : base(moduleType, buildSprite, componentSprites, space, name, description, health, weight, cost, areConnectorsMandatory, connectors, new []{ new ExclusionVector(new [] {ExclusionVectorDirections.PlaneAndForward}) }, crewRequirement, powerConumption, commandSupplied)
+        public CockpitModuleBlueprint(string moduleType, string[,,] componentSprites, string[,,] componentBuildSprites, Vector3Int[] space, string name, string description, int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors, int crewRequirement, float powerConumption, int personnelHoused, int commandSupplied)
+            : base(moduleType, componentSprites, componentBuildSprites, space, name, description, health, weight, cost, areConnectorsMandatory, connectors, new []{ new ExclusionVector(new [] {ExclusionVectorDirections.PlaneAndForward}) }, crewRequirement, powerConumption, commandSupplied)
         {
             PersonnelHoused = personnelHoused;
         }
@@ -25,7 +25,7 @@ namespace Assets.Ships.Modules.Command
             Connectors.CopyTo(connectors, 0);
             Space.CopyTo(space, 0);
 
-            return new CockpitModuleBlueprint(ModuleSubtype, BuildSprite, ComponentSprites, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory, connectors, CrewRequirement, PowerConumption, PersonnelHoused, CommandSupplied);
+            return new CockpitModuleBlueprint(ModuleSubtype, ComponentSprites, ComponentBuildSprites, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory, connectors, CrewRequirement, PowerConumption, PersonnelHoused, CommandSupplied);
         }
     }
 }
