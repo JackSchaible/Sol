@@ -72,7 +72,11 @@ namespace Assets.Ships.Modules
                     2,
                     24),
                 new CockpitModuleBlueprint(ControlCentreTypes.SmallShip,
-                    new [,,] {{{"Ships/Control Centres/Small Ship/Tactical Cockpit - Build"}}},
+                    new [,,]
+                    {
+                        {{"Ships/Control Centres/Small Ship/Tactical Cockpit (0, 0, 0)"}},
+                        {{"Ships/Control Centres/Small Ship/Tactical Cockpit (1, 0, 0)"}}
+                    },
                     new [,,]
                     {
                         {{"Ships/Control Centres/Small Ship/Tactical Cockpit (0, 0, 0) - Build"}},
