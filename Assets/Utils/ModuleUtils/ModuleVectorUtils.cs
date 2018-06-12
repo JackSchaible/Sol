@@ -265,7 +265,7 @@ namespace Assets.Utils.ModuleUtils
 
                 for (int j = 0; j < vectors[i].Directions.Length; j++)
                 {
-                    ExclusionVectorDirections newDirection = ExclusionVectorDirections.BackwardLine;
+                    ExclusionVectorDirections newDirection = vectors[i].Directions[j];
 
                     if (fd == FlipDirection.Vertical)
                     {
