@@ -13,12 +13,12 @@ namespace Assets.Ships
             
         }
 
-        public CommandModuleBlueprint(string moduleType, string buildSprite, 
-            string[,,] componentSprites, Vector3Int[] space, string name, string description,
+        public CommandModuleBlueprint(string moduleType, string[,,] componentSprites, 
+            string[,,] componentBuildSprites, Vector3Int[] space, string name, string description,
             int health, float weight, Cost cost, bool areConnectorsMandatory, Connector[] connectors,
             ExclusionVector[] exclusionVectors, int crewRequirement, float powerConumption,
             int commandSupplied)
-            : base(ModuleTypes.ControlCentre, moduleType, buildSprite, componentSprites, space, name,
+            : base(ModuleTypes.ControlCentre, moduleType, componentSprites, componentBuildSprites, space, name,
                   description, health, weight, cost, connectors, areConnectorsMandatory, 
                   exclusionVectors, crewRequirement, powerConumption, 0)
         {
@@ -35,7 +35,7 @@ namespace Assets.Ships
             ExclusionVectors.CopyTo(exclusionVectors, 0);
             Space.CopyTo(space, 0);
 
-            return new CommandModuleBlueprint(ModuleSubtype, BuildSprite, ComponentSprites, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory, connectors, exclusionVectors, CrewRequirement, PowerConumption, CommandSupplied);
+            return new CommandModuleBlueprint(ModuleSubtype, ComponentSprites, ComponentBuildSprites, space, Name, Description, Health, Weight, Cost, AreConnectorsMandatory, connectors, exclusionVectors, CrewRequirement, PowerConumption, CommandSupplied);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Assets.Scenes.ShipBuild
 
         private readonly Color _selectedDeckModuleColor = new Color(1, 1, 1, 1);
         private readonly Color _adjacentDeckModuleColor = new Color(1, 1, 1, 0.5f);
+        private readonly Color _unattachedDeckModuleColor = new Color(1, 1, 1, 0);
 
         void Awake()
         {
@@ -89,30 +90,32 @@ namespace Assets.Scenes.ShipBuild
                 for (var x = 0; x < xSize; x++)
                     for (var y = 0; y < ySize; y++)
                     {
-                        if (z > deck + 1 || z < deck - 1) continue;
+                        var go = BuildManager.Grid[x, y, z];
 
-                        var go = BuildManager.Grid[x, y, z].GameObject;
+                        if (go.GameObject != null)
+                        {
+                            Color color;
+                            var sr = go.GameObject.GetComponent<SpriteRenderer>();
 
-                        if (go != null)
-                            if (z == deck || z == deck - 1 || z == deck + 1)
+                            if (z == deck)
                             {
-                                Color color;
-                                go.SetActive(true);
-
-                                if (z == deck)
-                                    color = _selectedDeckModuleColor;
-                                else
-                                    color = _adjacentDeckModuleColor;
-
-                                go.GetComponent<SpriteRenderer>().color = color;
+                                color = _selectedDeckModuleColor;
+                                sr.sprite = go.BuildSprite;
                             }
                             else
-                                go.SetActive(false);
+                            {
+                                sr.sprite = go.Sprite;
 
-                        if (z != deck)
-                            BuildManager.Cells[x, y, z].SetActive(false);
-                        else
-                            BuildManager.Cells[x, y, z].SetActive(true);
+                                if (z == deck - 1 || z == deck + 1)
+                                    color = _adjacentDeckModuleColor;
+                                else
+                                    color = _unattachedDeckModuleColor;
+                            }
+
+                            sr.color = color;
+                        }
+
+                        BuildManager.Cells[x, y, z].SetActive(z == deck);
                     }
         }
 
@@ -130,13 +133,13 @@ namespace Assets.Scenes.ShipBuild
         {
             var cells = BuildManager.Cells;
 
-            for(int x = 0; x < cells.GetLength(0); x++)
-                for(int y = 0; y < cells.GetLength(1); y++)
+            for (int x = 0; x < cells.GetLength(0); x++)
+                for (int y = 0; y < cells.GetLength(1); y++)
                     for (int z = 0; z < cells.GetLength(2); z++)
                     {
                         var pos = cells[x, y, z].transform.position;
 
-                        BuildManager.Cells[x, y, z].transform.position = 
+                        BuildManager.Cells[x, y, z].transform.position =
                             new Vector3(pos.x, pos.y, -z);
 
                         var go = BuildManager.Grid[x, y, z].GameObject;
