@@ -138,6 +138,11 @@ namespace Assets.Utils.ModuleUtils
             return connectors;
         }
 
+        public static Vector3Int Multiply(Vector3Int vector, int scalar)
+        {
+            return new Vector3Int(vector.x * scalar, vector.y * scalar, vector.z * scalar);
+        }
+
         private static Connector[] RotateConnectorPositions(Connector[] positions, RotationDirection rd)
         {
             for (int i = 0; i < positions.Length; i++)

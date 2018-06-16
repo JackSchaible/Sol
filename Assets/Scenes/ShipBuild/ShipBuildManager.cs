@@ -65,91 +65,6 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
-    {
-        PowerUsed += blueprint.PowerConumption;
-        ControlUsed += blueprint.CommandRequirement;
-        PersonnelUsed += blueprint.CrewRequirement;
-
-        var commandBlueprint = blueprint as CommandModuleBlueprint;
-        if (commandBlueprint != null)
-        {
-            ControlAvailable += commandBlueprint.CommandSupplied;
-            HasCommandModule = true;
-        }
-
-        var cockpitBlueprint = blueprint as CockpitModuleBlueprint;
-        if (cockpitBlueprint != null)
-            PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
-
-        Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-
-        var newModule = Module.Create(blueprint);
-        newModule = ModuleVectorUtils.RotateModule(newModule, rotations);
-        newModule = ModuleVectorUtils.FlipModule(newModule, flips);
-        newModule.Position = pos;
-
-        if (Modules.Count == 0)
-            foreach (var cell in Cells)
-                cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
-
-        Modules.Add(newModule);
-
-        foreach (var com in newModule.Components)
-        {
-            var aPos = pos + com.LocalPosition;
-            var cell = Cells[aPos.x, aPos.y, aPos.z];
-            cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
-            cell.GetComponent<GridCell>().Connectors = new Connector[0];
-            com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
-            com.GameObject.transform.position = cell.gameObject.transform.position;
-            Grid[aPos.x, aPos.y, aPos.z] = com;
-
-            //Modify surrounding components to have receiving connectors
-            foreach (var con in com.Connectors)
-            {
-                var conPos = aPos + con.Direction;
-
-                var shiftDirection = Vector3Int.zero;
-
-                if (conPos.x < 0)
-                    shiftDirection += Vector3Int.right * 10;
-                else if (conPos.y < 0)
-                    shiftDirection += Vector3Int.up * 10;
-                else if (conPos.z < 0)
-                    shiftDirection += new Vector3Int(0, 0, 1);
-
-                aPos += shiftDirection;
-
-                if (!(_gridSize - Vector3Int.one).Contains(conPos))
-                {
-                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)),
-                        shiftDirection);
-
-                    if (con.Direction.z != 0)
-                    {
-                        if (con.Direction.z > 0)
-                            DeckManager.AddUpperDeck();
-                        else if (con.Direction.z < 0)
-                            DeckManager.AddLowerDeck();
-                    }
-
-                    pos += shiftDirection;
-                    conPos += shiftDirection;
-                    DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
-                }
-
-                if (!CanAddConnector(conPos))
-                    continue;
-
-                var cCell = Cells[conPos.x, conPos.y, conPos.z];
-                var gridCell = cCell.GetComponent<GridCell>();
-                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
-                cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
-            }
-        }
-    }
-
     public void DeleteModule(Module module)
     {
         //TODO:Enforce connector rules before deleting
@@ -163,18 +78,30 @@ public class ShipBuildManager : MonoBehaviour
         return cell.Connectors;
     }
 
-    private bool CanAddConnector(Vector3Int connectorPosition)
+    /// <summary>
+    /// Checks if a connector can be added to the specified position
+    /// </summary>
+    /// <param name="connectorPosition">The position to add the connector to</param>
+    /// <param name="excludeNewModule">Whether or not to check against all module, or exclude the newest-added one (used for the AddModule method)</param>
+    /// <returns>A bool specifying whether or not the connector may be added</returns>
+    private bool CanAddConnector(Vector3Int connectorPosition, bool excludeNewModule)
     {
         var canAddConnector = true;
 
-        //Can't add an open connector to a space populated by another object
+        #region  Can't add an open connector to a space populated by another object
+
         if (Grid[connectorPosition.x, connectorPosition.y, connectorPosition.z].GameObject != null)
             canAddConnector = false;
 
-        //Can't add a module to an exlcusion vector-space
-        for (var i = 0; i < Modules.Count - 1; i++)
+        #endregion
+
+        #region Can't add a module to an exlcusion vector-space
+
+        //Validate against the newly-placed module?
+        var count = excludeNewModule ? Modules.Count - 1 : Modules.Count;
+
+        for (var i = 0; i < count; i++)
         {
-            //Don't validate against the newly-placed module (Modules.Count - 1)
 
             var module = Modules[i];
             foreach (var component in module.Components)
@@ -273,7 +200,200 @@ public class ShipBuildManager : MonoBehaviour
             }
         }
 
+        #endregion
+
         return canAddConnector;
+    }
+
+    #endregion
+
+    #region Add Module
+
+    public string AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
+    {
+        var module = ConfigureModule(selectedComponent, blueprint, rotations, flips);
+        string msg = null;
+
+        //validate connectors
+        if (Modules.Count > 0)
+            msg = ValidateConnectors(module);
+
+        if (msg == null)
+        {
+            UpdateAddedValues(blueprint);
+            AddModuleToState(module);
+            CheckConnectors();
+        }
+
+        return msg;
+    }
+
+    private string ValidateConnectors(Module module)
+    {
+        string msg = null;
+
+        int numConnectors = 1;
+
+        if (module.ModuleBlueprint.AreConnectorsMandatory)
+        {
+            foreach (var component in module.Components)
+                numConnectors += component.Connectors.Length;
+        }
+
+        foreach (var component in module.Components)
+        {
+            foreach (var connector in component.Connectors)
+            {
+                var position = module.Position + component.LocalPosition + connector.Position;
+                var cell = Cells[position.x, position.y, position.z].GetComponent<GridCell>();
+
+                if (cell == null)
+                    continue;
+
+                List<Materials> matsConveyed = new List<Materials>();
+
+                if (connector.MaterialsConveyed != null)
+                    matsConveyed = connector.MaterialsConveyed.ToList();
+
+                foreach (var cellConnector in cell.Connectors)
+                {
+                    if (cellConnector.Direction == connector.Direction)
+                    {
+                        numConnectors--;
+                        foreach (var material in matsConveyed)
+                        {
+                            foreach (var cellMaterial in cellConnector.MaterialsConveyed)
+                            {
+                                if (cellMaterial == material)
+                                    matsConveyed.Remove(material);
+                            }
+                        }
+                    }
+                }
+
+                if (matsConveyed.Count > 0)
+                {
+                    foreach(var mat in matsConveyed)
+                        msg += "MaterialsNotConveyed." + mat + "\r\n";
+                }
+            }
+        }
+
+        if (numConnectors > 0)
+        {
+            msg = "NotEnoughConnections";
+        }
+
+        return msg;
+    }
+
+    private Module ConfigureModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
+    {
+        var newModule = Module.Create(blueprint);
+        newModule = ModuleVectorUtils.RotateModule(newModule, rotations);
+        newModule = ModuleVectorUtils.FlipModule(newModule, flips);
+        newModule.Position = selectedComponent.GetComponent<GridCell>().Position;
+
+        return newModule;
+    }
+    private void UpdateAddedValues(ModuleBlueprint blueprint)
+    {
+        PowerUsed += blueprint.PowerConumption;
+        ControlUsed += blueprint.CommandRequirement;
+        PersonnelUsed += blueprint.CrewRequirement;
+
+        var commandBlueprint = blueprint as CommandModuleBlueprint;
+        if (commandBlueprint != null)
+        {
+            ControlAvailable += commandBlueprint.CommandSupplied;
+            HasCommandModule = true;
+        }
+
+        var cockpitBlueprint = blueprint as CockpitModuleBlueprint;
+        if (cockpitBlueprint != null)
+            PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
+
+        if (Modules.Count == 0)
+            foreach (var cell in Cells)
+                cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+    }
+    private void AddModuleToState(Module newModule)
+    {
+        Modules.Add(newModule);
+
+        foreach (var com in newModule.Components)
+        {
+            var aPos = newModule.Position + com.LocalPosition;
+            var cell = Cells[aPos.x, aPos.y, aPos.z];
+            cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+            cell.GetComponent<GridCell>().Connectors = new Connector[0];
+            com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            com.GameObject.transform.position = cell.gameObject.transform.position;
+            Grid[aPos.x, aPos.y, aPos.z] = com;
+
+            //Modify surrounding components to have receiving connectors
+            foreach (var con in com.Connectors)
+            {
+                var conPos = aPos + con.Direction;
+
+                var shiftDirection = Vector3Int.zero;
+
+                if (conPos.x < 0)
+                    shiftDirection += Vector3Int.right * 10;
+                else if (conPos.y < 0)
+                    shiftDirection += Vector3Int.up * 10;
+                else if (conPos.z < 0)
+                    shiftDirection += new Vector3Int(0, 0, 1);
+
+                aPos += shiftDirection;
+
+                if (!(_gridSize - Vector3Int.one).Contains(conPos))
+                {
+                    Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)),
+                        shiftDirection);
+
+                    if (con.Direction.z != 0)
+                    {
+                        if (con.Direction.z > 0)
+                            DeckManager.AddUpperDeck();
+                        else if (con.Direction.z < 0)
+                            DeckManager.AddLowerDeck();
+                    }
+
+                    newModule.Position += shiftDirection;
+                    conPos += shiftDirection;
+                    DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
+                }
+
+                if (!CanAddConnector(conPos, true))
+                    continue;
+
+                var cCell = Cells[conPos.x, conPos.y, conPos.z];
+                var gridCell = cCell.GetComponent<GridCell>();
+                gridCell.Connectors = gridCell.Connectors.Concat(Enumerable.Repeat(new Connector(con.Direction * -1, con.MaterialsConveyed), 1)).ToArray();
+                cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
+            }
+        }
+    }
+    private void CheckConnectors()
+    {
+        //remove existing connectors if invalid
+        foreach (var cell in Cells)
+        {
+            var gridCell = cell.GetComponent<GridCell>();
+            if (gridCell.Connectors.Length == 0) continue;
+
+            foreach (var connector in gridCell.Connectors)
+            {
+                if (!CanAddConnector(connector.Position + gridCell.Position, false))
+                {
+                    var temp = gridCell.Connectors.ToList();
+                    temp.Remove(connector);
+                    gridCell.Connectors = temp.ToArray();
+                    cell.GetComponent<SpriteRenderer>().color = new Color((153f/255f), (36f/255f), (36f/255f));
+                }
+            }
+        }
     }
 
     #endregion
