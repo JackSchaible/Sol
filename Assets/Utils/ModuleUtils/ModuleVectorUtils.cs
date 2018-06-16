@@ -138,6 +138,11 @@ namespace Assets.Utils.ModuleUtils
             return connectors;
         }
 
+        public static Vector3Int Multiply(Vector3Int vector, int scalar)
+        {
+            return new Vector3Int(vector.x * scalar, vector.y * scalar, vector.z * scalar);
+        }
+
         private static Connector[] RotateConnectorPositions(Connector[] positions, RotationDirection rd)
         {
             for (int i = 0; i < positions.Length; i++)
@@ -265,7 +270,7 @@ namespace Assets.Utils.ModuleUtils
 
                 for (int j = 0; j < vectors[i].Directions.Length; j++)
                 {
-                    ExclusionVectorDirections newDirection = ExclusionVectorDirections.BackwardLine;
+                    ExclusionVectorDirections newDirection = vectors[i].Directions[j];
 
                     if (fd == FlipDirection.Vertical)
                     {

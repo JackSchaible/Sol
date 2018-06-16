@@ -39,6 +39,11 @@ public class ShipBuildManager : MonoBehaviour
 
     private void Update()
     {
+        if (Cells.GetLength(1) > 10)
+        {
+            var cell = Cells[3, 10, 1].GetComponent<GridCell>();
+            Debug.Log(cell.Connectors);
+        }
     }
 
     public void InitializeGrid()
@@ -60,7 +65,238 @@ public class ShipBuildManager : MonoBehaviour
         DeckManager.SelectDeck(0);
     }
 
-    public void AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
+    public void DeleteModule(Module module)
+    {
+        //TODO:Enforce connector rules before deleting
+    }
+
+    #region Rules
+
+    public Connector[] GetConnectors(GameObject selectedCell)
+    {
+        var cell = selectedCell.GetComponent<GridCell>();
+        return cell.Connectors;
+    }
+
+    /// <summary>
+    /// Checks if a connector can be added to the specified position
+    /// </summary>
+    /// <param name="connectorPosition">The position to add the connector to</param>
+    /// <param name="excludeNewModule">Whether or not to check against all module, or exclude the newest-added one (used for the AddModule method)</param>
+    /// <returns>A bool specifying whether or not the connector may be added</returns>
+    private bool CanAddConnector(Vector3Int connectorPosition, bool excludeNewModule)
+    {
+        var canAddConnector = true;
+
+        #region  Can't add an open connector to a space populated by another object
+
+        if (Grid[connectorPosition.x, connectorPosition.y, connectorPosition.z].GameObject != null)
+            canAddConnector = false;
+
+        #endregion
+
+        #region Can't add a module to an exlcusion vector-space
+
+        //Validate against the newly-placed module?
+        var count = excludeNewModule ? Modules.Count - 1 : Modules.Count;
+
+        for (var i = 0; i < count; i++)
+        {
+
+            var module = Modules[i];
+            foreach (var component in module.Components)
+            {
+                foreach (var ev in component.ExclusionVectors)
+                {
+                    var exclusionVectorPosition = module.Position + ev.Position;
+
+                    foreach (var direction in ev.Directions)
+                    {
+                        switch (direction)
+                        {
+                            case ExclusionVectorDirections.ForwardLine:
+                                if (exclusionVectorPosition.x == connectorPosition.x &&
+                                    exclusionVectorPosition.y == connectorPosition.y &&
+                                    exclusionVectorPosition.z <= connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.BackwardLine:
+                                if (exclusionVectorPosition.x == connectorPosition.x &&
+                                    exclusionVectorPosition.y == connectorPosition.y &&
+                                    exclusionVectorPosition.z >= connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.UpwardLine:
+                                if (exclusionVectorPosition.x == connectorPosition.x &&
+                                    exclusionVectorPosition.y <= connectorPosition.y &&
+                                    exclusionVectorPosition.z == connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.DownwardLine:
+                                if (exclusionVectorPosition.x == connectorPosition.x &&
+                                    exclusionVectorPosition.y >= connectorPosition.y &&
+                                    exclusionVectorPosition.z == connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.RightLine:
+                                if (exclusionVectorPosition.x <= connectorPosition.x &&
+                                    exclusionVectorPosition.y == connectorPosition.y &&
+                                    exclusionVectorPosition.z == connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.LeftLine:
+                                if (exclusionVectorPosition.x >= connectorPosition.x &&
+                                    exclusionVectorPosition.y == connectorPosition.y &&
+                                    exclusionVectorPosition.z == connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.Plane:
+                                if (exclusionVectorPosition.z == connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndAbove:
+                                if (exclusionVectorPosition.z == connectorPosition.z &&
+                                    exclusionVectorPosition.y >= connectorPosition.y)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndBelow:
+                                if (exclusionVectorPosition.z >= connectorPosition.z &&
+                                    exclusionVectorPosition.y <= connectorPosition.y)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndForward:
+                                if (exclusionVectorPosition.z <= connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndBackward:
+                                if (exclusionVectorPosition.z >= connectorPosition.z)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndRight:
+                                if (exclusionVectorPosition.z >= connectorPosition.z &&
+                                    exclusionVectorPosition.x <= connectorPosition.x)
+                                    canAddConnector = false;
+                                break;
+
+                            case ExclusionVectorDirections.PlaneAndLeft:
+                                if (exclusionVectorPosition.z >= connectorPosition.z &&
+                                    exclusionVectorPosition.x >= connectorPosition.x)
+                                    canAddConnector = false;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        return canAddConnector;
+    }
+
+    #endregion
+
+    #region Add Module
+
+    public string AddModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
+    {
+        var module = ConfigureModule(selectedComponent, blueprint, rotations, flips);
+        string msg = null;
+
+        //validate connectors
+        if (Modules.Count > 0)
+            msg = ValidateConnectors(module);
+
+        if (msg == null)
+        {
+            UpdateAddedValues(blueprint);
+            AddModuleToState(module);
+            CheckConnectors();
+        }
+
+        return msg;
+    }
+
+    private string ValidateConnectors(Module module)
+    {
+        string msg = null;
+
+        int numConnectors = 1;
+
+        if (module.ModuleBlueprint.AreConnectorsMandatory)
+        {
+            foreach (var component in module.Components)
+                numConnectors += component.Connectors.Length;
+        }
+
+        foreach (var component in module.Components)
+        {
+            foreach (var connector in component.Connectors)
+            {
+                var position = module.Position + component.LocalPosition + connector.Position;
+                var cell = Cells[position.x, position.y, position.z].GetComponent<GridCell>();
+
+                if (cell == null)
+                    continue;
+
+                List<Materials> matsConveyed = new List<Materials>();
+
+                if (connector.MaterialsConveyed != null)
+                    matsConveyed = connector.MaterialsConveyed.ToList();
+
+                foreach (var cellConnector in cell.Connectors)
+                {
+                    if (cellConnector.Direction == connector.Direction)
+                    {
+                        numConnectors--;
+                        foreach (var material in matsConveyed)
+                        {
+                            foreach (var cellMaterial in cellConnector.MaterialsConveyed)
+                            {
+                                if (cellMaterial == material)
+                                    matsConveyed.Remove(material);
+                            }
+                        }
+                    }
+                }
+
+                if (matsConveyed.Count > 0)
+                {
+                    foreach(var mat in matsConveyed)
+                        msg += "MaterialsNotConveyed." + mat + "\r\n";
+                }
+            }
+        }
+
+        if (numConnectors > 0)
+        {
+            msg = "NotEnoughConnections";
+        }
+
+        return msg;
+    }
+
+    private Module ConfigureModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
+    {
+        var newModule = Module.Create(blueprint);
+        newModule = ModuleVectorUtils.RotateModule(newModule, rotations);
+        newModule = ModuleVectorUtils.FlipModule(newModule, flips);
+        newModule.Position = selectedComponent.GetComponent<GridCell>().Position;
+
+        return newModule;
+    }
+    private void UpdateAddedValues(ModuleBlueprint blueprint)
     {
         PowerUsed += blueprint.PowerConumption;
         ControlUsed += blueprint.CommandRequirement;
@@ -77,23 +313,20 @@ public class ShipBuildManager : MonoBehaviour
         if (cockpitBlueprint != null)
             PersonnelAvailable += cockpitBlueprint.PersonnelHoused;
 
-        Vector3Int pos = selectedComponent.GetComponent<GridCell>().Position;
-
-        var newModule = Module.Create(blueprint);
-        newModule = ModuleVectorUtils.RotateModule(newModule, rotations);
-        newModule = ModuleVectorUtils.FlipModule(newModule, flips);
-
         if (Modules.Count == 0)
             foreach (var cell in Cells)
                 cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
-
+    }
+    private void AddModuleToState(Module newModule)
+    {
         Modules.Add(newModule);
-        
+
         foreach (var com in newModule.Components)
         {
-            var aPos = pos + com.LocalPosition;
+            var aPos = newModule.Position + com.LocalPosition;
             var cell = Cells[aPos.x, aPos.y, aPos.z];
             cell.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.14f, 0.14f);
+            cell.GetComponent<GridCell>().Connectors = new Connector[0];
             com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
             com.GameObject.transform.position = cell.gameObject.transform.position;
             Grid[aPos.x, aPos.y, aPos.z] = com;
@@ -114,7 +347,7 @@ public class ShipBuildManager : MonoBehaviour
 
                 aPos += shiftDirection;
 
-                if (!_gridSize.Contains(conPos))
+                if (!(_gridSize - Vector3Int.one).Contains(conPos))
                 {
                     Resize(new Vector3Int(con.Direction.x * 10, con.Direction.y * 10, Math.Abs(con.Direction.z)),
                         shiftDirection);
@@ -125,15 +358,14 @@ public class ShipBuildManager : MonoBehaviour
                             DeckManager.AddUpperDeck();
                         else if (con.Direction.z < 0)
                             DeckManager.AddLowerDeck();
-
-                        DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
                     }
 
-                    pos += shiftDirection;
+                    newModule.Position += shiftDirection;
                     conPos += shiftDirection;
+                    DeckManager.SelectDeck(DeckManager.CurrentDeck + shiftDirection.z);
                 }
 
-                if (!CanAddConnector(conPos))
+                if (!CanAddConnector(conPos, true))
                     continue;
 
                 var cCell = Cells[conPos.x, conPos.y, conPos.z];
@@ -142,142 +374,26 @@ public class ShipBuildManager : MonoBehaviour
                 cCell.GetComponent<SpriteRenderer>().color = new Color(0.22f, 0.66f, 0.22f);
             }
         }
-
-        //Disable decks if module has an x / y plane or space exclusion vector
-        if (blueprint.ExclusionVectors.Length > 0)
+    }
+    private void CheckConnectors()
+    {
+        //remove existing connectors if invalid
+        foreach (var cell in Cells)
         {
-            foreach (var vectors in blueprint.ExclusionVectors)
+            var gridCell = cell.GetComponent<GridCell>();
+            if (gridCell.Connectors.Length == 0) continue;
+
+            foreach (var connector in gridCell.Connectors)
             {
-                foreach (var vector in vectors.Directions)
+                if (!CanAddConnector(connector.Position + gridCell.Position, false))
                 {
-                    //Disable whatever it is
-                    switch (vector)
-                    {
-                        case ExclusionVectorDirections.Plane:
-                            break;
-
-                        case ExclusionVectorDirections.PlaneAndForward:
-                            break;
-
-                        case ExclusionVectorDirections.PlaneAndBackward:
-                            break;
-                    }
+                    var temp = gridCell.Connectors.ToList();
+                    temp.Remove(connector);
+                    gridCell.Connectors = temp.ToArray();
+                    cell.GetComponent<SpriteRenderer>().color = new Color((153f/255f), (36f/255f), (36f/255f));
                 }
             }
         }
-    }
-
-    public void DeleteModule(Module module)
-    {
-        //TODO:Enforce connector rules before deleting
-    }
-
-    #region Rules
-
-    public Connector[] GetConnectors(GameObject selectedCell)
-    {
-        var cell = selectedCell.GetComponent<GridCell>();
-        return cell.Connectors;
-    }
-
-    private bool CanAddConnector(Vector3Int position)
-    {
-        var canAddConnector = true;
-
-        //Can't add an open connector to a space populated by another object
-        if (Grid[position.x, position.y, position.z].GameObject != null)
-            canAddConnector = false;
-
-        //Can't add a module to an exlcusion vector-space
-        foreach (var module in Modules)
-        foreach (var component in module.Components)
-        foreach (var ev in component.ExclusionVectors)
-        foreach (var direction in ev.Directions)
-            switch (direction)
-            {
-                case ExclusionVectorDirections.ForwardLine:
-                    if (ev.Position.x == position.x &&
-                        ev.Position.y == position.y &&
-                        ev.Position.z <= position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.BackwardLine:
-                    if (ev.Position.x == position.x &&
-                        ev.Position.y == position.y &&
-                        ev.Position.z >= position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.UpwardLine:
-                    if (ev.Position.x == position.x &&
-                        ev.Position.y <= position.y &&
-                        ev.Position.z == position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.DownwardLine:
-                    if (ev.Position.x == position.x &&
-                        ev.Position.y >= position.y &&
-                        ev.Position.z == position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.RightLine:
-                    if (ev.Position.x <= position.x &&
-                        ev.Position.y == position.y &&
-                        ev.Position.z == position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.LeftLine:
-                    if (ev.Position.x >= position.x &&
-                        ev.Position.y == position.y &&
-                        ev.Position.z == position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.Plane:
-                    if (ev.Position.z == position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndAbove:
-                    if (ev.Position.z == position.z &&
-                        ev.Position.y >= position.y)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndBelow:
-                    if (ev.Position.z >= position.z &&
-                        ev.Position.y <= position.y)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndForward:
-                    if (ev.Position.z >= position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndBackward:
-                    if (ev.Position.z <= position.z)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndRight:
-                    if (ev.Position.z >= position.z &&
-                        ev.Position.x <= position.x)
-                        canAddConnector = false;
-                    break;
-
-                case ExclusionVectorDirections.PlaneAndLeft:
-                    if (ev.Position.z >= position.z &&
-                        ev.Position.x >= position.x)
-                        canAddConnector = false;
-                    break;
-        }
-
-        return canAddConnector;
     }
 
     #endregion
@@ -289,6 +405,11 @@ public class ShipBuildManager : MonoBehaviour
         var newGrid = Resize(add, Grid);
         Grid = ReinitComponents(newGrid, Grid, shift);
         _gridSize = new Vector3Int(Cells.GetLength(0), Cells.GetLength(1), Cells.GetLength(2));
+
+        if (shift == Vector3Int.zero) return;
+
+        foreach (var mod in Modules)
+            mod.Position += shift;
     }
     private T[,,] Resize<T>(Vector3Int newSpace, T[,,] arr)
     {
@@ -296,7 +417,7 @@ public class ShipBuildManager : MonoBehaviour
         var ySize = arr.GetLength(1);
         var zSize = arr.GetLength(2);
 
-        var newArr = new T[xSize + newSpace.x, ySize + newSpace.y, zSize + newSpace.z];
+        var newArr = new T[xSize + Mathf.Abs(newSpace.x), ySize + Mathf.Abs(newSpace.y), zSize + Mathf.Abs(newSpace.z)];
 
         return newArr;
     }

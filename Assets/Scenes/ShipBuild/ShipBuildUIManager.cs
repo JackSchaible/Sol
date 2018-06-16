@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Data;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Scenes.ShipBuild.UI;
@@ -73,9 +74,6 @@ namespace Assets.Scenes.ShipBuild
 
         void Update()
         {
-            if (_newModule != null && _newModule.Components != null && _newModule.Components.Length > 0)
-                Debug.Log(_newModule.ModuleBlueprint.Connectors[0]);
-
             ModulesText.text = ShipBuildManager.ControlUsed + " / " + ShipBuildManager.ControlAvailable;
             PowerText.text = ShipBuildManager.PowerUsed + " / " + ShipBuildManager.PowerAvailable;
             PeopleText.text = ShipBuildManager.PersonnelUsed + " / " + ShipBuildManager.PersonnelAvailable;
@@ -99,6 +97,13 @@ namespace Assets.Scenes.ShipBuild
                 DebugText.text = hit.transform.name;
                 if (_previousModule != hit.transform.gameObject)
                 {
+                    foreach (var cell in ShipBuildManager.Cells)
+                    {
+                        var gc = cell.GetComponent<GridCell>();
+                        if (gc.Connectors.Length > 0)
+                            Debug.Log(gc.Position);
+                    }
+
                     if (_previousModule != null)
                         _previousModule.GetComponent<SpriteRenderer>().color = _previousColor;
 
@@ -210,6 +215,7 @@ namespace Assets.Scenes.ShipBuild
 
             ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations, _newModuleFlips);
             Menu.ModulePlaced(_newModule.ModuleBlueprint);
+            _previousModule = null;
             CancelPlaceMode();
         }
 
