@@ -273,12 +273,12 @@ public class ShipBuildManager : MonoBehaviour
 
                 if (matsConveyed.Count > 0)
                     foreach(var mat in matsConveyed)
-                        msg += "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed." + mat + "\r\n";
+                        msg += "&&ShipBuild.ModulePlace.Errors.MaterialsNotConveyed." + mat + "&&\r\n";
             }
         }
 
         if (numConnectors > 0)
-            msg += "ShipBuild.ModulePlace.Errors.NumConnectors";
+            msg += "&&ShipBuild.ModulePlace.Errors.NumConnectors&&";
 
         return msg;
     }

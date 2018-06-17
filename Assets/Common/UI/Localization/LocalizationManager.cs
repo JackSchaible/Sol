@@ -19,10 +19,29 @@ namespace Assets.Common.Ui.Localization
         {
             string result = MissingText;
 
+            if (key == null) return result;
+
             if (LocalizedText.ContainsKey(key))
                 result = LocalizedText[key];
 
             return result;
+        }
+
+        //Replaces all instances of keys in this string with their user-friendly equivalents
+        public string GetLocalizedValues(string str)
+        {
+            while(str.Contains("&&"))
+            {
+                var index = str.IndexOf("&&");
+                var next = str.IndexOf("&&", index + 2);
+
+                var key = str.Substring(index + 2, next - index - 2);
+                var replace = LocalizedText[key];
+
+                str = str.Replace("&&" + key + "&&", replace);
+            }
+
+            return str;
         }
 
         private void Awake()

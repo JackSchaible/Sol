@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Common.Ui.Localization;
 using Assets.Scenes.ShipBuild.UI;
 using Assets.Ships;
 using Assets.Ships.Modules.Command;
@@ -122,6 +123,8 @@ namespace Assets.Scenes.ShipBuild.MenuManager
 
             mt.GameObject.name = toggle.Text;
             mt.Menu = GetMenu(mt.GameObject, toggle.ChildMenu, toggle);
+            mt.Title = toggle.Text;
+            mt.Description = toggle.Description;
             mt.GameObject.GetComponent<Toggle>().group = group;
             mt.GameObject.GetComponentInChildren<Image>().sprite = GraphicsUtils.GetSpriteFromPath(toggle.Image, true);
             mt.GameObject.GetComponentInChildren<Text>().text = toggle.Text;
@@ -261,6 +264,11 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         {
             var active = t.GameObject.GetComponent<Toggle>().isOn;
             t.Menu.GameObject.SetActive(active);
+
+            if (active)
+            {
+                UIManager.CategorySelected(t.Title, t.Description);
+            }
 
             if (t.Menu.MenuToggles == null) return;
 
@@ -407,8 +415,9 @@ namespace Assets.Scenes.ShipBuild.MenuManager
         }
         private void DisabledAllButCommand()
         {
+            var lm = LocalizationManager.Instance;
             //3.n) First module on a new ship must be a command module
-            var toggles = _menu.MenuToggles.Where(x => x.GameObject.name != "Control Centres");
+            var toggles = _menu.MenuToggles.Where(x => x.GameObject.name != lm.GetLocalizedValue("ShipBuild.CategoryTitle.ControlCentres"));
 
             foreach (var go in toggles)
             {
@@ -417,7 +426,7 @@ namespace Assets.Scenes.ShipBuild.MenuManager
                 t.isOn = false;
             }
 
-            var cct = _menu.MenuToggles.First(x => x.GameObject.name == "Control Centres");
+            var cct = _menu.MenuToggles.First(x => x.GameObject.name == lm.GetLocalizedValue("ShipBuild.CategoryTitle.ControlCentres"));
             cct.GameObject.GetComponent<Toggle>().isOn = true;
         }
 

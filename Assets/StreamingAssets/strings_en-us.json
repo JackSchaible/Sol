@@ -9,6 +9,10 @@
       "Value": "Connector Info"
     },
     {
+      "Key": "ShipBuild.ModulePlace.Errors.PanelTitle",
+      "Value": "Error Placing Module"
+    },
+    {
       "Key": "ShipBuild.ModulePlace.Errors.NumConnectors",
       "Value": "This module requires all connectors to be connected to your ship. Please check that all connectors connect to the ship."
     },
@@ -35,6 +39,138 @@
     {
       "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.People",
       "Value": "This module has a human transportation connector. It must be connected to another human transportation connector."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres",
+      "Value": "Command Centres"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.ControlCentres",
+      "Value": "What controls all of the other modules on your ships. Regulates power flow, life support, etc., as well as the targeting of weapons, shield distribution, engine fuel consumption, et cetera. Be sure to protect them, if you lose your command center, you lose control of the ship!"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Cockpits",
+      "Value": "Cockpits"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Cockpits",
+      "Value": "Small, lightweight, and requiring minimum personnel, small-ship control centres are perfect for fighters, bombers, and corvettes."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres.BasicCockpit",
+      "Value": "Basic Cockpit"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres.AdvancedCockpit",
+      "Value": "Advanced Cockpit"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres.HeavyCockpit",
+      "Value": "Heavy Cockpit"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres.HeavyAdvancedCockpit",
+      "Value": "Heavy Advanced Cockpit"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.ControlCentres.TacticalCockpit",
+      "Value": "Tactical Cockpit"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons",
+      "Value": "Weapons"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Weapons",
+      "Value": "Things that go 'pew'. Anything that can be used to the detriment of your enemy's ships or crew."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Projectiles",
+      "Value": "Projectiles"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Projectiles",
+      "Value": "Physical masses of (usually) metal alloys, thrown at high speeds towards an enemy ship without any guidance, propelled by an explosive force at the point of launch."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.LMG",
+      "Value": "Light Machine Gun"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.HMG",
+      "Value": "Heavy Machine Gun"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.ChainGun",
+      "Value": "Chain Gun"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.AAGun",
+      "Value": "AA Cannon"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.HECannon",
+      "Value": "HE Cannon"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.IncendiaryCannon",
+      "Value": "Incendiary Cannon"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.AmberGun",
+      "Value": "Amber Quarantine Gun"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.Tracer",
+      "Value": "Tracer Gun"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Weapons.DUSlugCannon",
+      "Value": "D-U Cannon"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Misc",
+      "Value": "Miscellanious"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Misc",
+      "Value": "Pieces of a ship that don't fit under other categories. Connectors, hallways, and more."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Decorative",
+      "Value": "Decorative"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Decorative",
+      "Value": "Decorative modules don't perform any function, aside from looking pretty and helping to connect pieces of your ship together."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Decorative.Panel",
+      "Value": "Panel"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Decorative.Panel2",
+      "Value": "Panel 2"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Decorative.Crossbeam",
+      "Value": "Crossbeam"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Decorative.WMount",
+      "Value": "Weapon Mount"
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Hallways",
+      "Value": "Hallways"
+    },
+    {
+      "Key": "ShipBuild.CategoryDescription.Hallways",
+      "Value": "Hallways connect the crewed areas of your ship. They also carry atmosphere and power and some carry heat, water, and waste, too."
+    },
+    {
+      "Key": "ShipBuild.CategoryTitle.Hallways.Hallway",
+      "Value": "Hallway"
     }
   ]
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Common.Ui.Localization;
 using Assets.Data;
 using Assets.Scenes.ShipBuild.MenuManager;
 using Assets.Scenes.ShipBuild.UI;
@@ -21,6 +22,7 @@ namespace Assets.Scenes.ShipBuild
         public ShipBuildManager ShipBuildManager;
         public DeckManager DeckManager;
 
+
         //Reference to the scene's main camera (used for the transformation matrix)
         public Camera Camera;
 
@@ -32,6 +34,7 @@ namespace Assets.Scenes.ShipBuild
         public Modal Modal;
         public InfoPanel InfoPanel;
         public CurrentModuleInfoPanel ModuleInfoPanel;
+        public ContextualInfoPanel ContextPanel;
 
         //Internal state-tracking variables
         private bool _placeMode;
@@ -210,13 +213,34 @@ namespace Assets.Scenes.ShipBuild
             if (_previousColor == new Color(0.6f, 0.14f, 0.14f))
                 return;
 
-            foreach (var com in _newModule.Components)
-                com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            var result = ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations, _newModuleFlips);
+            if (result == null)
+            {
+                foreach (var com in _newModule.Components)
+                    com.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
 
-            ShipBuildManager.AddModule(_previousModule, _blueprint, _newModuleRotations, _newModuleFlips);
-            Menu.ModulePlaced(_newModule.ModuleBlueprint);
-            _previousModule = null;
-            CancelPlaceMode();
+                Menu.ModulePlaced(_newModule.ModuleBlueprint);
+                _previousModule = null;
+                CancelPlaceMode();
+            }
+            else
+            {
+                ContextPanel.Title.text =
+                    LocalizationManager.Instance.GetLocalizedValue("ShipBuild.ModulePlace.Errors.PanelTitle");
+
+                ContextPanel.Description.text = LocalizationManager.Instance.GetLocalizedValues(result);
+            }
+        }
+
+        public void CategorySelected(string categoryName, string categoryDescription)
+        {
+            if (categoryDescription == null)
+                ContextPanel.gameObject.SetActive(false);
+            else
+                ContextPanel.gameObject.SetActive(true);
+
+            ContextPanel.Title.text = categoryName;
+            ContextPanel.Description.text = categoryDescription;
         }
 
         /// <summary>

@@ -18,14 +18,16 @@ namespace Assets.Scenes.ShipBuild.MenuManager
     {
         public string Image { get; set; }
         public string Text { get; set; }
+        public string Description { get; set; }
         public bool HasPopup { get; set; }
         public ModalData PopupData { get; set; }
         public MenuData ChildMenu { get; set; }
 
-        public ToggleData(string image, string text, bool hasPopup, MenuData childMenu, ModalData popupData = null)
+        public ToggleData(string image, string text, string description, bool hasPopup, MenuData childMenu, ModalData popupData = null)
         {
             Image = image;
             Text = text;
+            Description = description;
             HasPopup = hasPopup;
             PopupData = popupData;
             ChildMenu = childMenu;
