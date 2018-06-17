@@ -1,0 +1,40 @@
+{
+  "Items": [
+    {
+      "Key": "MainMenu.Buttons.NewGame",
+      "Value": "New Game"
+    },
+    {
+      "Key": "ShipBuild.UI.InfoPanel.Title",
+      "Value": "Connector Info"
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.NumConnectors",
+      "Value": "This module requires all connectors to be connected to your ship. Please check that all connectors connect to the ship."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.Power",
+      "Value": "This module has a power conduit. It must be connected to another power conduit."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.Water",
+      "Value": "This module has a water pipe. It must be connected to another water pipe."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.Air",
+      "Value": "This module has an atmosphere connector. It must be connected to another atmosphere connector."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.Waste",
+      "Value": "This module has a waste pipe. It must be connected to another waste pipe."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.Heat",
+      "Value": "This module has a thermal transfer pipe. It must be connected to another thermal transfer pipe."
+    },
+    {
+      "Key": "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed.People",
+      "Value": "This module has a human transportation connector. It must be connected to another human transportation connector."
+    }
+  ]
+}

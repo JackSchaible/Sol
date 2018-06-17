@@ -272,21 +272,16 @@ public class ShipBuildManager : MonoBehaviour
                 }
 
                 if (matsConveyed.Count > 0)
-                {
                     foreach(var mat in matsConveyed)
-                        msg += "MaterialsNotConveyed." + mat + "\r\n";
-                }
+                        msg += "ShipBuild.ModulePlace.Errors.MaterialsNotConveyed." + mat + "\r\n";
             }
         }
 
         if (numConnectors > 0)
-        {
-            msg = "NotEnoughConnections";
-        }
+            msg += "ShipBuild.ModulePlace.Errors.NumConnectors";
 
         return msg;
     }
-
     private Module ConfigureModule(GameObject selectedComponent, ModuleBlueprint blueprint, int rotations, int[] flips)
     {
         var newModule = Module.Create(blueprint);

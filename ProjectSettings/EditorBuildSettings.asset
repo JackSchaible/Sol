@@ -4,4 +4,16 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/LoadingScreen/LoadingScreen.unity
+    guid: 7b1bfcdb2bbb47d419daa52edbe9822c
+  - enabled: 1
+    path: Assets/Scenes/MainMenu/MainMenu.unity
+    guid: ee3eaa325fa30634e950f845914a0626
+  - enabled: 1
+    path: Assets/Scenes/SpaceFight/SpaceFight.unity
+    guid: d8a9a2ae6a3768848a17cacf3aacf719
+  - enabled: 1
+    path: Assets/Scenes/ShipBuild/ShipBuild.unity
+    guid: c0e6cccbae6408341b81e14f6ea13599
